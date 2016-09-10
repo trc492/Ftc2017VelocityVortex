@@ -34,7 +34,7 @@ import trclib.TrcSongPlayer;
 import trclib.TrcStateMachine;
 
 @Autonomous(name="Test: Android Song", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestSong extends FtcOpMode
 {
     private static final FtcAndroidTone.Waveform WAVE_FORM = FtcAndroidTone.Waveform.SineWave;

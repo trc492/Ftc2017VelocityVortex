@@ -36,7 +36,7 @@ import hallib.HalDashboard;
 import trclib.TrcSensor;
 
 @Autonomous(name="Test: ZX Distance Sensor", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestZXDistanceSensor extends FtcOpMode
 {
     private HalDashboard dashboard;

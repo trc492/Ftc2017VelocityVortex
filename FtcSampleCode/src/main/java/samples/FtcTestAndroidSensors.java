@@ -40,7 +40,7 @@ import ftclib.FtcOpMode;
 import hallib.HalDashboard;
 
 @Autonomous(name="Test: Android Sensors", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestAndroidSensors extends FtcOpMode
 {
     private HalDashboard dashboard;

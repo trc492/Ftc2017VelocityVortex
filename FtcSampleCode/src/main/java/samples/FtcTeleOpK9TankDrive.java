@@ -39,7 +39,7 @@ import trclib.TrcDriveBase;
 import trclib.TrcEnhancedServo;
 
 @TeleOp(name="TeleOp: K9Bot Tank Drive", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTeleOpK9TankDrive extends FtcOpMode implements FtcGamepad.ButtonHandler
 {
     private static final double ARM_MIN_RANGE   = 0.2;

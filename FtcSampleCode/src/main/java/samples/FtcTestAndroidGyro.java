@@ -36,7 +36,7 @@ import hallib.HalDashboard;
 import trclib.TrcGyro;
 
 @Autonomous(name="Test: Android Gyro", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestAndroidGyro extends FtcOpMode
 {
     private HalDashboard dashboard;

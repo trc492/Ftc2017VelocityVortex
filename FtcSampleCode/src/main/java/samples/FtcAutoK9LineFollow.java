@@ -37,7 +37,7 @@ import hallib.HalDashboard;
 import trclib.TrcDriveBase;
 
 @Autonomous(name="Auto: K9Bot Line Following", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcAutoK9LineFollow extends FtcOpMode
 {
     private static final double MOTOR_POWER     = 0.15;

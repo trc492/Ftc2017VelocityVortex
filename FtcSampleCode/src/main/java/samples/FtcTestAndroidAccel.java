@@ -38,7 +38,7 @@ import trclib.TrcAccelerometer;
 import trclib.TrcIIRFilter;
 
 @Autonomous(name="Test: Android Accelerometer", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestAndroidAccel extends FtcOpMode
 {
     private HalDashboard dashboard;

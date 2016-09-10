@@ -36,7 +36,7 @@ import hallib.HalDashboard;
 import trclib.TrcSensor;
 
 @Autonomous(name="Test: AdaFruit Color Sensor", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestAdaFruitColorSensor extends FtcOpMode
 {
     private HalDashboard dashboard;

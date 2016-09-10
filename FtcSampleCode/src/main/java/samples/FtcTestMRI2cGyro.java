@@ -36,7 +36,7 @@ import hallib.HalDashboard;
 import trclib.TrcSensor;
 
 @Autonomous(name="Test: Modern Robotics I2C Gyro", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestMRI2cGyro extends FtcOpMode
 {
     private HalDashboard dashboard;

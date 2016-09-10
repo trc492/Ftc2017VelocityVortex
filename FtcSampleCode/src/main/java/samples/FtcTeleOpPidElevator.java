@@ -31,7 +31,7 @@ import hallib.HalDashboard;
 import samples.Elevator;
 
 @TeleOp(name="TeleOp: PID Elevator", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTeleOpPidElevator extends FtcOpMode implements FtcGamepad.ButtonHandler
 {
     private HalDashboard dashboard;

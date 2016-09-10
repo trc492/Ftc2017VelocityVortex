@@ -37,7 +37,7 @@ import hallib.HalDashboard;
 import trclib.TrcSensor;
 
 @Autonomous(name="Test: I2C Color Sensor", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestI2cColorSensor extends FtcOpMode
 {
     private static final int ALTERNATE_I2CADDRESS = 0x40;

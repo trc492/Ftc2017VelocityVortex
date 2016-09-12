@@ -1,10 +1,6 @@
 package team3543;
 
-import android.widget.TextView;
-
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 
 import ftclib.FtcGamepad;
 import ftclib.FtcOpMode;
@@ -16,6 +12,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 {
     protected HalDashboard dashboard;
     protected Robot robot;
+
     private FtcGamepad driverGamepad;
     private FtcGamepad operatorGamepad;
 
@@ -32,6 +29,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         // Initializing robot objects.
         //
         robot = new Robot(TrcRobot.RunMode.TELEOP_MODE);
+        dashboard = robot.dashboard;
         //
         // Initializing Gamepads.
         //

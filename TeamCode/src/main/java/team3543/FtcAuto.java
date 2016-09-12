@@ -1,10 +1,6 @@
 package team3543;
 
-import android.widget.TextView;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-
-import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 
 import ftclib.FtcChoiceMenu;
 import ftclib.FtcMenu;
@@ -46,7 +42,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     }   //enum Strategy
 
     private HalDashboard dashboard;
-    private Robot robot = null;
+    private Robot robot;
+
     private TrcRobot.AutoStrategy autoStrategy = null;
     private Alliance alliance = Alliance.RED_ALLIANCE;
     private StartPosition startPos = StartPosition.NEAR_MOUNTAIN;
@@ -68,6 +65,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         // Initializing robot objects.
         //
         robot = new Robot(TrcRobot.RunMode.AUTO_MODE);
+        dashboard = robot.dashboard;
         //
         // Choice menus.
         //

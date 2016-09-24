@@ -56,7 +56,7 @@ import ftclib.FtcVuforia;
 import hallib.HalDashboard;
 
 @Autonomous(name="Test: Vuforia Navigation", group="Ftc3543Sample")
-//@Disabled
+@Disabled
 public class FtcTestVuforia extends FtcOpMode
 {
     private final float MM_PER_INCH = 25.4f;

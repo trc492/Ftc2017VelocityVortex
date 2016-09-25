@@ -54,7 +54,7 @@ import ftclib.FtcOpMode;
 import ftclib.FtcVuforia;
 import hallib.HalDashboard;
 
-@Autonomous(name="Test: Vuforia Navigation", group="Ftc3543Sample")
+@Autonomous(name="Test: Vuforia Targets Tracking", group="Ftc3543Sample")
 //@Disabled
 public class FtcTestVuforia extends FtcOpMode
 {
@@ -62,7 +62,10 @@ public class FtcTestVuforia extends FtcOpMode
     private final float ROBOT_WIDTH = 18*MM_PER_INCH;               // in mm
     private final float FTC_FIELD_WIDTH = (12*12 - 2)*MM_PER_INCH;  // in mm
     private final float TARGET_HEIGHT = 160.0f;                     // in mm
-
+    //
+    // If you copy our code, please register your own account and generate your own license key at this site:
+    // https://developer.vuforia.com/license-manager
+    //
     private final String VUFORIA_LICENSE_KEY =
             "AdCwzDH/////AAAAGeDkDS3ukU9+lIXc19LMh+cKk29caNhOl8UqmZOymRGwVwT1ZN8uaPdE3Q+zceDu9AKNsqL9qLblSFV" +
             "/x8Y3jfOZdjMFs0CQSQOEyWv3xfJsdSmevXDQDQr+4KI31HY2YSf/KB/kyxfuRMk4Pi+vWS+oLl65o7sWPiyFgzoM74ENyb" +

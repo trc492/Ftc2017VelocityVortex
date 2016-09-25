@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -47,8 +48,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-
-import java.util.ArrayList;
 
 import FtcSampleCode.R;
 import ftclib.FtcOpMode;
@@ -75,6 +74,7 @@ public class FtcTestVuforia extends FtcOpMode
 
     private HalDashboard dashboard;
     private FtcVuforia vuforia;
+    private VuforiaTrackable[] targets;
 
     //
     // Implements FtcOpMode abstract method.
@@ -88,7 +88,7 @@ public class FtcTestVuforia extends FtcOpMode
         FtcRobotControllerActivity activity = (FtcRobotControllerActivity)hardwareMap.appContext;
         dashboard.setTextView((TextView)activity.findViewById(R.id.textOpMode));
 
-        vuforia = new FtcVuforia(VUFORIA_LICENSE_KEY, CAMERAVIEW_ID, CAMERA_DIR, TRACKABLES_FILE);
+        vuforia = new FtcVuforia(VUFORIA_LICENSE_KEY, CAMERAVIEW_ID, CAMERA_DIR, TRACKABLES_FILE, 4);
         //
         // Camera location:
         //
@@ -129,6 +129,8 @@ public class FtcTestVuforia extends FtcOpMode
                         .multiplied(Orientation.getRotationMatrix(
                                 AxesReference.EXTRINSIC, AxesOrder.XZX, AngleUnit.DEGREES, 90, 0, 0));
         vuforia.addTarget(3, "gears", gearsLocationOnField);
+
+        targets = vuforia.getTargets();
     }   //initRobot
 
     //
@@ -151,20 +153,18 @@ public class FtcTestVuforia extends FtcOpMode
     @Override
     public void runPeriodic(double elapsedTime)
     {
-//        final int LABEL_WIDTH = 100;
-        ArrayList<VuforiaTrackable> targets = vuforia.getTargets();
-
-        for (int i = 0; i < targets.size(); i++)
+        for (int i = 0; i < targets.length; i++)
         {
-            VuforiaTrackable target = targets.get(i);
-            VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener)(target.getListener());
-            OpenGLMatrix locationTransform = listener.getUpdatedRobotLocation();
+            VuforiaTrackableDefaultListener listener =
+                    (VuforiaTrackableDefaultListener)(targets[i].getListener());
+            OpenGLMatrix pose = listener.getPose();
 
             dashboard.displayPrintf(
-                    i*2 + 1, "%s: %s", target.getName(), listener.isVisible()? "Found": "NotFound");
-            if (locationTransform != null)
+                    i*2 + 1, "%s: %s", targets[i].getName(), listener.isVisible()? "Found": "NotFound");
+            if (pose != null)
             {
-                dashboard.displayPrintf(i*2 + 2, "%s", locationTransform.formatAsTransform());
+                VectorF translation = pose.getTranslation();
+                dashboard.displayPrintf(i*2 + 2, "%s", translation);
             }
         }
     }   //runPeriodic

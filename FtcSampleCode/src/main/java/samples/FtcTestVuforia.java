@@ -53,30 +53,6 @@ import hallib.HalDashboard;
 //@Disabled
 public class FtcTestVuforia extends FtcOpMode
 {
-    private class Target
-    {
-        public final String name;
-        public final float rotateX;
-        public final float rotateY;
-        public final float rotateZ;
-        public final float translateX;
-        public final float translateY;
-        public final float translateZ;
-
-        public Target(
-                final String name, final float rotateX, final float rotateY, final float rotateZ,
-                final float translateX, final float translateY, final float translateZ)
-        {
-            this.name = name;
-            this.rotateX = rotateX;
-            this.rotateY = rotateY;
-            this.rotateZ = rotateZ;
-            this.translateX = translateX;
-            this.translateY = translateY;
-            this.translateZ = translateZ;
-        }   //Target
-    }   //class Target
-
     private final boolean trackRobotLocation = false;
     private final float MM_PER_INCH = 25.4f;
     private final float ROBOT_WIDTH = 18*MM_PER_INCH;               // in mm
@@ -97,24 +73,24 @@ public class FtcTestVuforia extends FtcOpMode
     //
     // Note that the order of the targets must match the order in the FTC_2016-17.xml file.
     //
-    private Target[] targets =
+    private FtcVuforia.Target[] targets =
     {
             //
             // Blue alliance beacon 1.
             //
-            new Target("wheels", 90.0f, 0.0f, 0.0f, 12.0f*MM_PER_INCH, FTC_FIELD_WIDTH/2.0f, TARGET_HEIGHT),
+            new FtcVuforia.Target("wheels", 90.0f, 0.0f, 0.0f, 12.0f*MM_PER_INCH, FTC_FIELD_WIDTH/2.0f, TARGET_HEIGHT),
             //
             // Red alliance beacon 2.
             //
-            new Target("tools", 90.0f, 0.0f, 90.0f, -FTC_FIELD_WIDTH/2.0f, 30.0f*MM_PER_INCH, TARGET_HEIGHT),
+            new FtcVuforia.Target("tools", 90.0f, 0.0f, 90.0f, -FTC_FIELD_WIDTH/2.0f, 30.0f*MM_PER_INCH, TARGET_HEIGHT),
             //
             // Blue alliance beacon 2 location.
             //
-            new Target("legos", 90.0f, 0.0f, 0.0f, -30.0f*MM_PER_INCH, FTC_FIELD_WIDTH/2.0f, TARGET_HEIGHT),
+            new FtcVuforia.Target("legos", 90.0f, 0.0f, 0.0f, -30.0f*MM_PER_INCH, FTC_FIELD_WIDTH/2.0f, TARGET_HEIGHT),
             //
             // Red alliance beacon 1 location.
             //
-            new Target("gears", 90.0f, 0.0f, 90.0f, -FTC_FIELD_WIDTH/2.0f, -12.0f*MM_PER_INCH, TARGET_HEIGHT)
+            new FtcVuforia.Target("gears", 90.0f, 0.0f, 90.0f, -FTC_FIELD_WIDTH/2.0f, -12.0f*MM_PER_INCH, TARGET_HEIGHT)
     };
 
     private HalDashboard dashboard;
@@ -134,27 +110,13 @@ public class FtcTestVuforia extends FtcOpMode
         dashboard.setTextView((TextView)activity.findViewById(R.id.textOpMode));
 
         vuforia = new FtcVuforia(VUFORIA_LICENSE_KEY, CAMERAVIEW_ID, CAMERA_DIR, TRACKABLES_FILE, targets.length);
+        //
+        // Phone location: Mounted center on the front of the robot with the back camera facing outward.
+        //
+        OpenGLMatrix phoneLocationOnRobot =
+                trackRobotLocation? vuforia.locationMatrix(90.0f, 0.0f, 0.0f, 0.0f, ROBOT_WIDTH/2.0f, 0.0f): null;
 
-        OpenGLMatrix phoneLocationOnRobot = null;
-        if (trackRobotLocation)
-        {
-            //
-            // Phone location: Mounted center on the front of the robot with the back camera facing outward.
-            //
-            phoneLocationOnRobot = vuforia.locationMatrix(90.0f, 0.0f, 0.0f, 0.0f, ROBOT_WIDTH/2.0f, 0.0f);
-        }
-
-        for (int i = 0; i < targets.length; i++)
-        {
-            OpenGLMatrix targetLocationOnField = null;
-            if (trackRobotLocation)
-            {
-                targetLocationOnField = vuforia.locationMatrix(
-                        targets[i].rotateX, targets[i].rotateY, targets[i].rotateZ,
-                        targets[i].translateX, targets[i].translateY, targets[i].translateZ);
-            }
-            vuforia.setTargetInfo(i, targets[i].name, targetLocationOnField, phoneLocationOnRobot);
-        }
+        vuforia.setTargets(targets, phoneLocationOnRobot);
     }   //initRobot
 
     //

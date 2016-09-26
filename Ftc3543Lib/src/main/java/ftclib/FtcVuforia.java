@@ -54,6 +54,41 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
  */
 public class FtcVuforia
 {
+    /**
+     * This class contains information required to make a trackable target. It has two constructors.
+     * One with all the rotation/translation info for tracking the robot location on the field. If
+     * you don't need to track the robot's location, then you can use the constructor with only the
+     * target name.
+     */
+    public static class Target
+    {
+        public final String name;
+        public final float rotateX;
+        public final float rotateY;
+        public final float rotateZ;
+        public final float translateX;
+        public final float translateY;
+        public final float translateZ;
+
+        public Target(
+                final String name, final float rotateX, final float rotateY, final float rotateZ,
+                final float translateX, final float translateY, final float translateZ)
+        {
+            this.name = name;
+            this.rotateX = rotateX;
+            this.rotateY = rotateY;
+            this.rotateZ = rotateZ;
+            this.translateX = translateX;
+            this.translateY = translateY;
+            this.translateZ = translateZ;
+        }   //Target
+
+        public Target(final String name)
+        {
+            this(name, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        }   //Target
+    }   //class Target
+
     private VuforiaLocalizer.Parameters params;
     private VuforiaTrackables targetList;
 
@@ -131,6 +166,26 @@ public class FtcVuforia
     {
         setTargetInfo(index, name, null, null);
     }   //setTargetInfo
+
+    /**
+     * This method sets tracking info for the targets described in the given target array.
+     *
+     * @param targets specifies the array of targets to set tracking info.
+     * @param phoneLocationOnRobot specifies the location marix of the phone on the robot.
+     */
+    public void setTargets(Target[] targets, OpenGLMatrix phoneLocationOnRobot)
+    {
+        for (int i = 0; i < targets.length; i++)
+        {
+            OpenGLMatrix targetLocationOnField =
+                    phoneLocationOnRobot == null?
+                            null:
+                            locationMatrix(
+                                    targets[i].rotateX, targets[i].rotateY, targets[i].rotateZ,
+                                    targets[i].translateX, targets[i].translateY, targets[i].translateZ);
+            setTargetInfo(i, targets[i].name, targetLocationOnField, phoneLocationOnRobot);
+        }
+    }   //setTargets
 
     /**
      * This method creates a location matrix that can be used to relocate an object to its final location

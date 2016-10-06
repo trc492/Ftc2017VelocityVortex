@@ -9,7 +9,7 @@ import trclib.TrcEvent;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
-@TeleOp(name="Test", group="Team3543")
+@TeleOp(name="Test", group="3543Test")
 public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
 {
     private enum Test

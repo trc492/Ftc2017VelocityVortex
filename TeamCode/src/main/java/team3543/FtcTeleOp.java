@@ -7,7 +7,7 @@ import ftclib.FtcOpMode;
 import hallib.HalDashboard;
 import trclib.TrcRobot;
 
-@TeleOp(name="TeleOp", group="Team3543")
+@TeleOp(name="TeleOp", group="3543TeleOp")
 public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 {
     protected HalDashboard dashboard;

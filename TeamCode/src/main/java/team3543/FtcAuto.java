@@ -9,7 +9,7 @@ import ftclib.FtcValueMenu;
 import hallib.HalDashboard;
 import trclib.TrcRobot;
 
-@Autonomous(name="Autonomous", group="Team3543")
+@Autonomous(name="Autonomous", group="3543Auto")
 public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 {
     public enum Alliance

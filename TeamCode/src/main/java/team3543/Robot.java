@@ -60,6 +60,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public TrcPidDrive pidLineFollow;
     public TrcAnalogTrigger colorTrigger;
 
+    // subsystems
+    public PartAccel partAccel;
+    public ButtonPusher leftPusher;
+    public ButtonPusher rightPusher;
+    public BallPickUp ballPickUp;
+
+
     public Robot(TrcRobot.RunMode runMode)
     {
         opmode = FtcOpMode.getInstance();
@@ -132,6 +139,12 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         // Create subsystems here.
         //
+        partAccel = new PartAccel("shooter");
+
+        leftPusher = new ButtonPusher("leftPusher");
+        rightPusher = new ButtonPusher("rightPusher");
+
+        ballPickUp = new BallPickUp("ballPickUp");
     }   //Robot
 
     public void startMode(TrcRobot.RunMode runMode)

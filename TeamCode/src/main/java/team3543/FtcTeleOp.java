@@ -112,6 +112,10 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
             switch (button)
             {
                 case FtcGamepad.GAMEPAD_A:
+                    if (pressed)
+                        robot.partAccel.shoot();
+                    else
+                        robot.partAccel.reset();
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:

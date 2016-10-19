@@ -10,6 +10,13 @@ import trclib.TrcRobot;
 @TeleOp(name="TeleOp", group="3543TeleOp")
 public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 {
+    private enum DriveMode
+    {
+        TANK_MODE,
+        MECANUM_MODE_ONE_STICK,
+        MECANUM_MODE_TWO_STICKS
+    }   //enum DriveMode
+
     protected HalDashboard dashboard;
     protected Robot robot;
 
@@ -17,7 +24,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
     private FtcGamepad operatorGamepad;
 
     private boolean invertedDrive = false;
-
+    private DriveMode   driveMode = DriveMode.MECANUM_MODE_TWO_STICKS;
     //
     // Implements FtcOpMode abstract method.
     //
@@ -69,10 +76,35 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         //
         // DriveBase subsystem.
         //
-        double leftPower  = driverGamepad.getLeftStickY(true);
-        double rightPower = driverGamepad.getRightStickY(true);
-        robot.driveBase.tankDrive(leftPower, rightPower, invertedDrive);
-        dashboard.displayPrintf(1, "leftPower=%.2f,rightPower=%.2f", leftPower, rightPower);
+        double x=0.0,y=0.0,rotation=0.0;
+
+        switch(driveMode)
+        {
+            case TANK_MODE:
+            {
+                x = driverGamepad.getLeftStickY(true);
+                y = driverGamepad.getRightStickY(true);
+                break;
+            }
+            case MECANUM_MODE_ONE_STICK:
+            {
+                x = driverGamepad.getLeftStickX(true);
+                y = driverGamepad.getLeftStickY(true);
+                rotation = driverGamepad.getRightTrigger(true)-driverGamepad.getLeftTrigger(true);
+                break;
+            }
+            case MECANUM_MODE_TWO_STICKS:
+            default:
+            {
+                x = driverGamepad.getRightStickX(true);
+                y = driverGamepad.getLeftStickY(true);
+                rotation = driverGamepad.getRightTrigger(true)-driverGamepad.getLeftTrigger(true);
+            }
+
+        }
+        robot.driveBase.mecanumDrive_Cartesian(x,y,rotation);
+
+        dashboard.displayPrintf(1, "mode=%s,x=%.2f,y=%.2f,rot=%.2f",driveMode.toString(),x,y,rotation);
         dashboard.displayPrintf(2, "yPos=%.2f,heading=%.2f",
                                 robot.driveBase.getYPosition(), robot.driveBase.getHeading());
     }   //runPeriodic
@@ -91,12 +123,18 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
             switch (button)
             {
                 case FtcGamepad.GAMEPAD_A:
+                    if (pressed)
+                        driveMode = DriveMode.MECANUM_MODE_ONE_STICK;
                     break;
 
                 case FtcGamepad.GAMEPAD_B:
+                    if (pressed)
+                        driveMode = DriveMode.MECANUM_MODE_TWO_STICKS;
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
+                    if (pressed)
+                        driveMode = DriveMode.TANK_MODE;
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:

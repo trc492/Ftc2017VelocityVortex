@@ -154,27 +154,47 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
             {
                 case FtcGamepad.GAMEPAD_A:
                     if (pressed)
-                        robot.partAccel.shoot();
-                    else
-                        robot.partAccel.reset();
+                        robot.partAccel.openFire(false);
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:
+                    if (pressed) {
+                        robot.ballPickUp.stopPickUp();
+                        robot.conveyer.stopConveyer();
+                    }
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
+                    if (pressed) {
+                        robot.ballPickUp.startPickUp();
+                        robot.conveyer.startConveyer();
+                    }
                     break;
 
                 case FtcGamepad.GAMEPAD_B:
+                    if (pressed)
+                        robot.partAccel.stopFire();
                     break;
 
                 case FtcGamepad.GAMEPAD_LBUMPER:
+                    if (pressed)
+                        robot.leftPusher.extend();
+                    else
+                        robot.leftPusher.retract();
                     break;
 
                 case FtcGamepad.GAMEPAD_RBUMPER:
+                    if (pressed)
+                        robot.rightPusher.extend();
+                    else
+                        robot.rightPusher.retract();
                     break;
 
                 case FtcGamepad.GAMEPAD_START:
+                    if (pressed)
+                        robot.conveyer.openGate();
+                    else
+                        robot.conveyer.closeGate();
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_UP:

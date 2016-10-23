@@ -65,6 +65,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public ButtonPusher leftPusher;
     public ButtonPusher rightPusher;
     public BallPickUp ballPickUp;
+    public Conveyer conveyer;
 
     private boolean useDriveBaseOnly = false;
 
@@ -292,13 +293,22 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         rightPusher = new ButtonPusher("rightPusher");
 
         ballPickUp = new BallPickUp("ballPickUp");
+        conveyer = new Conveyer("conveyer");
     }
 
     private void StartSubsystems() {
-        //to be implemented
+        partAccel.reset();
+        ballPickUp.reset();
+        leftPusher.reset();
+        rightPusher.reset();
+        ballPickUp.reset();
     }
 
     private void StopSubsystems(){
-        //to be implemented
+        partAccel.reset();
+        ballPickUp.reset();
+        leftPusher.reset();
+        rightPusher.reset();
+        ballPickUp.reset();
     }
 }   //class Robot

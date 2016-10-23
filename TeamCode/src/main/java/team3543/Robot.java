@@ -78,14 +78,14 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         // Initialize sensors.
         //
-        gyro = new FtcMRGyro("gyroSensor");
-        gyro.calibrate();
-        beaconColorSensor = hardwareMap.colorSensor.get("colorSensor");
-        beaconColorSensor.enableLed(false);
-        lineFollowColorSensor = new FtcMRI2cColorSensor("i2cColorSensor", 0x40, false);
-        lineFollowColorSensor.setLEDEnabled(true);
-        sonarSensor = new FtcUltrasonicSensor("legoSonarSensor");
-        sonarSensor.setScale(RobotInfo.SONAR_INCHES_PER_CM);
+        //gyro = new FtcMRGyro("gyroSensor");
+        //gyro.calibrate();
+        //beaconColorSensor = hardwareMap.colorSensor.get("colorSensor");
+        //beaconColorSensor.enableLed(false);
+        //lineFollowColorSensor = new FtcMRI2cColorSensor("i2cColorSensor", 0x40, false);
+        //lineFollowColorSensor.setLEDEnabled(true);
+        //sonarSensor = new FtcUltrasonicSensor("legoSonarSensor");
+        //sonarSensor.setScale(RobotInfo.SONAR_INCHES_PER_CM);
         //
         // DriveBase subsystem.
         //
@@ -93,11 +93,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         rightFrontWheel = new FtcDcMotor("rightFrontWheel");
         leftRearWheel = new FtcDcMotor("leftRearWheel");
         rightRearWheel = new FtcDcMotor("rightRearWheel");
-        leftFrontWheel.setInverted(true);
+        //leftFrontWheel.setInverted(true);
         leftRearWheel.setInverted(true);
         driveBase = new TrcDriveBase(
-                leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel, gyro);
+                leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel);
         driveBase.setYPositionScale(RobotInfo.DRIVE_INCHES_PER_COUNT);
+
+        /*
         //
         // PID Drive.
         //
@@ -145,15 +147,16 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         rightPusher = new ButtonPusher("rightPusher");
 
         ballPickUp = new BallPickUp("ballPickUp");
+        */
     }   //Robot
 
     public void startMode(TrcRobot.RunMode runMode)
     {
-        gyro.resetZIntegrator();
-        gyro.setEnabled(true);
-        lineFollowColorSensor.setLEDEnabled(true);
-        sonarSensor.setEnabled(true);
-        prevSonarValue = (Double)sonarSensor.getData(0).value;
+        //gyro.resetZIntegrator();
+        //gyro.setEnabled(true);
+        //lineFollowColorSensor.setLEDEnabled(true);
+        //sonarSensor.setEnabled(true);
+        //prevSonarValue = (Double)sonarSensor.getData(0).value;
         driveBase.resetPosition();
     }   //startMode
 
@@ -161,9 +164,9 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     {
         FtcOpMode.getOpModeTracer().traceInfo(
                 FtcOpMode.getOpModeName(), "Stopping: %.3f", HalUtil.getCurrentTime());
-        gyro.setEnabled(false);
-        lineFollowColorSensor.setLEDEnabled(false);
-        sonarSensor.setEnabled(false);
+        //gyro.setEnabled(false);
+        //lineFollowColorSensor.setLEDEnabled(false);
+        //sonarSensor.setEnabled(false);
     }   //stopMode
 
     //

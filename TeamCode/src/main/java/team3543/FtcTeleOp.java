@@ -103,13 +103,13 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
         }
         if (driveMode != DriveMode.TANK_MODE)
-            robot.driveBase.mecanumDrive_Cartesian(x,y,rotation);
+           robot.driveBase.mecanumDrive_Cartesian(x,y,rotation);
         else
             robot.driveBase.tankDrive(x,y);
 
         dashboard.displayPrintf(1, "mode=%s,x=%.2f,y=%.2f,rot=%.2f",driveMode.toString(),x,y,rotation);
         dashboard.displayPrintf(2, "yPos=%.2f,heading=%.2f",
-                                robot.driveBase.getYPosition(), robot.driveBase.getHeading());
+                               robot.driveBase.getYPosition(), robot.driveBase.getHeading());
     }   //runPeriodic
 
     //
@@ -160,14 +160,14 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                 case FtcGamepad.GAMEPAD_Y:
                     if (pressed) {
                         robot.ballPickUp.stopPickUp();
-                        robot.conveyer.stopConveyer();
+                        robot.conveyor.stopConveyor();
                     }
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
                     if (pressed) {
                         robot.ballPickUp.startPickUp();
-                        robot.conveyer.startConveyer();
+                        robot.conveyor.startConveyor();
                     }
                     break;
 
@@ -178,23 +178,25 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
                 case FtcGamepad.GAMEPAD_LBUMPER:
                     if (pressed)
-                        robot.leftPusher.extend();
-                    else
-                        robot.leftPusher.retract();
+                        robot.partAccel.openFire(true);
+                    //if (pressed)
+                    //    robot.leftPusher.extend();
+                    //else
+                    //    robot.leftPusher.retract();
                     break;
 
                 case FtcGamepad.GAMEPAD_RBUMPER:
-                    if (pressed)
-                        robot.rightPusher.extend();
-                    else
-                        robot.rightPusher.retract();
-                    break;
+                    //if (pressed)
+                    //    robot.rightPusher.extend();
+                    //else
+                    //    robot.rightPusher.retract();
+                    //break;
 
                 case FtcGamepad.GAMEPAD_START:
                     if (pressed)
-                        robot.conveyer.openGate();
+                        robot.conveyor.openGate();
                     else
-                        robot.conveyer.closeGate();
+                        robot.conveyor.closeGate();
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_UP:

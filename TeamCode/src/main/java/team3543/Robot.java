@@ -65,9 +65,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public ButtonPusher leftPusher;
     public ButtonPusher rightPusher;
     public BallPickUp ballPickUp;
-    public Conveyer conveyer;
-
-    private boolean useDriveBaseOnly = false;
+    public Conveyor conveyor;
 
     public Robot(TrcRobot.RunMode runMode)
     {
@@ -78,24 +76,19 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         hardwareMap.logDevices();
         dashboard.setTextView((TextView)activity.findViewById(FtcSampleCode.R.id.textOpMode));
 
-        //10/23/16 senors/gyro/subsystems are not hooked up yet
-        //enabling drive base only to test drive, needs cleanup later
-        useDriveBaseOnly = true;
+        //10/25/16 senors/gyro/button pushers are not hooked up yet
 
         //sensors
-        if (!useDriveBaseOnly)
-        InitSensors();
+        //InitSensors();
 
         //drivebase
         InitDriveBase();
 
-        if (!useDriveBaseOnly){
-            //pid drives for FtcAuto
-            InitPidDrives();
+        //pid drives for FtcAuto
+        //InitPidDrives();
 
-            //init subsystems
-            InitSubsystems();
-        }
+        //init subsystems
+        InitSubsystems();
     }   //Robot
 
     public void startMode(TrcRobot.RunMode runMode)
@@ -103,10 +96,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         FtcOpMode.getOpModeTracer().traceInfo(
                 FtcOpMode.getOpModeName(), "Starting: %.3f", HalUtil.getCurrentTime());
 
-        if (!useDriveBaseOnly){
-            StartSensors();
-            StartSubsystems();
-        }
+        //StartSensors();
+        StartSubsystems();
         StartDriveBase();
     }   //startMode
 
@@ -115,11 +106,10 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         FtcOpMode.getOpModeTracer().traceInfo(
                 FtcOpMode.getOpModeName(), "Stopping: %.3f", HalUtil.getCurrentTime());
 
-        if (!useDriveBaseOnly){
-            StopSubsystems();
-            StopSensors();
-        }
+
+        //StopSensors();
         StopDriveBase();
+        StopSubsystems();
     }   //stopMode
 
     //
@@ -269,8 +259,10 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         rightFrontWheel = new FtcDcMotor("rightFrontWheel");
         leftRearWheel = new FtcDcMotor("leftRearWheel");
         rightRearWheel = new FtcDcMotor("rightRearWheel");
-        //leftFrontWheel.setInverted(true);
+        //leftFrontWheel.setInverted(true); //the left front wheel is inverted, uncomment this after the hardware is fixed
         leftRearWheel.setInverted(true);
+
+        //need to initialize with the gyro once gyro is installed
         driveBase = new TrcDriveBase(
                 leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel);
         driveBase.setYPositionScale(RobotInfo.DRIVE_INCHES_PER_COUNT);
@@ -281,7 +273,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     }
 
     private void StopDriveBase() {
-        //nothing to be done
+        //nothing to do for now
     }
     private void InitSubsystems() {
         //
@@ -289,26 +281,26 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         partAccel = new PartAccel("shooter");
 
-        leftPusher = new ButtonPusher("leftPusher");
-        rightPusher = new ButtonPusher("rightPusher");
+        //leftPusher = new ButtonPusher("leftPusher");
+        //rightPusher = new ButtonPusher("rightPusher");
 
         ballPickUp = new BallPickUp("ballPickUp");
-        conveyer = new Conveyer("conveyer");
+        conveyor = new Conveyor("conveyor");
     }
 
     private void StartSubsystems() {
         partAccel.reset();
         ballPickUp.reset();
-        leftPusher.reset();
-        rightPusher.reset();
-        ballPickUp.reset();
+        conveyor.reset();
+        //leftPusher.reset();
+        //rightPusher.reset();
     }
 
     private void StopSubsystems(){
         partAccel.reset();
         ballPickUp.reset();
-        leftPusher.reset();
-        rightPusher.reset();
-        ballPickUp.reset();
+        conveyor.reset();
+        //leftPusher.reset();
+        //rightPusher.reset();
     }
 }   //class Robot

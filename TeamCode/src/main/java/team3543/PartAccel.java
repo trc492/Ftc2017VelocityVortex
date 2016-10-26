@@ -4,6 +4,7 @@ package team3543;
  * Created by jzheng on 10/16/2016.
  */
 import ftclib.FtcDcMotor;
+import ftclib.FtcOpMode;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
@@ -31,8 +32,10 @@ public class PartAccel implements TrcTaskMgr.Task
     //the below logic relies on getPosition can accurately tell the ticks for one rotation
     //otherwise we need to either calibrate or implement some sensor to detect the full rotation
     //or the other idea is to use motor speed to detect the teeth disengaging.
-    private static double PART_ACCEL_TRAVEL_DISTANCE_PER_ROTATION = 10.0; //distance for one rotation
-    private static double PART_ACCEL_DELAY_TIME_IN_SEC = 2.0;   //delay between shots if shooting continuously
+    //note: encoder cable must be plugged in with red wire up
+    private static double PART_ACCEL_TRAVEL_DISTANCE_PER_ROTATION = 1667.0; //distance for one rotation
+    private static double PART_ACCEL_DELAY_TIME_IN_SEC = 5.0;   //delay between shots if shooting continuously
+    private static double PART_ACCEL_MOTOR_POWER = 1.0; //motor power
     private double _nextStopPosition;
     private boolean _shootContinuously;
 
@@ -44,6 +47,7 @@ public class PartAccel implements TrcTaskMgr.Task
         _sm = new TrcStateMachine(_instanceName);
         _shootContinuously = false;
         _nextStopPosition = 0.0;
+        _partAccelMotor.setInverted(true);
     }
 
     public void reset(){
@@ -59,6 +63,9 @@ public class PartAccel implements TrcTaskMgr.Task
 
     public void stopFire() {
         _shootContinuously = false;
+        FtcOpMode.getOpModeTracer().traceInfo("Robot","Shooter motor position (%.0f %.0f).",
+                _partAccelMotor.getPosition(),_nextStopPosition);
+
         //it may run through FIRE_AND_ARM cycle one more to stop
         //need to check if there is a way to break from the DELAY state
     }
@@ -95,23 +102,31 @@ public class PartAccel implements TrcTaskMgr.Task
             switch (state)
             {
                 case ARM_AND_FIRE:
-                    _partAccelMotor.setPower(1.0);
+                    _partAccelMotor.setPower(PART_ACCEL_MOTOR_POWER);
                     if (_partAccelMotor.getPosition() > _nextStopPosition) {
                         if (_shootContinuously) {
                             _sm.setState(ShooterState.DELAY);
-                            _nextStopPosition += PART_ACCEL_TRAVEL_DISTANCE_PER_ROTATION;
                         }
                         else
                         {
                             _sm.setState(ShooterState.STOPPED);
                         }
+                        _nextStopPosition += PART_ACCEL_TRAVEL_DISTANCE_PER_ROTATION;
                     }
+                    FtcOpMode.getOpModeTracer().traceInfo("Robot","Shooter motor position (%.0f %.0f).",
+                            _partAccelMotor.getPosition(),_nextStopPosition);
                     break;
 
                 case DELAY:
                     _partAccelMotor.setPower(0.0);
                     _timer.set(PART_ACCEL_DELAY_TIME_IN_SEC, _event);
-                    _sm.waitForEvents(ShooterState.ARM_AND_FIRE);
+                    _sm.addEvent(_event);
+                    if (_shootContinuously) {
+                        _sm.waitForEvents(ShooterState.ARM_AND_FIRE);
+                    }
+                    else {
+                        _sm.setState(ShooterState.STOPPED);
+                    }
                     break;
 
                 case STOPPED:
@@ -129,6 +144,7 @@ public class PartAccel implements TrcTaskMgr.Task
         {
             TrcTaskMgr.getInstance().registerTask(
                     _instanceName, this, TrcTaskMgr.TaskType.POSTCONTINUOUS_TASK);
+            _sm.start(ShooterState.ARM_AND_FIRE);
         }
         else
         {

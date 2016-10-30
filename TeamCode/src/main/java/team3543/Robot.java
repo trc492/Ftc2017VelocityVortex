@@ -11,6 +11,7 @@ import ftclib.FtcDcMotor;
 import ftclib.FtcMRGyro;
 import ftclib.FtcMRI2cColorSensor;
 import ftclib.FtcOpMode;
+import ftclib.FtcServo;
 import ftclib.FtcUltrasonicSensor;
 import hallib.HalDashboard;
 import hallib.HalUtil;
@@ -20,6 +21,7 @@ import trclib.TrcPidController;
 import trclib.TrcPidDrive;
 import trclib.TrcRobot;
 import trclib.TrcSensor;
+import trclib.TrcServo;
 
 public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.TriggerHandler
 {
@@ -62,8 +64,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
     // subsystems
     public PartAccel partAccel;
-    public ButtonPusher leftPusher;
-    public ButtonPusher rightPusher;
+    public FtcServo leftPusherServo;
+    public FtcServo rightPusherServo;
     public FtcDcMotor ballPickUpMotor;
     public Conveyor conveyor;
 
@@ -280,10 +282,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         // Create subsystems here.
         //
         partAccel = new PartAccel("shooter");
-
-        //leftPusher = new ButtonPusher("leftPusher");
-        //rightPusher = new ButtonPusher("rightPusher");
-
+        leftPusherServo = new FtcServo("leftButtonPusherServo");
+        rightPusherServo = new FtcServo("rightButtonPusherServo");
         //ballPickUp = new BallPickUp("ballPickUp");
         ballPickUpMotor = new FtcDcMotor("pickUpMotor");
         ballPickUpMotor.setInverted(true);
@@ -296,15 +296,16 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         ballPickUpMotor.resetPosition();
         ballPickUpMotor.setPower(0.0);
-        //leftPusher.reset();
-        //rightPusher.reset();
+
+        leftPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+        rightPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
     }
 
     private void StopSubsystems(){
         partAccel.reset();
         conveyor.reset();
         ballPickUpMotor.setPower(0.0);
-        //leftPusher.reset();
-        //rightPusher.reset();
+        leftPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+        rightPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
     }
 }   //class Robot

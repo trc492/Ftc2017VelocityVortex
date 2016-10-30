@@ -58,14 +58,15 @@ public class PartAccel implements TrcTaskMgr.Task
 
     public void openFire(boolean shootContinuously){
         _shootContinuously = shootContinuously;
-        _setEnabled(true);
+        _partAccelMotor.setPower(PART_ACCEL_MOTOR_POWER);
+        //_setEnabled(true);
     }
 
     public void stopFire() {
         _shootContinuously = false;
         FtcOpMode.getOpModeTracer().traceInfo("Robot","Shooter motor position (%.0f %.0f).",
                 _partAccelMotor.getPosition(),_nextStopPosition);
-
+        _partAccelMotor.setPower(0.0);
         //it may run through FIRE_AND_ARM cycle one more to stop
         //need to check if there is a way to break from the DELAY state
     }

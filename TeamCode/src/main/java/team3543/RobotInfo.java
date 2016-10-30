@@ -50,7 +50,7 @@ public class RobotInfo
     public static final double BALL_PICKUP_MOTOR_POWER          = 1.0;
 
     public static final double BUTTON_PUSHER_RETRACT_POSITION = 0.0;
-    public static final double BUTTON_PUSHER_EXTEND_POSITION = 200.0;
+    public static final double BUTTON_PUSHER_EXTEND_POSITION = 255.0;
 
     //
     // Winch subsystem.

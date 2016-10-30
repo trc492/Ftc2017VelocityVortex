@@ -64,7 +64,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public PartAccel partAccel;
     public ButtonPusher leftPusher;
     public ButtonPusher rightPusher;
-    public BallPickUp ballPickUp;
+    public FtcDcMotor ballPickUpMotor;
     public Conveyor conveyor;
 
     public Robot(TrcRobot.RunMode runMode)
@@ -284,22 +284,26 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //leftPusher = new ButtonPusher("leftPusher");
         //rightPusher = new ButtonPusher("rightPusher");
 
-        ballPickUp = new BallPickUp("ballPickUp");
+        //ballPickUp = new BallPickUp("ballPickUp");
+        ballPickUpMotor = new FtcDcMotor("pickUpMotor");
+        ballPickUpMotor.setInverted(true);
         conveyor = new Conveyor("conveyor");
     }
 
     private void StartSubsystems() {
         partAccel.reset();
-        ballPickUp.reset();
         conveyor.reset();
+
+        ballPickUpMotor.resetPosition();
+        ballPickUpMotor.setPower(0.0);
         //leftPusher.reset();
         //rightPusher.reset();
     }
 
     private void StopSubsystems(){
         partAccel.reset();
-        ballPickUp.reset();
         conveyor.reset();
+        ballPickUpMotor.setPower(0.0);
         //leftPusher.reset();
         //rightPusher.reset();
     }

@@ -47,6 +47,7 @@ public class RobotInfo
     public static final double COLOR_LINE_EDGE_LEVEL            = ((COLOR_DARK_LEVEL + COLOR_WHITE_LEVEL)/2.0);
     public static final double COLOR_LINE_EDGE_DEADBAND         = (COLOR_LINE_EDGE_LEVEL*0.25);
 
+    public static final double BALL_PICKUP_MOTOR_POWER          = 1.0;
     //
     // Winch subsystem.
     //

@@ -50,49 +50,9 @@ public class RobotInfo
     public static final double BALL_PICKUP_MOTOR_POWER          = 1.0;
 
     public static final double BUTTON_PUSHER_RETRACT_POSITION = 0.0;
-    public static final double BUTTON_PUSHER_EXTEND_POSITION = 255.0;
+    public static final double BUTTON_PUSHER_EXTEND_POSITION = 1.0;
 
-    //
-    // Winch subsystem.
-    //
-    public static final double WINCH_KP                         = 0.5;  //TODO: needs tuning
-    public static final double WINCH_KI                         = 0.0;
-    public static final double WINCH_KD                         = 0.0;
-    public static final double WINCH_KF                         = 0.0;
-    public static final double WINCH_TOLERANCE                  = 0.2;
-    public static final double WINCH_SETTLING                   = 0.2;
-    public static final double WINCH_INCHES_PER_COUNT           = 1.0;
-    public static final double WINCH_MIN_LENGTH                 = 0.0;
-    public static final double WINCH_MAX_LENGTH                 = 23.5;
-    public static final double WINCH_CAL_POWER                  = 0.2;
-    public static final double WINCH_BRAKE_ON_POSITION          = 1.0;
-    public static final double WINCH_BRAKE_OFF_POSITION         = 0.0;
-
-    public static final double WINCH_TILTER_MIN_POSITION        = 0.2;
-    public static final double WINCH_TILTER_MAX_POSITION        = 0.65;
-    public static final double WINCH_TILTER_START_POSITION      = 0.55;
-    public static final double WINCH_TILTER_MAX_STEPRATE        = 0.2;
-
-    //
-    // Climber Depositor subsystem.
-    //
-    public static final double DEPOSITOR_MIN_POSITION           = 0.28;
-    public static final double DEPOSITOR_RETRACT_POSITION       = 0.35;
-    public static final double DEPOSITOR_EXTEND_POSITION        = 0.85;
-    public static final double DEPOSITOR_STEPRATE               = 0.5;
-
-    //
-    // ClimberRelease subsystem.
-    //
-    public static final double WING_LEFT_RETRACT_POSITION       = 0.15;
-    public static final double WING_LEFT_EXTEND_POSITION        = 0.75;
-    public static final double WING_RIGHT_RETRACT_POSITION      = 0.25;
-    public static final double WING_RIGHT_EXTEND_POSITION       = 0.6;
-
-    //
-    // ButtonPusher subsystem.
-    //
-    public static final double PUSHER_LEFT_TRAVEL_TIME          = 0.7;
-    public static final double PUSHER_RIGHT_TRAVEL_TIME         = 1.0;
-
+    public static final double CONVEYOR_GATE_CLOSE_SERVO_POSITION = 165.0/255.0;
+    public static final double CONVEYOR_GATE_OPEN_SERVO_POSITION = 140.0/255.0;
+    public static final double CONVEYOR_MOTOR_POWER = 1.0;
 }   //class RobotInfo

@@ -284,7 +284,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         partAccel = new PartAccel("shooter");
         leftPusherServo = new FtcServo("leftButtonPusherServo");
         rightPusherServo = new FtcServo("rightButtonPusherServo");
-        //ballPickUp = new BallPickUp("ballPickUp");
+
         ballPickUpMotor = new FtcDcMotor("pickUpMotor");
         ballPickUpMotor.setInverted(true);
         conveyor = new Conveyor("conveyor");

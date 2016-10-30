@@ -10,6 +10,13 @@ import trclib.TrcRobot;
 @TeleOp(name="TeleOp", group="3543TeleOp")
 public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 {
+    private enum DriveMode
+    {
+        TANK_MODE,
+        MECANUM_MODE_ONE_STICK,
+        MECANUM_MODE_TWO_STICKS
+    }   //enum DriveMode
+
     protected HalDashboard dashboard;
     protected Robot robot;
 
@@ -17,7 +24,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
     private FtcGamepad operatorGamepad;
 
     private boolean invertedDrive = false;
-
+    private DriveMode   driveMode = DriveMode.MECANUM_MODE_TWO_STICKS;
     //
     // Implements FtcOpMode abstract method.
     //
@@ -69,12 +76,40 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         //
         // DriveBase subsystem.
         //
-        double leftPower  = driverGamepad.getLeftStickY(true);
-        double rightPower = driverGamepad.getRightStickY(true);
-        robot.driveBase.tankDrive(leftPower, rightPower, invertedDrive);
-        dashboard.displayPrintf(1, "leftPower=%.2f,rightPower=%.2f", leftPower, rightPower);
+        double x=0.0,y=0.0,rotation=0.0;
+
+        switch(driveMode)
+        {
+            case TANK_MODE:
+            {
+                x = driverGamepad.getLeftStickY(true);
+                y = driverGamepad.getRightStickY(true);
+                break;
+            }
+            case MECANUM_MODE_ONE_STICK:
+            {
+                x = driverGamepad.getLeftStickX(true);
+                y = driverGamepad.getLeftStickY(true);
+                rotation = driverGamepad.getRightTrigger(true)-driverGamepad.getLeftTrigger(true);
+                break;
+            }
+            case MECANUM_MODE_TWO_STICKS:
+            default:
+            {
+                x = driverGamepad.getRightStickX(true);
+                y = driverGamepad.getLeftStickY(true);
+                rotation = driverGamepad.getRightTrigger(true)-driverGamepad.getLeftTrigger(true);
+            }
+
+        }
+        if (driveMode != DriveMode.TANK_MODE)
+           robot.driveBase.mecanumDrive_Cartesian(x,y,rotation);
+        else
+            robot.driveBase.tankDrive(x,y);
+
+        dashboard.displayPrintf(1, "mode=%s,x=%.2f,y=%.2f,rot=%.2f",driveMode.toString(),x,y,rotation);
         dashboard.displayPrintf(2, "yPos=%.2f,heading=%.2f",
-                                robot.driveBase.getYPosition(), robot.driveBase.getHeading());
+                               robot.driveBase.getYPosition(), robot.driveBase.getHeading());
     }   //runPeriodic
 
     //
@@ -91,12 +126,18 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
             switch (button)
             {
                 case FtcGamepad.GAMEPAD_A:
+                    if (pressed)
+                        driveMode = DriveMode.MECANUM_MODE_ONE_STICK;
                     break;
 
                 case FtcGamepad.GAMEPAD_B:
+                    if (pressed)
+                        driveMode = DriveMode.MECANUM_MODE_TWO_STICKS;
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
+                    if (pressed)
+                        driveMode = DriveMode.TANK_MODE;
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:
@@ -113,27 +154,49 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
             {
                 case FtcGamepad.GAMEPAD_A:
                     if (pressed)
-                        robot.partAccel.shoot();
-                    else
-                        robot.partAccel.reset();
+                        robot.partAccel.openFire(false);
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:
+                    if (pressed) {
+                        robot.ballPickUp.stopPickUp();
+                        robot.conveyor.stopConveyor();
+                    }
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
+                    if (pressed) {
+                        robot.ballPickUp.startPickUp();
+                        robot.conveyor.startConveyor();
+                    }
                     break;
 
                 case FtcGamepad.GAMEPAD_B:
+                    if (pressed)
+                        robot.partAccel.stopFire();
                     break;
 
                 case FtcGamepad.GAMEPAD_LBUMPER:
+                    if (pressed)
+                        robot.partAccel.openFire(true);
+                    //if (pressed)
+                    //    robot.leftPusher.extend();
+                    //else
+                    //    robot.leftPusher.retract();
                     break;
 
                 case FtcGamepad.GAMEPAD_RBUMPER:
-                    break;
+                    //if (pressed)
+                    //    robot.rightPusher.extend();
+                    //else
+                    //    robot.rightPusher.retract();
+                    //break;
 
                 case FtcGamepad.GAMEPAD_START:
+                    if (pressed)
+                        robot.conveyor.openGate();
+                    else
+                        robot.conveyor.closeGate();
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_UP:

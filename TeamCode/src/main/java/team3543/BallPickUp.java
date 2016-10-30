@@ -12,6 +12,7 @@ public class BallPickUp {
     BallPickUp(String instanceName){
         _InstanceName = instanceName;
         pickUpMotor = new FtcDcMotor("pickUpMotor");
+        pickUpMotor.setInverted(true);
     }
     public void reset(){
         pickUpMotor.resetPosition();

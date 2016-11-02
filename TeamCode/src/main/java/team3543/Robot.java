@@ -21,7 +21,6 @@ import trclib.TrcPidController;
 import trclib.TrcPidDrive;
 import trclib.TrcRobot;
 import trclib.TrcSensor;
-import trclib.TrcServo;
 
 public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.TriggerHandler
 {
@@ -67,7 +66,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public FtcServo leftPusherServo;
     public FtcServo rightPusherServo;
     public FtcDcMotor ballPickUpMotor;
-    public Conveyor conveyor;
+    public FtcDcMotor conveyorMotor;
+    public FtcServo ballGateServo;
 
     public Robot(TrcRobot.RunMode runMode)
     {
@@ -84,13 +84,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //InitSensors();
 
         //drivebase
-        InitDriveBase();
+        initDriveBase();
 
         //pid drives for FtcAuto
         //InitPidDrives();
 
         //init subsystems
-        InitSubsystems();
+        initSubsystems();
     }   //Robot
 
     public void startMode(TrcRobot.RunMode runMode)
@@ -99,8 +99,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 FtcOpMode.getOpModeName(), "Starting: %.3f", HalUtil.getCurrentTime());
 
         //StartSensors();
-        StartSubsystems();
-        StartDriveBase();
+        startSubsystems();
+        startDriveBase();
     }   //startMode
 
     public void stopMode(TrcRobot.RunMode runMode)
@@ -110,8 +110,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
 
         //StopSensors();
-        StopDriveBase();
-        StopSubsystems();
+        stopDriveBase();
+        stopSubsystems();
     }   //stopMode
 
     //
@@ -185,7 +185,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         }
     }   //AnalogTriggerEvent
 
-    private void InitSensors() {
+    private void initSensors() {
         //
         // Initialize sensors.
         //
@@ -199,7 +199,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         sonarSensor.setScale(RobotInfo.SONAR_INCHES_PER_CM);
     }
 
-    private void StartSensors() {
+    private void startSensors() {
         gyro.resetZIntegrator();
         gyro.setEnabled(true);
         lineFollowColorSensor.setLEDEnabled(true);
@@ -207,13 +207,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         prevSonarValue = (Double)sonarSensor.getData(0).value;
     }
 
-    private void StopSensors() {
+    private void stopSensors() {
         gyro.setEnabled(false);
         lineFollowColorSensor.setLEDEnabled(false);
         sonarSensor.setEnabled(false);
     }
 
-    private void InitPidDrives() {
+    private void initPidDrives() {
         //
         // PID Drive.
         //
@@ -254,8 +254,9 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 "colorTrigger", lineFollowColorSensor, 0, color4Zones, this);
     }
 
-    private void InitDriveBase() {
-        // DriveBase subsystem.
+    private void initDriveBase() {
+        //
+        // Create the motors.
         //
         leftFrontWheel = new FtcDcMotor("leftFrontWheel");
         rightFrontWheel = new FtcDcMotor("rightFrontWheel");
@@ -270,27 +271,36 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         driveBase.setYPositionScale(RobotInfo.DRIVE_INCHES_PER_COUNT);
     }
 
-    private void StartDriveBase() {
+    private void startDriveBase() {
         driveBase.resetPosition();
     }
 
-    private void StopDriveBase() {
+    private void stopDriveBase() {
         //nothing to do for now
     }
-    private void InitSubsystems() {
+    private void initSubsystems() {
         //
-        // Create subsystems here.
+        // Create and initialize subsystems here.
         //
         partAccel = new PartAccel("shooter");
+
         leftPusherServo = new FtcServo("leftButtonPusherServo");
+        leftPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+
         rightPusherServo = new FtcServo("rightButtonPusherServo");
+        rightPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
 
         ballPickUpMotor = new FtcDcMotor("pickUpMotor");
         ballPickUpMotor.setInverted(true);
-        conveyor = new Conveyor("conveyor");
+
+        conveyorMotor = new FtcDcMotor("conveyorMotor");
+
+        ballGateServo = new FtcServo("gateServo");
+        ballGateServo.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
     }
 
-    private void StartSubsystems() {
+    private void startSubsystems() {
+        /*
         partAccel.reset();
         conveyor.reset();
 
@@ -299,13 +309,16 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         leftPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
         rightPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+        */
     }
-
-    private void StopSubsystems(){
+    private void stopSubsystems(){
+        /*
         partAccel.reset();
         conveyor.reset();
         ballPickUpMotor.setPower(0.0);
         leftPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
         rightPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+        */
     }
+
 }   //class Robot

@@ -49,10 +49,10 @@ public class RobotInfo
 
     public static final double BALL_PICKUP_MOTOR_POWER          = 1.0;
 
-    public static final double BUTTON_PUSHER_RETRACT_POSITION = 0.0;
-    public static final double BUTTON_PUSHER_EXTEND_POSITION = 1.0;
+    public static final double BUTTON_PUSHER_RETRACT_POSITION   = 0.0;
+    public static final double BUTTON_PUSHER_EXTEND_POSITION    = 1.0;
 
-    public static final double CONVEYOR_GATE_CLOSE_SERVO_POSITION = 165.0/255.0;
-    public static final double CONVEYOR_GATE_OPEN_SERVO_POSITION = 140.0/255.0;
-    public static final double CONVEYOR_MOTOR_POWER = 1.0;
+    public static final double BALLGATE_CLOSE_POSITION          = 165.0/255.0;
+    public static final double BALLGATE_OPEN_POSITION           = 140.0/255.0;
+    public static final double CONVEYOR_MOTOR_POWER             = 1.0;
 }   //class RobotInfo

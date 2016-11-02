@@ -162,14 +162,14 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                 case FtcGamepad.GAMEPAD_Y:
                     if (pressed) {
                         robot.ballPickUpMotor.setPower(0.0);
-                        robot.conveyor.stopConveyor();
+                        robot.conveyorMotor.setPower(0.0);
                     }
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
                     if (pressed) {
                         robot.ballPickUpMotor.setPower(RobotInfo.BALL_PICKUP_MOTOR_POWER);
-                        robot.conveyor.startConveyor();
+                        robot.conveyorMotor.setPower(RobotInfo.CONVEYOR_MOTOR_POWER);
                     }
                     break;
 
@@ -186,9 +186,9 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
                 case FtcGamepad.GAMEPAD_BACK:
                     if (pressed)
-                        robot.conveyor.openGate();
+                        robot.ballGateServo.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
                     else
-                        robot.conveyor.closeGate();
+                        robot.ballGateServo.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
                     break;
 
                 case FtcGamepad.GAMEPAD_START:

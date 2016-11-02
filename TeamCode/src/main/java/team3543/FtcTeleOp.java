@@ -103,13 +103,14 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
         }
         if (driveMode != DriveMode.TANK_MODE)
-           robot.driveBase.mecanumDrive_Cartesian(x,y,rotation);
+            robot.driveBase.mecanumDrive_Cartesian(x,y,rotation);
         else
             robot.driveBase.tankDrive(x,y);
 
         dashboard.displayPrintf(1, "mode=%s,x=%.2f,y=%.2f,rot=%.2f",driveMode.toString(),x,y,rotation);
         dashboard.displayPrintf(2, "yPos=%.2f,heading=%.2f",
                                robot.driveBase.getYPosition(), robot.driveBase.getHeading());
+        getOpModeTracer().traceInfo("runPeriodic", "ShooterSpeed = %.3f", robot.shooter.getSpeed());
     }   //runPeriodic
 
     //
@@ -154,9 +155,9 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
             {
                 case FtcGamepad.GAMEPAD_A:
                     if (pressed)
-                        robot.partAccel.openFire(false);
+                        robot.shooter.openFire(false);
                     else
-                        robot.partAccel.stopFire();
+                        robot.shooter.stopFire();
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:
@@ -175,7 +176,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
                 case FtcGamepad.GAMEPAD_B:
                     if (pressed)
-                        robot.partAccel.stopFire();
+                        robot.shooter.stopFire();
                     break;
 
                 case FtcGamepad.GAMEPAD_LBUMPER:

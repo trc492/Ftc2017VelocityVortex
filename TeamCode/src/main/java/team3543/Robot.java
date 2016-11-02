@@ -62,7 +62,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public TrcAnalogTrigger colorTrigger;
 
     // subsystems
-    public PartAccel partAccel;
+    public Shooter shooter;
     public FtcServo leftPusherServo;
     public FtcServo rightPusherServo;
     public FtcDcMotor ballPickUpMotor;
@@ -282,7 +282,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         // Create and initialize subsystems here.
         //
-        partAccel = new PartAccel("shooter");
+        shooter = new Shooter("shooter");
 
         leftPusherServo = new FtcServo("leftButtonPusherServo");
         leftPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);

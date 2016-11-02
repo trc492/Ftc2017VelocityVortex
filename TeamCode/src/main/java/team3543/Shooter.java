@@ -1,162 +1,190 @@
 package team3543;
 
-/**
- * Created by jzheng on 10/16/2016.
- */
 import ftclib.FtcDcMotor;
-import ftclib.FtcOpMode;
 import trclib.TrcEvent;
+import trclib.TrcPidController;
+import trclib.TrcPidMotor;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTaskMgr;
-import trclib.TrcTimer;
 
-public class Shooter implements TrcTaskMgr.Task
+public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
 {
-    private String instanceName;
-    private FtcDcMotor shooterMotor;
-
     private enum ShooterState
     {
         ARM_AND_FIRE,
-        DELAY,
-        STOPPED
+        REENGAGE,
+        PULL_BACK,
+        DONE
     }   //enum State
 
-    private TrcTimer timer;
-    private TrcEvent event;
+    private String instanceName;
+    private FtcDcMotor shooterMotor;
+    private TrcPidController pidCtrl;
+    private TrcPidMotor pidMotor;
     private TrcStateMachine sm;
+    private TrcEvent event;
+    private boolean continuousModeOn = false;
 
-    //the mechanism is to let motor rotate 360 degrees for each shot
-    //the exact stop(next start) position for the motor doesn't matter
-    //the below logic relies on getPosition can accurately tell the ticks for one rotation
-    //otherwise we need to either calibrate or implement some sensor to detect the full rotation
-    //or the other idea is to use motor speed to detect the teeth disengaging.
-    //note: encoder cable must be plugged in with red wire up
-    private static double PART_ACCEL_TRAVEL_DISTANCE_PER_ROTATION = 1667.0; //distance for one rotation
-    private static double PART_ACCEL_DELAY_TIME_IN_SEC = 5.0;   //delay between shots if shooting continuously
-    private static double PART_ACCEL_MOTOR_POWER = 1.0; //motor power
-    private double nextStopPosition;
-    private boolean shootContinuously;
-
-    public Shooter(String instanceName){
+    public Shooter(String instanceName)
+    {
         this.instanceName = instanceName;
+
         shooterMotor = new FtcDcMotor("shooterMotor");
-        timer = new TrcTimer(instanceName);
-        event = new TrcEvent(instanceName);
-        sm = new TrcStateMachine(instanceName);
-        shootContinuously = false;
-        nextStopPosition = 0.0;
         shooterMotor.setInverted(true);
+        shooterMotor.setBrakeModeEnabled(true);
         shooterMotor.setSpeedTaskEnabled(true);
+        pidCtrl = new TrcPidController(
+                instanceName,
+                RobotInfo.SHOOTER_KP, RobotInfo.SHOOTER_KI, RobotInfo.SHOOTER_KD, RobotInfo.SHOOTER_KF,
+                RobotInfo.SHOOTER_TOLERANCE, RobotInfo.SHOOTER_SETTLING, this);
+        pidMotor = new TrcPidMotor(instanceName, shooterMotor, pidCtrl);
+
+        sm = new TrcStateMachine(instanceName);
+        event = new TrcEvent(instanceName);
     }
 
-    public double getSpeed() {
+    private void setEnabled(boolean enabled)
+    {
+        if (enabled)
+        {
+            TrcTaskMgr.getInstance().registerTask(instanceName, this, TrcTaskMgr.TaskType.POSTCONTINUOUS_TASK);
+        }
+        else
+        {
+            TrcTaskMgr.getInstance().unregisterTask(this, TrcTaskMgr.TaskType.POSTCONTINUOUS_TASK);
+        }
+    }
+
+    public void stop()
+    {
+        if (sm.isEnabled())
+        {
+            sm.stop();
+        }
+        setEnabled(false);
+        continuousModeOn = false;
+        shooterMotor.setPower(0.0);
+    }
+
+    public double getSpeed()
+    {
         return shooterMotor.getSpeed();
     }
 
-    public void reset(){
-        shooterMotor.resetPosition();
-        shooterMotor.setPower(0.0);
-        nextStopPosition = PART_ACCEL_TRAVEL_DISTANCE_PER_ROTATION;
+    public double getPosition()
+    {
+        return shooterMotor.getPosition();
     }
 
-    public void openFire(boolean shootContinuously){
-        shootContinuously = shootContinuously;
-        shooterMotor.setPower(PART_ACCEL_MOTOR_POWER);
-        //_setEnabled(true);
+    private void fire(boolean continuous)
+    {
+        continuousModeOn = continuous;
+        if (!sm.isEnabled())
+        {
+            sm.start(ShooterState.ARM_AND_FIRE);
+            setEnabled(true);
+        }
     }
 
-    public void stopFire() {
-        shootContinuously = false;
-        FtcOpMode.getOpModeTracer().traceInfo("Robot","Shooter motor position (%.0f %.0f).",
-                shooterMotor.getPosition(), nextStopPosition);
-        shooterMotor.setPower(0.0);
-        //it may run through FIRE_AND_ARM cycle one more to stop
-        //need to check if there is a way to break from the DELAY state
+    public void fireOneShot()
+    {
+        fire(false);
+    }
+
+    public void fireContinuous(boolean on)
+    {
+        continuousModeOn = on;
+        if (on)
+        {
+            fire(true);
+        }
+    }
+
+    //
+    // Implements TrcTaskMgr.Task.
+    //
+
+    @Override
+    public void startTask(TrcRobot.RunMode runMode)
+    {
     }
 
     @Override
-    public void startTask(TrcRobot.RunMode runMode) {
-
+    public void stopTask(TrcRobot.RunMode runMode)
+    {
     }
 
     @Override
-    public void stopTask(TrcRobot.RunMode runMode) {
-
+    public void prePeriodicTask(TrcRobot.RunMode runMode)
+    {
     }
 
     @Override
-    public void prePeriodicTask(TrcRobot.RunMode runMode) {
-
+    public void postPeriodicTask(TrcRobot.RunMode runMode)
+    {
     }
 
     @Override
-    public void postPeriodicTask(TrcRobot.RunMode runMode) {
-
+    public void preContinuousTask(TrcRobot.RunMode runMode)
+    {
     }
 
     @Override
-    public void preContinuousTask(TrcRobot.RunMode runMode) {
-
-    }
-
-    @Override
-    public void postContinuousTask(TrcRobot.RunMode runMode) {
+    public void postContinuousTask(TrcRobot.RunMode runMode)
+    {
         if (sm.isReady())
         {
             ShooterState state = (ShooterState)sm.getState();
             switch (state)
             {
                 case ARM_AND_FIRE:
-                    shooterMotor.setPower(PART_ACCEL_MOTOR_POWER);
-                    if (shooterMotor.getPosition() > nextStopPosition) {
-                        if (shootContinuously) {
-                            sm.setState(ShooterState.DELAY);
-                        }
-                        else
-                        {
-                            sm.setState(ShooterState.STOPPED);
-                        }
-                        nextStopPosition += PART_ACCEL_TRAVEL_DISTANCE_PER_ROTATION;
+                    shooterMotor.setPower(RobotInfo.SHOOTER_HIGH_POWER);
+                    if (shooterMotor.getSpeed() > RobotInfo.SHOOTER_SPEED_HIGH_THRESHOLD)
+                    {
+                        shooterMotor.setPower(0.0);
+                        sm.setState(ShooterState.REENGAGE);
                     }
-                    FtcOpMode.getOpModeTracer().traceInfo("Robot","Shooter motor position (%.0f %.0f).",
-                            shooterMotor.getPosition(), nextStopPosition);
                     break;
 
-                case DELAY:
-                    shooterMotor.setPower(0.0);
-                    timer.set(PART_ACCEL_DELAY_TIME_IN_SEC, event);
+                case REENGAGE:
+                    shooterMotor.setPower(RobotInfo.SHOOTER_LOW_POWER);
+                    if (shooterMotor.getSpeed() < RobotInfo.SHOOTER_SPEED_LOW_THRESHOLD)
+                    {
+                        sm.setState(ShooterState.PULL_BACK);
+                    }
+                    break;
+
+                case PULL_BACK:
+                    pidMotor.setTarget(RobotInfo.SHOOTER_PULLBACK_TARGET, event, 0.0);
                     sm.addEvent(event);
-                    if (shootContinuously) {
-                        sm.waitForEvents(ShooterState.ARM_AND_FIRE);
-                    }
-                    else {
-                        sm.setState(ShooterState.STOPPED);
-                    }
+                    sm.waitForEvents(continuousModeOn? ShooterState.ARM_AND_FIRE: ShooterState.DONE);
                     break;
 
-                case STOPPED:
-                    shooterMotor.setPower(0.0);
+                default:
+                case DONE:
                     sm.stop();
-                    _setEnabled(false);
+                    setEnabled(false);
                     break;
             }
         }
     }
 
-    private void _setEnabled(boolean enabled)
+    //
+    // Implements TrcPidController.PidInput
+    //
+
+    @Override
+    public double getInput(TrcPidController pidCtrl)
     {
-        if (enabled)
+        double input = 0.0;
+
+        if (pidCtrl == this.pidCtrl)
         {
-            TrcTaskMgr.getInstance().registerTask(
-                    instanceName, this, TrcTaskMgr.TaskType.POSTCONTINUOUS_TASK);
-            sm.start(ShooterState.ARM_AND_FIRE);
+            input = shooterMotor.getPosition();
         }
-        else
-        {
-            TrcTaskMgr.getInstance().unregisterTask(
-                    this, TrcTaskMgr.TaskType.POSTCONTINUOUS_TASK);
-        }
-    }
-}
+
+        return input;
+    }   //getInput
+
+}   //class Shooter

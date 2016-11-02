@@ -63,11 +63,11 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
     // subsystems
     public Shooter shooter;
-    public FtcServo leftPusherServo;
-    public FtcServo rightPusherServo;
-    public FtcDcMotor ballPickUpMotor;
-    public FtcDcMotor conveyorMotor;
-    public FtcServo ballGateServo;
+    public FtcServo leftButtonPusher;
+    public FtcServo rightButtonPusher;
+    public FtcDcMotor ballPickUp;
+    public FtcServo ballGate;
+    public FtcDcMotor conveyor;
 
     public Robot(TrcRobot.RunMode runMode)
     {
@@ -284,19 +284,19 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         shooter = new Shooter("shooter");
 
-        leftPusherServo = new FtcServo("leftButtonPusherServo");
-        leftPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+        leftButtonPusher = new FtcServo("leftButtonPusherServo");
+        leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
 
-        rightPusherServo = new FtcServo("rightButtonPusherServo");
-        rightPusherServo.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+        rightButtonPusher = new FtcServo("rightButtonPusherServo");
+        rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
 
-        ballPickUpMotor = new FtcDcMotor("pickUpMotor");
-        ballPickUpMotor.setInverted(true);
+        ballPickUp = new FtcDcMotor("pickUpMotor");
+        ballPickUp.setInverted(true);
 
-        conveyorMotor = new FtcDcMotor("conveyorMotor");
+        ballGate = new FtcServo("gateServo");
+        ballGate.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
 
-        ballGateServo = new FtcServo("gateServo");
-        ballGateServo.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
+        conveyor = new FtcDcMotor("conveyorMotor");
     }
 
     private void startSubsystems() {

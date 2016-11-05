@@ -198,15 +198,17 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
         // Read all sensors and display on the dashboard.
         // Drive the robot around to sample different locations of the field.
         //
-        dashboard.displayPrintf(9, "Enc:lf=%.0f,rf=%.0f",
+        dashboard.displayPrintf(9, "FrontEnc:left=%.0f,right=%.0f",
                                 robot.leftFrontWheel.getPosition(),
                                 robot.rightFrontWheel.getPosition());
-        dashboard.displayPrintf(10, "Enc:lr=%.0f,rr=%.0f",
+        dashboard.displayPrintf(10, "RearEnc:left=%.0f,right=%.0f",
                                 robot.leftRearWheel.getPosition(),
                                 robot.rightRearWheel.getPosition());
         dashboard.displayPrintf(11, "Gyro:Rate=%.1f,Heading=%.1f",
                                 robot.gyro.getZRotationRate().value,
                                 robot.gyro.getZHeading().value);
+        dashboard.displayPrintf(12, "Shooter:Pos=%.3f,Speed=%.3f",
+                                robot.shooter.getPosition(), robot.shooter.getSpeed());
         dashboard.displayPrintf(13, "Beacon:RGBAH=[%d,%d,%d,%d,%x]",
                                 robot.beaconColorSensor.red(),
                                 robot.beaconColorSensor.green(),

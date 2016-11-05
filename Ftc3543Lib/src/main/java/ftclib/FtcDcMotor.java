@@ -185,6 +185,14 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
         return (double)position;
     }   //getPosition
 
+    /**
+     * This method enables/disables the task that monitors the motor speed. To determine the motor speed,
+     * the task runs periodically and determines the delta encoder reading over delta time to calculate
+     * the speed. Since the task takes up CPU cycle, it should not be enabled if the user doesn't need
+     * motor speed info.
+     *
+     * @param enabled specifies true to enable speed monitor task, disable otherwise.
+     */
     public void setSpeedTaskEnabled(boolean enabled)
     {
         final String funcName = "setSpeedTaskEnabled";
@@ -199,6 +207,8 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
         TrcTaskMgr taskMgr = TrcTaskMgr.getInstance();
         if (enabled)
         {
+            prevTime = HalUtil.getCurrentTime();
+            prevPos = getPosition();
             taskMgr.registerTask(
                     instanceName,
                     this,

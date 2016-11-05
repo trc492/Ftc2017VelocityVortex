@@ -25,6 +25,9 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
     private TrcStateMachine sm;
     private TrcEvent event;
     private boolean continuousModeOn = false;
+    private double highThreshold = RobotInfo.SHOOTER_SPEED_HIGH_THRESHOLD;
+    private double lowThreshold = RobotInfo.SHOOTER_SPEED_LOW_THRESHOLD;
+    private double pullbackTarget = RobotInfo.SHOOTER_PULLBACK_TARGET;
 
     public Shooter(String instanceName)
     {
@@ -101,6 +104,15 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         }
     }
 
+    public void setShooterParameter(double low, double high, double target) {
+        lowThreshold = low;
+        highThreshold = high;
+        pullbackTarget = target;
+    }
+
+    public void setPowerManually(double power) {
+        shooterMotor.setPower(power);
+    }
     //
     // Implements TrcTaskMgr.Task.
     //
@@ -140,7 +152,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
             {
                 case ARM_AND_FIRE:
                     shooterMotor.setPower(RobotInfo.SHOOTER_HIGH_POWER);
-                    if (shooterMotor.getSpeed() > RobotInfo.SHOOTER_SPEED_HIGH_THRESHOLD)
+                    if (shooterMotor.getSpeed() > highThreshold)
                     {
                         shooterMotor.setPower(0.0);
                         sm.setState(ShooterState.REENGAGE);
@@ -149,14 +161,14 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
 
                 case REENGAGE:
                     shooterMotor.setPower(RobotInfo.SHOOTER_LOW_POWER);
-                    if (shooterMotor.getSpeed() < RobotInfo.SHOOTER_SPEED_LOW_THRESHOLD)
+                    if (shooterMotor.getSpeed() < lowThreshold)
                     {
                         sm.setState(ShooterState.PULL_BACK);
                     }
                     break;
 
                 case PULL_BACK:
-                    pidMotor.setTarget(RobotInfo.SHOOTER_PULLBACK_TARGET, event, 0.0);
+                    pidMotor.setTarget(pullbackTarget, event, 0.0);
                     sm.addEvent(event);
                     sm.waitForEvents(continuousModeOn? ShooterState.ARM_AND_FIRE: ShooterState.DONE);
                     break;

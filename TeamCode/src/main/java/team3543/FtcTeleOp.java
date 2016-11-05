@@ -20,11 +20,11 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
     protected HalDashboard dashboard;
     protected Robot robot;
 
-    private FtcGamepad driverGamepad;
-    private FtcGamepad operatorGamepad;
+    protected FtcGamepad driverGamepad;
+    protected FtcGamepad operatorGamepad;
 
     private boolean invertedDrive = false;
-    private DriveMode   driveMode = DriveMode.MECANUM_MODE_TWO_STICKS;
+    private DriveMode   driveMode = DriveMode.MECANUM_MODE_ONE_STICK;
     //
     // Implements FtcOpMode abstract method.
     //
@@ -110,7 +110,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         dashboard.displayPrintf(1, "mode=%s,x=%.2f,y=%.2f,rot=%.2f",driveMode.toString(),x,y,rotation);
         dashboard.displayPrintf(2, "yPos=%.2f,heading=%.2f",
                                robot.driveBase.getYPosition(), robot.driveBase.getHeading());
-        getOpModeTracer().traceInfo("runPeriodic", "ShooterSpeed = %.3f", robot.shooter.getSpeed());
+        getOpModeTracer().traceInfo("runPeriodic", "ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
     }   //runPeriodic
 
     //
@@ -173,6 +173,10 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                     break;
 
                 case FtcGamepad.GAMEPAD_B:
+                    if (pressed)
+                        robot.ballGate.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
+                    else
+                        robot.ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
                     break;
 
                 case FtcGamepad.GAMEPAD_LBUMPER:
@@ -182,10 +186,6 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                     break;
 
                 case FtcGamepad.GAMEPAD_BACK:
-                    if (pressed)
-                        robot.ballGate.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
-                    else
-                        robot.ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
                     break;
 
                 case FtcGamepad.GAMEPAD_START:

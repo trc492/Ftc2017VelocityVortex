@@ -76,9 +76,8 @@ public class RobotInfo
     //
     // Ball gate subsystem.
     //
-    public static final double BALLGATE_CLOSE_POSITION          = 165.0/255.0;
-    public static final double BALLGATE_OPEN_POSITION           = 140.0/255.0;
-
+    public static final double BALLGATE_CLOSE_POSITION          = 195.0/255.0;
+    public static final double BALLGATE_OPEN_POSITION           = 150.0/255.0;
     //
     // Conveyor subsystem.
     //

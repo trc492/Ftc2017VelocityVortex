@@ -1,11 +1,13 @@
 package team3543;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import ftclib.FtcGamepad;
 
 /**
  * Created by jzheng on 11/5/2016.
  */
-
+@TeleOp(name="TestShooter", group="3543Test")
 public class FtcTeleOpTestShooter extends FtcTeleOp implements FtcGamepad.ButtonHandler {
     private double highThreshold = RobotInfo.SHOOTER_SPEED_HIGH_THRESHOLD;
     private double lowThreshold = RobotInfo.SHOOTER_SPEED_LOW_THRESHOLD;
@@ -14,7 +16,7 @@ public class FtcTeleOpTestShooter extends FtcTeleOp implements FtcGamepad.Button
     @Override
     public void gamepadButtonEvent(FtcGamepad gamepad, int button, boolean pressed) {
         boolean processed = false;
-        if ((gamepad == super.operatorGamepad) && pressed)
+        if (gamepad == super.operatorGamepad)
         {
             if (pressed) {
                 processed = true;
@@ -64,7 +66,7 @@ public class FtcTeleOpTestShooter extends FtcTeleOp implements FtcGamepad.Button
                 }
             }
         }
-        dashboard.displayPrintf(1, "hThreshold = %.2f, lThreshold = %.2f, target = %.2f",highThreshold,lowThreshold,pullBackTarget);
+        dashboard.displayPrintf(10, "hThreshold = %.2f, lThreshold = %.2f, target = %.2f",highThreshold,lowThreshold,pullBackTarget);
         getOpModeTracer().traceInfo("testShooter","highThreshold = %.2f, lowThreshold = %.2f, target = %.2f",highThreshold,lowThreshold,pullBackTarget);
         if (!processed)
             super.gamepadButtonEvent(gamepad,button,pressed);

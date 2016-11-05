@@ -294,7 +294,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         ballPickUp.setInverted(true);
 
         ballGate = new FtcServo("gateServo");
-        ballGate.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
+        ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
 
         conveyor = new FtcDcMotor("conveyorMotor");
     }

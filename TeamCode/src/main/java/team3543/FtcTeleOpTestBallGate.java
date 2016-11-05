@@ -1,11 +1,13 @@
 package team3543;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import ftclib.FtcGamepad;
 
 /**
  * Created by jzheng on 11/5/2016.
  */
-
+@TeleOp(name="TestBallGate", group="3543Test")
 public class FtcTeleOpTestBallGate extends FtcTeleOp implements FtcGamepad.ButtonHandler {
     private double gatePosition = RobotInfo.BALLGATE_CLOSE_POSITION;
 
@@ -27,6 +29,7 @@ public class FtcTeleOpTestBallGate extends FtcTeleOp implements FtcGamepad.Butto
                 case FtcGamepad.GAMEPAD_B:
                     if (pressed) {
                         gatePosition -= 0.01;
+                        super.robot.ballGate.setPosition(gatePosition);
                     }
                     break;
                 default:
@@ -34,7 +37,7 @@ public class FtcTeleOpTestBallGate extends FtcTeleOp implements FtcGamepad.Butto
                     break;
             }
         }
-        dashboard.displayPrintf(1, "gatePosition = %.2f",gatePosition);
+        dashboard.displayPrintf(10, "gatePosition = %.2f",gatePosition);
         getOpModeTracer().traceInfo("gatePusher", "pusherPosition = %.2f",gatePosition);
         if (!processed)
             super.gamepadButtonEvent(gamepad,button,pressed);

@@ -466,12 +466,15 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
 
         double currTime = HalUtil.getCurrentTime();
         double currPos = getPosition();
-        if (prevTime != 0.0)
+
+        if ((currTime - prevTime > 0.05))
         {
-            speed = (currPos - prevPos)/(currTime - prevTime);
+            if (prevTime != 0.0) {
+                speed = (currPos - prevPos) / (currTime - prevTime);
+            }
+            prevTime = currTime;
+            prevPos = currPos;
         }
-        prevTime = currTime;
-        prevPos = currPos;
 
         if (debugEnabled)
         {

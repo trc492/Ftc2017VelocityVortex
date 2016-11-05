@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import ftclib.FtcGamepad;
 import ftclib.FtcOpMode;
 import hallib.HalDashboard;
+import hallib.HalUtil;
 import trclib.TrcRobot;
 
 @TeleOp(name="TeleOp", group="3543TeleOp")
@@ -110,9 +111,17 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         dashboard.displayPrintf(1, "mode=%s,x=%.2f,y=%.2f,rot=%.2f",driveMode.toString(),x,y,rotation);
         dashboard.displayPrintf(2, "yPos=%.2f,heading=%.2f",
                                robot.driveBase.getYPosition(), robot.driveBase.getHeading());
-        getOpModeTracer().traceInfo("runPeriodic", "ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
+        //dashboard.displayPrintf(12,"ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
+        //getOpModeTracer().traceInfo("runPeriodic", "ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
     }   //runPeriodic
 
+    @Override
+    public void runContinuous(double elapsedTime)
+    {
+        super.runContinuous(elapsedTime);
+        dashboard.displayPrintf(12,"ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
+        getOpModeTracer().traceInfo("runPeriodic", "ts = %.3f ShooterSpeed = %.3f, position = %.3f", HalUtil.getCurrentTime(),robot.shooter.getSpeed(),robot.shooter.getPosition());
+    }
     //
     // Implements FtcGamepad.ButtonHandler interface.
     //

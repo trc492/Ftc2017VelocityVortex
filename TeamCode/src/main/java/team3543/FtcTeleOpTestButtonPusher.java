@@ -40,7 +40,7 @@ public class FtcTeleOpTestButtonPusher extends FtcTeleOp implements ButtonHandle
                     break;
             }
         }
-        dashboard.displayPrintf(1, "pusherPosition = %.2f",pusherPosition);
+        dashboard.displayPrintf(10, "pusherPosition = %.2f",pusherPosition);
         getOpModeTracer().traceInfo("testPusher", "pusherPosition = %.2f",pusherPosition);
         if (!processed)
             super.gamepadButtonEvent(gamepad,button,pressed);

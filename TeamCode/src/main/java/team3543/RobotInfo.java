@@ -65,8 +65,8 @@ public class RobotInfo
     //
     // Button pusher subsystem.
     //
-    public static final double BUTTON_PUSHER_RETRACT_POSITION   = 0.0;
-    public static final double BUTTON_PUSHER_EXTEND_POSITION    = 1.0;
+    public static final double BUTTON_PUSHER_RETRACT_POSITION   = 0.2;
+    public static final double BUTTON_PUSHER_EXTEND_POSITION    = 0.8;
 
     //
     // Ball pickup subsystem.
@@ -76,8 +76,8 @@ public class RobotInfo
     //
     // Ball gate subsystem.
     //
-    public static final double BALLGATE_CLOSE_POSITION          = 195.0/255.0;
-    public static final double BALLGATE_OPEN_POSITION           = 150.0/255.0;
+    public static final double BALLGATE_CLOSE_POSITION          = 0.78;
+    public static final double BALLGATE_OPEN_POSITION           = 0.60;
     //
     // Conveyor subsystem.
     //

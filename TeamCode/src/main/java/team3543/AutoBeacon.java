@@ -2,6 +2,7 @@ package team3543;
 
 import ftclib.FtcOpMode;
 import hallib.HalDashboard;
+import trclib.TrcAnalogInput;
 import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
@@ -79,30 +80,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
         {
             robot.encoderPidCtrl.printPidInfo(tracer);
             robot.gyroPidCtrl.printPidInfo(tracer);
-            tracer.traceInfo(moduleName, "[%.3f] LineFollow: color=%d, W/R/G/B=%d/%d/%d/%d",
+            tracer.traceInfo(moduleName, "[%.3f] LineDetect: value=%d",
                              elapsedTime,
-                             (Integer)robot.lineFollowColorSensor.getColorNumber().value,
-                             (Integer)robot.lineFollowColorSensor.getWhiteValue().value,
-                             (Integer)robot.lineFollowColorSensor.getRedValue().value,
-                             (Integer)robot.lineFollowColorSensor.getGreenValue().value,
-                             (Integer)robot.lineFollowColorSensor.getBlueValue().value);
-        }
-        else if (robot.pidLineFollow.isEnabled())
-        {
-            robot.sonarPidCtrl.printPidInfo(tracer);
-            robot.colorPidCtrl.printPidInfo(tracer);
-            tracer.traceInfo(moduleName, "[%.3f] LineFollow: color=%d, W/R/G/B=%d/%d/%d/%d",
-                             elapsedTime,
-                             (Integer)robot.lineFollowColorSensor.getColorNumber().value,
-                             (Integer)robot.lineFollowColorSensor.getWhiteValue().value,
-                             (Integer)robot.lineFollowColorSensor.getRedValue().value,
-                             (Integer)robot.lineFollowColorSensor.getGreenValue().value,
-                             (Integer)robot.lineFollowColorSensor.getBlueValue().value);
-            dashboard.displayPrintf(3, "LineFollow:color=%d,white=%d",
-                                    (Integer)robot.lineFollowColorSensor.getColorNumber().value,
-                                    (Integer)robot.lineFollowColorSensor.getWhiteValue().value);
-            robot.sonarPidCtrl.displayPidInfo(4);
-            robot.colorPidCtrl.displayPidInfo(6);
+                             (Integer)robot.lineDetectionSensor.getRawData(0, TrcAnalogInput.DataType.INPUT_DATA).value);
         }
 
         dashboard.displayPrintf(1, moduleName + ": %s,%s,delay=%.0f,pushButton=%s,option=%s",
@@ -158,7 +138,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     // Drive forward slowly until we reach the line.
                     // If line is detected, it will interrupt PID drive.
                     //
-                    robot.colorTrigger.setEnabled(true);
+                    robot.lineTrigger.setEnabled(true);
                     robot.encoderPidCtrl.setOutputRange(-0.3, 0.3);
                     robot.pidDrive.setTarget(15.0, 0.0, false, event);
                     sm.addEvent(event);
@@ -166,7 +146,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case CLEAR_DEBRIS:
-                    robot.colorTrigger.setEnabled(false);
+                    robot.lineTrigger.setEnabled(false);
                     robot.pidDrive.setTarget(20.0, 0.0, false, event, 2.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.BACK_TO_LINE);
@@ -181,8 +161,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case FIND_LINE_AGAIN:
-                    robot.colorTrigger.setTriggerPoints(robot.color2Zones);
-                    robot.colorTrigger.setEnabled(true);
+//                    robot.lineTrigger.setTriggerPoints(robot.color2Zones);
+//                    robot.colorTrigger.setEnabled(true);
                     robot.encoderPidCtrl.setOutputRange(-0.2, 0.2);
                     robot.pidDrive.setTarget(15.0, 0.0, false, event);
                     sm.addEvent(event);
@@ -206,6 +186,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     // Follow the line until we are in front of the beacon .
                     //
+                    /*
                     robot.colorTrigger.setEnabled(false);
                     robot.sonarPidCtrl.setOutputRange(-0.3, 0.3);;
                     robot.colorPidCtrl.setOutputRange(-0.5, 0.5);
@@ -216,6 +197,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                             false, event, 4.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.PUSH_BUTTON);
+                    */
                     break;
 
                 case PUSH_BUTTON:
@@ -224,8 +206,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     // Simultaneously dump the climbers into the bin and
                     // wait for it to finish.
                     //
-                    robot.colorPidCtrl.setOutputRange(-1.0, 1.0);
-                    robot.sonarPidCtrl.setOutputRange(-1.0, 1.0);
+//                    robot.colorPidCtrl.setOutputRange(-1.0, 1.0);
+//                    robot.sonarPidCtrl.setOutputRange(-1.0, 1.0);
                     robot.gyroPidCtrl.setOutputRange(-1.0, 1.0);;
                     robot.encoderPidCtrl.setOutputRange(-1.0, 1.0);
                     if (pushButton)

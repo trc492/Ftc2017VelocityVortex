@@ -3,14 +3,16 @@ package team3543;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import ftclib.FtcChoiceMenu;
+import ftclib.FtcGamepad;
 import ftclib.FtcMenu;
 import ftclib.FtcValueMenu;
+import trclib.TrcAnalogInput;
 import trclib.TrcEvent;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
 @TeleOp(name="Test", group="3543Test")
-public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
+public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepad.ButtonHandler
 {
     private enum Test
     {
@@ -18,8 +20,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
         MOTORS_TEST,
         TIMED_DRIVE,
         DISTANCE_DRIVE,
-        DEGREES_TURN,
-        LINE_FOLLOW
+        DEGREES_TURN
     }   //enum Test
 
     private enum Alliance
@@ -53,6 +54,8 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
     private double wallDistance = 0.0;
 
     private int motorIndex = 0;
+    private double ballGatePos = RobotInfo.BALLGATE_CLOSE_POSITION;
+    private double buttonPusherPos = 0.0;
 
     //
     // Implements FtcOpMode interface.
@@ -121,10 +124,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
             case DEGREES_TURN:
                 doDegreesTurn(turnDegrees);
                 break;
-
-            case LINE_FOLLOW:
-                doLineFollow(alliance, wallDistance);
-                break;
         }
     }   //runContinuous
 
@@ -175,7 +174,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
         testMenu.addChoice("Timed drive", Test.TIMED_DRIVE, driveTimeMenu);
         testMenu.addChoice("Distance drive", Test.DISTANCE_DRIVE, driveDistanceMenu);
         testMenu.addChoice("Degrees turn", Test.DEGREES_TURN, turnDegreesMenu);
-        testMenu.addChoice("Line follow", Test.LINE_FOLLOW, allianceMenu);
 
         allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, wallDistanceMenu);
         allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, wallDistanceMenu);
@@ -215,10 +213,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
                                 robot.beaconColorSensor.blue(),
                                 robot.beaconColorSensor.alpha(),
                                 robot.beaconColorSensor.argb());
-        dashboard.displayPrintf(14, "Color=%d,White=%d,Sonar=%.1f",
-                                (Integer)robot.lineFollowColorSensor.getColorNumber().value,
-                                (Integer)robot.lineFollowColorSensor.getWhiteValue().value,
-                                robot.sonarSensor.getData(0).value);
+        dashboard.displayPrintf(
+                14, "Light=%d",
+                (Integer)robot.lineDetectionSensor.getRawData(0, TrcAnalogInput.DataType.DOUBLE_INTEGRATED_DATA).value);
+        dashboard.displayPrintf(15, "ServoPos:BallGate=%.2f,Pusher=%.2f", ballGatePos, buttonPusherPos);
     }   //doSensorsTest
 
     private void doMotorsTest()
@@ -403,100 +401,111 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons
         }
     }   //doDegreesTurn
 
-    private void doLineFollow(Alliance alliance, double wallDistance)
+    //
+    // Implements FtcGamepad.ButtonHandler interface.
+    //
+
+    @Override
+    public void gamepadButtonEvent(FtcGamepad gamepad, int button, boolean pressed)
     {
-        dashboard.displayPrintf(9, "Line Follow: %s, wallDist=%.1f",
-                                alliance.toString(), wallDistance);
-        dashboard.displayPrintf(10, "Color=%d,W/R/G/B=%d/%d/%d/%d,Sonar=%.1f",
-                                (Integer)robot.lineFollowColorSensor.getColorNumber().value,
-                                (Integer)robot.lineFollowColorSensor.getWhiteValue().value,
-                                (Integer)robot.lineFollowColorSensor.getRedValue().value,
-                                (Integer)robot.lineFollowColorSensor.getGreenValue().value,
-                                (Integer)robot.lineFollowColorSensor.getBlueValue().value,
-                                robot.sonarSensor.getData(0).value);
-        dashboard.displayPrintf(11, "Color: R=%d,G=%d,B=%d,Alpha=%d,Hue=%x",
-                                robot.beaconColorSensor.red(),
-                                robot.beaconColorSensor.green(),
-                                robot.beaconColorSensor.blue(),
-                                robot.beaconColorSensor.alpha(),
-                                robot.beaconColorSensor.argb());
-        robot.sonarPidCtrl.displayPidInfo(12);
-        robot.colorPidCtrl.displayPidInfo(14);
+        boolean processed = false;
 
-        if (sm.isReady())
+        dashboard.displayPrintf(7, "%s: %04x->%s",
+                gamepad.toString(), button, pressed? "Pressed": "Released");
+
+        if (gamepad == driverGamepad)
         {
-            State state = (State)sm.getState();
-            switch (state)
+            switch (button)
             {
-                case START:
-                    //
-                    // Drive forward until we reached 24 inches or found the line.
-                    // Enable light trigger so that detecting the line will stop the drive.
-                    // Limit all PID controllers to half power so we go slowly and hopefully
-                    // not passing the line that much.
-                    //
-                    robot.colorTrigger.setEnabled(true);
-                    robot.encoderPidCtrl.setOutputRange(-0.5, 0.5);
-                    robot.gyroPidCtrl.setOutputRange(-0.75, 0.75);
-                    robot.sonarPidCtrl.setOutputRange(-0.3, 0.3);
-                    robot.colorPidCtrl.setOutputRange(-0.5, 0.5);
-                    robot.pidDrive.setTarget(24.0, 0.0, false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.TURN_TO_LINE);
-                    break;
-
-                case TURN_TO_LINE:
-                    //
-                    // We have past the line, turn slowly to find the line again.
-                    //
-                    if (alliance == Alliance.RED_ALLIANCE)
+                case FtcGamepad.GAMEPAD_DPAD_UP:
+                    if (pressed)
                     {
-                        //
-                        // Turn left to find the line and set to follow the
-                        // right edge of the line.
-                        //
-                        robot.colorPidCtrl.setInverted(true);
-                        robot.pidDrive.setTarget(0.0, -90.0, false, event);
+                        ballGatePos += 0.01;
+                        if (ballGatePos > 1.0) ballGatePos = 1.0;
+                        robot.ballGate.setPosition(ballGatePos);
                     }
-                    else
+                    processed = true;
+                    break;
+
+                case FtcGamepad.GAMEPAD_DPAD_DOWN:
+                    if (pressed)
                     {
-                        //
-                        // Turn right to find the line and set to follow the
-                        // left edge of the line.
-                        //
-                        robot.colorPidCtrl.setInverted(false);
-                        robot.pidDrive.setTarget(0.0, 90.0, false, event);
+                        ballGatePos -= 0.01;
+                        if (ballGatePos < 0.0) ballGatePos = 0.0;
+                        robot.ballGate.setPosition(ballGatePos);
                     }
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.FOLLOW_LINE);
+                    processed = true;
                     break;
 
-                case FOLLOW_LINE:
-                    //
-                    // Disable light trigger.
-                    // Follow the line until we are at the given distance from
-                    // the wall.
-                    //
-                    robot.colorTrigger.setEnabled(false);
-                    robot.pidLineFollow.setTarget(
-                            wallDistance, RobotInfo.COLOR_LINE_EDGE_LEVEL, false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
+                case FtcGamepad.GAMEPAD_DPAD_LEFT:
+                    if (pressed)
+                    {
+                        buttonPusherPos -= 0.05;
+                        if (buttonPusherPos < 0.0) buttonPusherPos = 0.0;
+                        robot.leftButtonPusher.setPosition(buttonPusherPos);
+                        robot.rightButtonPusher.setPosition(buttonPusherPos);
+                    }
+                    processed = true;
                     break;
 
-                case DONE:
-                default:
-                    //
-                    // We are done, restore everything.
-                    //
-                    robot.encoderPidCtrl.setOutputRange(-1.0, 1.0);
-                    robot.gyroPidCtrl.setOutputRange(-1.0, 1.0);
-                    robot.sonarPidCtrl.setOutputRange(-1.0, 1.0);
-                    robot.colorPidCtrl.setOutputRange(-1.0, 1.0);
-                    sm.stop();
+                case FtcGamepad.GAMEPAD_DPAD_RIGHT:
+                    if (pressed)
+                    {
+                        buttonPusherPos += 0.05;
+                        if (buttonPusherPos > 1.0) buttonPusherPos = 1.0;
+                        robot.leftButtonPusher.setPosition(buttonPusherPos);
+                        robot.rightButtonPusher.setPosition(buttonPusherPos);
+                    }
+                    processed = true;
                     break;
             }
         }
-    }   //doLineFollow
+        else if (gamepad == operatorGamepad)
+        {
+            switch (button)
+            {
+                case FtcGamepad.GAMEPAD_A:
+                    break;
+
+                case FtcGamepad.GAMEPAD_Y:
+                    break;
+
+                case FtcGamepad.GAMEPAD_X:
+                    break;
+
+                case FtcGamepad.GAMEPAD_B:
+                    break;
+
+                case FtcGamepad.GAMEPAD_LBUMPER:
+                    break;
+
+                case FtcGamepad.GAMEPAD_RBUMPER:
+                    break;
+
+                case FtcGamepad.GAMEPAD_BACK:
+                    break;
+
+                case FtcGamepad.GAMEPAD_START:
+                    break;
+
+                case FtcGamepad.GAMEPAD_DPAD_UP:
+                    break;
+
+                case FtcGamepad.GAMEPAD_DPAD_DOWN:
+                    break;
+
+                case FtcGamepad.GAMEPAD_DPAD_LEFT:
+                    break;
+
+                case FtcGamepad.GAMEPAD_DPAD_RIGHT:
+                    break;
+            }
+        }
+
+        if (!processed)
+        {
+            super.gamepadButtonEvent(gamepad, button, pressed);
+        }
+    }   //gamepadButtonEvent
 
 }   //class FtcTest

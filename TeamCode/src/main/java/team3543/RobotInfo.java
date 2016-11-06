@@ -21,31 +21,10 @@ public class RobotInfo
     public static final double GYRO_SETTLING                    = 0.2;
 
     //
-    // Line following PID control.
+    // Line detection.
     //
-    public static final double SONAR_KP                         = 0.08;
-    public static final double SONAR_KI                         = 0.0;
-    public static final double SONAR_KD                         = 0.0;
-    public static final double SONAR_KF                         = 0.0;
-    public static final double SONAR_TOLERANCE                  = 0.2;
-    public static final double SONAR_SETTLING                   = 0.2;
-    public static final double SONAR_INCHES_PER_CM              = (1.0/2.54);
-    public static final double SONAR_BEACON_DISTANCE            = 2.0;
-
-    public static final double COLOR_KP                         = 0.125;
-    public static final double COLOR_KI                         = 0.0;
-    public static final double COLOR_KD                         = 0.0;
-    public static final double COLOR_KF                         = 0.0;
-    public static final double COLOR_TOLERANCE                  = 2.0;
-    public static final double COLOR_SETTLING                   = 0.2;
-    public static final double COLOR_BLACK                      = 0.0;
-    public static final double COLOR_BLUE                       = 3.0;
-    public static final double COLOR_RED                        = 10.0;
-    public static final double COLOR_WHITE                      = 16.0;
-    public static final double COLOR_DARK_LEVEL                 = 0.0;
-    public static final double COLOR_WHITE_LEVEL                = 10.0;
-    public static final double COLOR_LINE_EDGE_LEVEL            = ((COLOR_DARK_LEVEL + COLOR_WHITE_LEVEL)/2.0);
-    public static final double COLOR_LINE_EDGE_DEADBAND         = (COLOR_LINE_EDGE_LEVEL*0.25);
+    public static final double LINE_LEVEL_DARK                  = 0.0;
+    public static final double LINE_LEVEL_WHITE                 = 3.0;
 
     //
     // Shooter subsystem.

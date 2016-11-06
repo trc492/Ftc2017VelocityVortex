@@ -122,6 +122,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         dashboard.displayPrintf(12,"ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
         getOpModeTracer().traceInfo("runPeriodic", "ts = %.3f ShooterSpeed = %.3f, position = %.3f", HalUtil.getCurrentTime(),robot.shooter.getSpeed(),robot.shooter.getPosition());
     }
+
     //
     // Implements FtcGamepad.ButtonHandler interface.
     //

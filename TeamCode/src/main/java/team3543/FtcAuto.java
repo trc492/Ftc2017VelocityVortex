@@ -51,7 +51,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     private Strategy strategy = Strategy.DO_NOTHING;
     private double driveDistance = 0.0;
     private boolean pushButton = true;
-    private boolean depositClimbers = false;
     private BeaconOption beaconOption = BeaconOption.DO_NOTHING;
 
     //
@@ -76,6 +75,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         switch (strategy)
         {
             case DEFENSE:
+                autoStrategy = new AutoDefense(robot, delay, driveDistance);
                 break;
 
             case PARK_FLOOR_GOAL:
@@ -85,6 +85,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 break;
 
             case BEACON:
+                autoStrategy = new AutoBeacon(robot, alliance, startPos, delay, pushButton, beaconOption);
                 break;
 
             case DO_NOTHING:
@@ -95,10 +96,9 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
         getOpModeTracer().traceInfo(
                 getOpModeName(),
-                "Strategy: %s(alliance=%s, startPos=%s, delay=%.0f, pushButton=%s, depositClimbers=%s, beaconOption=%s",
+                "Strategy: %s(alliance=%s, startPos=%s, delay=%.0f, pushButton=%s, beaconOption=%s",
                 strategy.toString(), alliance.toString(), startPos.toString(), delay,
-                Boolean.toString(pushButton), Boolean.toString(depositClimbers),
-                beaconOption.toString());
+                Boolean.toString(pushButton), beaconOption.toString());
     }   //initRobot
 
     //
@@ -166,10 +166,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                                                      1.0, 10.0, 1.0, 1.0, " %.0f ft");
         FtcChoiceMenu beaconButtonMenu =
                 new FtcChoiceMenu("Push beacon button:", strategyMenu, this);
-        FtcChoiceMenu depositClimbersMenu =
-                new FtcChoiceMenu("Deposit climbers:", beaconButtonMenu, this);
         FtcChoiceMenu beaconOptionMenu =
-                new FtcChoiceMenu("Beacon options", depositClimbersMenu, this);
+                new FtcChoiceMenu("Beacon options", beaconButtonMenu, this);
 
         allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, startPosMenu);
         allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, startPosMenu);
@@ -185,11 +183,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         strategyMenu.addChoice("Park mountain", Strategy.PARK_MOUNTAIN);
         strategyMenu.addChoice("Beacon", Strategy.BEACON, beaconButtonMenu);
 
-        beaconButtonMenu.addChoice("Yes", true, depositClimbersMenu);
-        beaconButtonMenu.addChoice("No", false, depositClimbersMenu);
-
-        depositClimbersMenu.addChoice("Yes", true, beaconOptionMenu);
-        depositClimbersMenu.addChoice("No", false, beaconOptionMenu);
+        beaconButtonMenu.addChoice("Yes", true, beaconOptionMenu);
+        beaconButtonMenu.addChoice("No", false, beaconOptionMenu);
 
         beaconOptionMenu.addChoice("Do nothing", BeaconOption.DO_NOTHING);
         beaconOptionMenu.addChoice("Do defense", BeaconOption.DEFENSE);
@@ -204,7 +199,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         strategy = (Strategy)strategyMenu.getCurrentChoiceObject();
         driveDistance = distanceMenu.getCurrentValue();
         pushButton = (Boolean)beaconButtonMenu.getCurrentChoiceObject();
-        depositClimbers = (Boolean)depositClimbersMenu.getCurrentChoiceObject();
         beaconOption = (BeaconOption)beaconOptionMenu.getCurrentChoiceObject();
 
         dashboard.displayPrintf(0, "Auto Strategy: %s (%s)",
@@ -212,9 +206,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         dashboard.displayPrintf(1, "Start position: %s", startPos.toString());
         dashboard.displayPrintf(2, "Delay = %.0f sec", delay);
         dashboard.displayPrintf(3, "Defense: distance=%.0f ft", driveDistance);
-        dashboard.displayPrintf(4, "Beacon: PushButton=%s,DepositClimber=%s,Option=%s",
-                                Boolean.toString(pushButton), Boolean.toString(depositClimbers),
-                                beaconOption.toString());
+        dashboard.displayPrintf(4, "Beacon: PushButton=%s,Option=%s",
+                                Boolean.toString(pushButton), beaconOption.toString());
     }   //doMenus
 
 }   //class FtcAuto

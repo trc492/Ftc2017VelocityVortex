@@ -17,7 +17,8 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     {
         SENSORS_TEST,
         MOTORS_TEST,
-        TIMED_DRIVE,
+        Y_TIMED_DRIVE,
+        X_TIMED_DRIVE,
         Y_DISTANCE_DRIVE,
         X_DISTANCE_DRIVE,
         GYRO_TURN
@@ -103,20 +104,24 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 doMotorsTest();
                 break;
 
-            case TIMED_DRIVE:
-                doTimedDrive(driveTime);
+            case Y_TIMED_DRIVE:
+                doTimedDrive(0.0, 0.2, 0.0, driveTime);
+                break;
+
+            case X_TIMED_DRIVE:
+                doTimedDrive(0.2, 0.0, 0.0, driveTime);
                 break;
 
             case Y_DISTANCE_DRIVE:
-                doYDistanceDrive(driveDistance);
+                doPidDrive(0.0, driveDistance, 0.0);
                 break;
 
             case X_DISTANCE_DRIVE:
-                doXDistanceDrive(driveDistance);
+                doPidDrive(driveDistance, 0.0, 0.0);
                 break;
 
             case GYRO_TURN:
-                doGyroTurn(turnDegrees);
+                doPidDrive(0.0, 0.0, turnDegrees);
                 break;
         }
     }   //runContinuous
@@ -162,7 +167,8 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         testMenu.addChoice("Sensors test", Test.SENSORS_TEST);
         testMenu.addChoice("Motors test", Test.MOTORS_TEST);
-        testMenu.addChoice("Timed drive", Test.TIMED_DRIVE, driveTimeMenu);
+        testMenu.addChoice("Y Timed drive", Test.Y_TIMED_DRIVE, driveTimeMenu);
+        testMenu.addChoice("X Timed drive", Test.X_TIMED_DRIVE, driveTimeMenu);
         testMenu.addChoice("Y Distance drive", Test.Y_DISTANCE_DRIVE, driveDistanceMenu);
         testMenu.addChoice("X Distance drive", Test.X_DISTANCE_DRIVE, driveDistanceMenu);
         testMenu.addChoice("Degrees turn", Test.GYRO_TURN, turnDegreesMenu);
@@ -280,7 +286,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         }
     }   //doMotorsTest
 
-    private void doTimedDrive(double time)
+    private void doTimedDrive(double xPower, double yPower, double turnPower, double time)
     {
         double lfEnc = robot.leftFrontWheel.getPosition();
         double rfEnc = robot.rightFrontWheel.getPosition();
@@ -302,9 +308,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
             {
                 case START:
                     //
-                    // Drive the robot forward and set a timer for the given time.
+                    // Drive the robot with the specified power and set a timer for the given time.
                     //
-                    robot.driveBase.tankDrive(0.2, 0.2);
+                    robot.driveBase.mecanumDrive_Cartesian(xPower, yPower, turnPower);
                     timer.set(time, event);
                     sm.addEvent(event);
                     sm.waitForEvents(State.DONE);
@@ -322,7 +328,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         }
     }   //doTimedDrive
 
-    private void doYDistanceDrive(double distance)
+    private void doPidDrive(double xDistance, double yDistance, double rotation)
     {
         dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
                                 robot.driveBase.getXPosition(),
@@ -341,7 +347,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     //
                     // Drive the given Y distance.
                     //
-                    robot.pidDrive.setTarget(0.0, distance*12.0, 0.0, false, event);
+                    robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
                     sm.addEvent(event);
                     sm.waitForEvents(State.DONE);
                     break;
@@ -355,77 +361,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     break;
             }
         }
-    }   //doYDistanceDrive
-
-    private void doXDistanceDrive(double distance)
-    {
-        dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
-                robot.driveBase.getXPosition(),
-                robot.driveBase.getYPosition(),
-                robot.driveBase.getHeading());
-        robot.encoderXPidCtrl.displayPidInfo(10);
-        robot.encoderYPidCtrl.displayPidInfo(12);
-        robot.gyroPidCtrl.displayPidInfo(14);
-
-        if (sm.isReady())
-        {
-            State state = (State)sm.getState();
-            switch (state)
-            {
-                case START:
-                    //
-                    // Drive the given X distance.
-                    //
-                    robot.pidDrive.setTarget(distance*12.0, 0.0, 0.0, false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
-                    break;
-
-                case DONE:
-                default:
-                    //
-                    // We are done.
-                    //
-                    sm.stop();
-                    break;
-            }
-        }
-    }   //doXDistanceDrive
-
-    private void doGyroTurn(double degrees)
-    {
-        dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
-                                robot.driveBase.getXPosition(),
-                                robot.driveBase.getYPosition(),
-                                robot.driveBase.getHeading());
-        robot.encoderXPidCtrl.displayPidInfo(10);
-        robot.encoderYPidCtrl.displayPidInfo(12);
-        robot.gyroPidCtrl.displayPidInfo(14);
-
-        if (sm.isReady())
-        {
-            State state = (State)sm.getState();
-            switch (state)
-            {
-                case START:
-                    //
-                    // Turn the given degrees.
-                    //
-                    robot.pidDrive.setTarget(0.0, 0.0, degrees, false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
-                    break;
-
-                case DONE:
-                default:
-                    //
-                    // We are done.
-                    //
-                    sm.stop();
-                    break;
-            }
-        }
-    }   //doGyroTurn
+    }   //doPidDrive
 
     //
     // Implements FtcGamepad.ButtonHandler interface.

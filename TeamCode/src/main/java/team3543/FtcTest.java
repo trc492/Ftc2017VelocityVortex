@@ -213,9 +213,11 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                                 robot.beaconColorSensor.blue(),
                                 robot.beaconColorSensor.alpha(),
                                 robot.beaconColorSensor.argb());
+        /*
         dashboard.displayPrintf(
                 14, "Light=%d",
                 (Integer)robot.lineDetectionSensor.getRawData(0, TrcAnalogInput.DataType.DOUBLE_INTEGRATED_DATA).value);
+                */
         dashboard.displayPrintf(15, "ServoPos:BallGate=%.2f,Pusher=%.2f", ballGatePos, buttonPusherPos);
     }   //doSensorsTest
 

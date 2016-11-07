@@ -11,9 +11,9 @@ public class RobotInfo
     public static final double DRIVE_KF                         = 0.0;
     public static final double DRIVE_TOLERANCE                  = 2.0;
     public static final double DRIVE_SETTLING                   = 0.2;
-    public static final double DRIVE_INCHES_PER_COUNT           = (104.0/7416.5);
+    public static final double DRIVE_INCHES_PER_COUNT           = (103.0/9212.25);
 
-    public static final double GYRO_KP                          = 0.05;
+    public static final double GYRO_KP                          = 0.02;
     public static final double GYRO_KI                          = 0.0;
     public static final double GYRO_KD                          = 0.0;
     public static final double GYRO_KF                          = 0.0;

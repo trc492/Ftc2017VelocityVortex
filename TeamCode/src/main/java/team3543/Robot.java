@@ -10,7 +10,6 @@ import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity
 import ftclib.FtcDcMotor;
 import ftclib.FtcMRGyro;
 import ftclib.FtcOpMode;
-import ftclib.FtcOpticalDistanceSensor;
 import ftclib.FtcServo;
 import hallib.HalDashboard;
 import hallib.HalUtil;
@@ -34,7 +33,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     //
     public FtcMRGyro gyro;
     public ColorSensor beaconColorSensor;
-    public FtcOpticalDistanceSensor lineDetectionSensor;
+//    public FtcOpticalDistanceSensor lineDetectionSensor;
 
     //
     // DriveBase subsystem.
@@ -72,13 +71,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //10/25/16 senors/gyro/button pushers are not hooked up yet
 
         //sensors
-        //InitSensors();
+        initSensors();
 
         //drivebase
         initDriveBase();
 
         //pid drives for FtcAuto
-        //InitPidDrives();
+        initPidDrives();
 
         //init subsystems
         initSubsystems();
@@ -89,7 +88,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         FtcOpMode.getOpModeTracer().traceInfo(
                 FtcOpMode.getOpModeName(), "Starting: %.3f", HalUtil.getCurrentTime());
 
-        //StartSensors();
+        startSensors();
         startSubsystems();
         startDriveBase();
     }   //startMode
@@ -100,7 +99,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 FtcOpMode.getOpModeName(), "Stopping: %.3f", HalUtil.getCurrentTime());
 
 
-        //StopSensors();
+        stopSensors();
         stopDriveBase();
         stopSubsystems();
     }   //stopMode
@@ -155,7 +154,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         gyro.calibrate();
         beaconColorSensor = hardwareMap.colorSensor.get("colorSensor");
         beaconColorSensor.enableLed(false);
-        lineDetectionSensor = new FtcOpticalDistanceSensor("odsSensor");
+//        lineDetectionSensor = new FtcOpticalDistanceSensor("odsSensor");
     }
 
     private void startSensors() {
@@ -184,8 +183,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 RobotInfo.GYRO_TOLERANCE, RobotInfo.GYRO_SETTLING,
                 this);
         pidDrive = new TrcPidDrive("pidDrive", driveBase, null, encoderPidCtrl, gyroPidCtrl);
-        lineTrigger = new TrcAnalogTrigger(
-                "lineTrigger", lineDetectionSensor, 0, lightZones, this);
+//        lineTrigger = new TrcAnalogTrigger(
+//                "lineTrigger", lineDetectionSensor, 0, lightZones, this);
     }
 
     private void initDriveBase() {
@@ -196,12 +195,12 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         rightFrontWheel = new FtcDcMotor("rightFrontWheel");
         leftRearWheel = new FtcDcMotor("leftRearWheel");
         rightRearWheel = new FtcDcMotor("rightRearWheel");
-        //leftFrontWheel.setInverted(true); //the left front wheel is inverted, uncomment this after the hardware is fixed
+        leftFrontWheel.setInverted(true); //the left front wheel is inverted, uncomment this after the hardware is fixed
         leftRearWheel.setInverted(true);
 
         //need to initialize with the gyro once gyro is installed
         driveBase = new TrcDriveBase(
-                leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel);
+                leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel, gyro);
         driveBase.setYPositionScale(RobotInfo.DRIVE_INCHES_PER_COUNT);
     }
 

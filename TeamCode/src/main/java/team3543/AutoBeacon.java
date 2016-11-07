@@ -80,9 +80,11 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
         {
             robot.encoderPidCtrl.printPidInfo(tracer);
             robot.gyroPidCtrl.printPidInfo(tracer);
+            /*
             tracer.traceInfo(moduleName, "[%.3f] LineDetect: value=%d",
                              elapsedTime,
                              (Integer)robot.lineDetectionSensor.getRawData(0, TrcAnalogInput.DataType.INPUT_DATA).value);
+                             */
         }
 
         dashboard.displayPrintf(1, moduleName + ": %s,%s,delay=%.0f,pushButton=%s,option=%s",

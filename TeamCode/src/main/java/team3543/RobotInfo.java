@@ -5,13 +5,21 @@ public class RobotInfo
     //
     // DriveBase subsystem.
     //
-    public static final double DRIVE_KP                         = 0.03;
-    public static final double DRIVE_KI                         = 0.0;
-    public static final double DRIVE_KD                         = 0.0;
-    public static final double DRIVE_KF                         = 0.0;
-    public static final double DRIVE_TOLERANCE                  = 2.0;
-    public static final double DRIVE_SETTLING                   = 0.2;
-    public static final double DRIVE_INCHES_PER_COUNT           = (103.0/9212.25);
+    public static final double ENCODER_X_KP                     = 0.03;
+    public static final double ENCODER_X_KI                     = 0.0;
+    public static final double ENCODER_X_KD                     = 0.0;
+    public static final double ENCODER_X_KF                     = 0.0;
+    public static final double ENCODER_X_TOLERANCE              = 2.0;
+    public static final double ENCODER_X_SETTLING               = 0.2;
+    public static final double ENCODER_X_INCHES_PER_COUNT       = (103.0/9212.25);
+
+    public static final double ENCODER_Y_KP                     = 0.03;
+    public static final double ENCODER_Y_KI                     = 0.0;
+    public static final double ENCODER_Y_KD                     = 0.0;
+    public static final double ENCODER_Y_KF                     = 0.0;
+    public static final double ENCODER_Y_TOLERANCE              = 2.0;
+    public static final double ENCODER_Y_SETTLING               = 0.2;
+    public static final double ENOCDER_Y_INCHES_PER_COUNT       = (103.0/9212.25);
 
     public static final double GYRO_KP                          = 0.02;
     public static final double GYRO_KI                          = 0.0;
@@ -23,8 +31,8 @@ public class RobotInfo
     //
     // Line detection.
     //
-    public static final double LINE_LEVEL_DARK                  = 0.0;
-    public static final double LINE_LEVEL_WHITE                 = 3.0;
+    public static final double LINE_DARK_LEVEL                  = 0.0;
+    public static final double LINE_WHITE_LEVEL                 = 3.0;
 
     //
     // Shooter subsystem.

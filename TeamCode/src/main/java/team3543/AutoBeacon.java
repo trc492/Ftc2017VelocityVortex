@@ -78,7 +78,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
         //
         if (robot.pidDrive.isEnabled())
         {
-            robot.encoderPidCtrl.printPidInfo(tracer);
+            robot.encoderYPidCtrl.printPidInfo(tracer);
             robot.gyroPidCtrl.printPidInfo(tracer);
             /*
             tracer.traceInfo(moduleName, "[%.3f] LineDetect: value=%d",
@@ -141,7 +141,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     // If line is detected, it will interrupt PID drive.
                     //
                     robot.lineTrigger.setEnabled(true);
-                    robot.encoderPidCtrl.setOutputRange(-0.3, 0.3);
+                    robot.encoderYPidCtrl.setOutputRange(-0.3, 0.3);
                     robot.pidDrive.setTarget(15.0, 0.0, false, event);
                     sm.addEvent(event);
                     sm.waitForEvents(State.CLEAR_DEBRIS);
@@ -165,7 +165,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case FIND_LINE_AGAIN:
 //                    robot.lineTrigger.setTriggerPoints(robot.color2Zones);
 //                    robot.colorTrigger.setEnabled(true);
-                    robot.encoderPidCtrl.setOutputRange(-0.2, 0.2);
+                    robot.encoderYPidCtrl.setOutputRange(-0.2, 0.2);
                     robot.pidDrive.setTarget(15.0, 0.0, false, event);
                     sm.addEvent(event);
                     sm.waitForEvents(State.TURN_TO_LINE);
@@ -211,7 +211,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 //                    robot.colorPidCtrl.setOutputRange(-1.0, 1.0);
 //                    robot.sonarPidCtrl.setOutputRange(-1.0, 1.0);
                     robot.gyroPidCtrl.setOutputRange(-1.0, 1.0);;
-                    robot.encoderPidCtrl.setOutputRange(-1.0, 1.0);
+                    robot.encoderYPidCtrl.setOutputRange(-1.0, 1.0);
                     if (pushButton)
                     {
                         int redValue = robot.beaconColorSensor.red();

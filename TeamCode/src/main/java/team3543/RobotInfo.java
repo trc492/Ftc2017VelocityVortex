@@ -49,6 +49,11 @@ public class RobotInfo
     public static final double SHOOTER_SPEED_LOW_THRESHOLD      = 500.0;
     public static final double SHOOTER_PULLBACK_TARGET          = 100.0;
 
+    public static final double SHOOTER_SIMPLE_PULLBACK_TARGET   = 200.0; //initial pull back distance
+    public static final double SHOOTER_SIMPLE_ONESHOT_TARGET    = 1667.0 - SHOOTER_SIMPLE_PULLBACK_TARGET; //encoder distance for one shot minus pull back
+    public static final double SHOOTER_SIMPLE_OPEN_GATE_DELAY   = 1.0; //delay for opening ball gate (in second)
+    public static final double SHOOTER_SIPMLE_CLOSE_GATE_DELAY  = 1.0; //delay for closing ball gate
+
     //
     // Button pusher subsystem.
     //
@@ -63,8 +68,8 @@ public class RobotInfo
     //
     // Ball gate subsystem.
     //
-    public static final double BALLGATE_CLOSE_POSITION          = 0.78;
-    public static final double BALLGATE_OPEN_POSITION           = 0.60;
+    public static final double BALLGATE_CLOSE_POSITION          = 0.69;
+    public static final double BALLGATE_OPEN_POSITION           = 0.56;
     //
     // Conveyor subsystem.
     //

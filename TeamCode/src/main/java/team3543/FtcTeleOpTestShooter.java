@@ -9,9 +9,10 @@ import ftclib.FtcGamepad;
  */
 @TeleOp(name="TestShooter", group="3543Test")
 public class FtcTeleOpTestShooter extends FtcTeleOp implements FtcGamepad.ButtonHandler {
-    private double highThreshold = RobotInfo.SHOOTER_SPEED_HIGH_THRESHOLD;
-    private double lowThreshold = RobotInfo.SHOOTER_SPEED_LOW_THRESHOLD;
-    private double pullBackTarget = RobotInfo.SHOOTER_PULLBACK_TARGET;
+    private double pullback = RobotInfo.SHOOTER_SIMPLE_PULLBACK_TARGET;
+    private double oneShot = RobotInfo.SHOOTER_SIMPLE_ONESHOT_TARGET;
+    private double openGate = RobotInfo.SHOOTER_SIPMLE_CLOSE_GATE_DELAY;
+    private double closeGate = RobotInfo.SHOOTER_SIPMLE_CLOSE_GATE_DELAY;
 
     @Override
     public void gamepadButtonEvent(FtcGamepad gamepad, int button, boolean pressed) {
@@ -22,52 +23,58 @@ public class FtcTeleOpTestShooter extends FtcTeleOp implements FtcGamepad.Button
                 processed = true;
                 switch (button) {
                     case FtcGamepad.GAMEPAD_DPAD_UP:
-                        highThreshold += 1.0;
+                        pullback += 10.0;
                         break;
 
                     case FtcGamepad.GAMEPAD_DPAD_DOWN:
-                        highThreshold -= 1.0;
+                        pullback -= 10.0;
                         break;
 
                     case FtcGamepad.GAMEPAD_DPAD_RIGHT:
-                        lowThreshold += 1.0;
+                        oneShot += 10.0;
                         break;
 
                     case FtcGamepad.GAMEPAD_DPAD_LEFT:
-                        lowThreshold -= 1.0;
+                        oneShot -= 10.0;
                         break;
 
-                    case FtcGamepad.GAMEPAD_X:
-                        pullBackTarget += 1.0;
+                    case FtcGamepad.GAMEPAD_RBUMPER:
+                        openGate += 0.2;
+                        closeGate += 0.2;
                         break;
 
-                    case FtcGamepad.GAMEPAD_Y:
-                        pullBackTarget -= 1.0;
+                    case FtcGamepad.GAMEPAD_LBUMPER:
+                        openGate -= 0.2;
+                        closeGate -= 0.2;
                         break;
 
                     case FtcGamepad.GAMEPAD_A:
-                        super.robot.shooter.setShooterParameter(lowThreshold, highThreshold, pullBackTarget);
+                        super.robot.shooter.setShooterParameters(pullback,oneShot,openGate,closeGate);
                         super.robot.shooter.fireOneShot();
                         break;
 
                     case FtcGamepad.GAMEPAD_B:
                         super.robot.shooter.setPowerManually(1.0);
                         break;
+
+                    case FtcGamepad.GAMEPAD_X:
+                        super.robot.shooter.fireContinuous(true);
+
                     default:
                         processed = false;
                         break;
                 }
             }
             else {
-                if (button == FtcGamepad.GAMEPAD_B)
+                if ((button == FtcGamepad.GAMEPAD_X) || (button == FtcGamepad.GAMEPAD_A))
                 {
-                    super.robot.shooter.setPowerManually(0.0);
+                    super.robot.shooter.stop();
                     processed = true;
                 }
             }
         }
-        dashboard.displayPrintf(10, "hThreshold = %.2f, lThreshold = %.2f, target = %.2f",highThreshold,lowThreshold,pullBackTarget);
-        getOpModeTracer().traceInfo("testShooter","highThreshold = %.2f, lowThreshold = %.2f, target = %.2f",highThreshold,lowThreshold,pullBackTarget);
+        dashboard.displayPrintf(10, "pullback distance = %.2f, oneshot distance = %.2f, gate delay = %.2f",pullback,oneShot,openGate);
+        getOpModeTracer().traceInfo("testShooter","pullback distance = %.2f, oneshot distance = %.2f, gate delay = %.2f",pullback,oneShot,openGate);
         if (!processed)
             super.gamepadButtonEvent(gamepad,button,pressed);
     }

@@ -26,6 +26,10 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
     private boolean invertedDrive = false;
     private DriveMode   driveMode = DriveMode.MECANUM_MODE_ONE_STICK;
+    private boolean conveyorOn = false;
+    private boolean ballGateOpen = false;
+    private boolean leftPusherExtend = false;
+    private boolean rightPusherExtend = false;
     //
     // Implements FtcOpMode abstract method.
     //
@@ -168,31 +172,40 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                         robot.shooter.fireOneShot();
                     break;
 
+                case FtcGamepad.GAMEPAD_B:
+                    if (pressed)
+                        robot.shooter.setPowerManually(1.0);
+                    else
+                        robot.shooter.setPowerManually(0.0);
+                    break;
+
                 case FtcGamepad.GAMEPAD_Y:
                     if (pressed) {
-                        robot.ballPickUp.setPower(0.0);
-                        robot.conveyor.setPower(0.0);
+                        ballGateOpen = !ballGateOpen;
+                        robot.ballGate.setPosition(ballGateOpen?RobotInfo.BALLGATE_OPEN_POSITION:RobotInfo.BALLGATE_CLOSE_POSITION);
                     }
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
                     if (pressed) {
-                        robot.ballPickUp.setPower(RobotInfo.BALL_PICKUP_MOTOR_POWER);
-                        robot.conveyor.setPower(RobotInfo.CONVEYOR_MOTOR_POWER);
+                        conveyorOn = !conveyorOn;
+                        robot.ballPickUp.setPower(conveyorOn?RobotInfo.BALL_PICKUP_MOTOR_POWER:0.0);
+                        robot.conveyor.setPower(conveyorOn?RobotInfo.CONVEYOR_MOTOR_POWER:0.0);
                     }
                     break;
 
-                case FtcGamepad.GAMEPAD_B:
-                    if (pressed)
-                        robot.ballGate.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
-                    else
-                        robot.ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
-                    break;
-
                 case FtcGamepad.GAMEPAD_LBUMPER:
+                    if (pressed) {
+                        leftPusherExtend = !leftPusherExtend;
+                        robot.leftButtonPusher.setPosition(leftPusherExtend ? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION : RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+                    }
                     break;
 
                 case FtcGamepad.GAMEPAD_RBUMPER:
+                    if (pressed) {
+                        rightPusherExtend = !rightPusherExtend;
+                        robot.rightButtonPusher.setPosition(rightPusherExtend ? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION : RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+                    }
                     break;
 
                 case FtcGamepad.GAMEPAD_BACK:
@@ -202,23 +215,17 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_UP:
+                    if (pressed)
+                        robot.shooter.fireContinuous(true);
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_DOWN:
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_LEFT:
-                    if (pressed)
-                        robot.leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_EXTEND_POSITION);
-                    else
-                        robot.leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_RIGHT:
-                    if (pressed)
-                        robot.rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_EXTEND_POSITION);
-                    else
-                        robot.rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
                     break;
             }
         }

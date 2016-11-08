@@ -54,7 +54,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public TrcAnalogTrigger lineTrigger;
 
     // subsystems
-    public Shooter shooter;
+    public SimpleShooter shooter;
     public FtcServo leftButtonPusher;
     public FtcServo rightButtonPusher;
     public FtcDcMotor ballPickUp;
@@ -125,8 +125,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         // Initialize subsystems.
         //
 
-        shooter = new Shooter("shooter");
-
         leftButtonPusher = new FtcServo("leftButtonPusherServo");
         leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
 
@@ -139,6 +137,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         ballGate = new FtcServo("gateServo");
         ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
 
+        shooter = new SimpleShooter("shooter",ballGate);
         conveyor = new FtcDcMotor("conveyorMotor");
     }   //Robot
 
@@ -154,6 +153,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     {
         lineDetectionSensor.setLEDEnabled(false);
         gyro.setEnabled(false);
+        shooter.stop();
     }   //stopMode
 
     //

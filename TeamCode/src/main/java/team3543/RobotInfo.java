@@ -37,7 +37,7 @@ public class RobotInfo
     //
     // Shooter subsystem.
     //
-    public static final double SHOOTER_KP                       = 0.001;
+    public static final double SHOOTER_KP                       = 0.01;
     public static final double SHOOTER_KI                       = 0.0;
     public static final double SHOOTER_KD                       = 0.0;
     public static final double SHOOTER_KF                       = 0.0;
@@ -53,6 +53,7 @@ public class RobotInfo
     public static final double SHOOTER_SIMPLE_ONESHOT_TARGET    = 1667.0 - SHOOTER_SIMPLE_PULLBACK_TARGET; //encoder distance for one shot minus pull back
     public static final double SHOOTER_SIMPLE_OPEN_GATE_DELAY   = 1.0; //delay for opening ball gate (in second)
     public static final double SHOOTER_SIPMLE_CLOSE_GATE_DELAY  = 1.0; //delay for closing ball gate
+    public static final double SHOOTER_SIPMLE_AFTER_FIRE_DELAY  = 0.5;
 
     //
     // Button pusher subsystem.

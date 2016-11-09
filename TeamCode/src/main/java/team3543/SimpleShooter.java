@@ -1,6 +1,8 @@
 package team3543;
 
 import ftclib.FtcDcMotor;
+import ftclib.FtcTouchSensor;
+import trclib.TrcDigitalTrigger;
 import trclib.TrcEvent;
 import trclib.TrcPidController;
 import trclib.TrcPidMotor;
@@ -17,10 +19,12 @@ import trclib.TrcTimer;
 public class SimpleShooter implements TrcTaskMgr.Task, TrcPidController.PidInput {
     private enum SimpleShooterState
     {
+        START,
         PULL_BACK,
         OPEN_BALL_GATE,
         CLOSE_BALL_GATE,
         FIRE,
+        AFTER_FIRE_DELAY,
         DONE
     }   //enum State
 
@@ -37,8 +41,12 @@ public class SimpleShooter implements TrcTaskMgr.Task, TrcPidController.PidInput
     private double oneShotDistance = RobotInfo.SHOOTER_SIMPLE_ONESHOT_TARGET;
     private double openBallGateDelay  = RobotInfo.SHOOTER_SIMPLE_OPEN_GATE_DELAY;
     private double closeBallGateDelay  = RobotInfo.SHOOTER_SIPMLE_CLOSE_GATE_DELAY;
-
-    public SimpleShooter(String instanceName, TrcServo servo)
+    private double shooterCurrPos = 0.0;
+    private double shooterPullbackPos = 0.0;
+    private double shooterFirePos = 0.0;
+    private FtcTouchSensor shooterSensor;
+    ;
+    public SimpleShooter(String instanceName, TrcServo servo, FtcTouchSensor sensor)
     {
         this.instanceName = instanceName;
 
@@ -55,6 +63,7 @@ public class SimpleShooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         sm = new TrcStateMachine(instanceName);
         event = new TrcEvent(instanceName);
         timer = new TrcTimer(instanceName);
+        shooterSensor = sensor;
         gateServo = servo;
     }
 
@@ -98,7 +107,7 @@ public class SimpleShooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         continuousModeOn = continuous;
         if (!sm.isEnabled())
         {
-            sm.start(SimpleShooterState.PULL_BACK);
+            sm.start(SimpleShooterState.START);
             setEnabled(true);
         }
     }
@@ -164,10 +173,22 @@ public class SimpleShooter implements TrcTaskMgr.Task, TrcPidController.PidInput
             SimpleShooterState state = (SimpleShooterState) sm.getState();
             switch (state)
             {
+                case START:
+                    shooterCurrPos = shooterMotor.getPosition();
+                    shooterPullbackPos = shooterCurrPos + pullBackDistance;
+                    shooterFirePos = shooterPullbackPos + oneShotDistance;
+                    sm.setState(SimpleShooterState.PULL_BACK);
+                    break;
+
                 case PULL_BACK:
-                    pidMotor.setTarget(pullBackDistance, event, 0.0);
-                    sm.addEvent(event);
-                    sm.waitForEvents(SimpleShooterState.OPEN_BALL_GATE);
+                    shooterMotor.setPower(RobotInfo.SHOOTER_HIGH_POWER);
+                    if (shooterMotor.getPosition() > shooterPullbackPos) {
+                        shooterMotor.setPower(0.0);
+                        sm.setState(SimpleShooterState.OPEN_BALL_GATE);
+                    }
+                    //pidMotor.setTarget(pullBackDistance, event, 0.0);
+                    //sm.addEvent(event);
+                    //sm.waitForEvents(SimpleShooterState.OPEN_BALL_GATE);
                     break;
 
                 case OPEN_BALL_GATE:
@@ -185,9 +206,21 @@ public class SimpleShooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                     break;
 
                 case FIRE:
-                    pidMotor.setTarget(oneShotDistance, event, 0.0);
+                    //pidMotor.setTarget(oneShotDistance, event, 0.0);
+                    //sm.addEvent(event);
+                    //sm.waitForEvents((continuousModeOn)?SimpleShooterState.PULL_BACK:SimpleShooterState.DONE);
+                    shooterMotor.setPower(RobotInfo.SHOOTER_HIGH_POWER);
+                    if (((shooterSensor == null) && (shooterMotor.getPosition() > shooterFirePos))||
+                            (shooterSensor != null) && (shooterSensor.isActive())){
+                        shooterMotor.setPower(0.0);
+                        sm.setState(SimpleShooterState.AFTER_FIRE_DELAY);
+                    }
+                    break;
+
+                case AFTER_FIRE_DELAY:
+                    timer.set(RobotInfo.SHOOTER_SIPMLE_AFTER_FIRE_DELAY, event);
                     sm.addEvent(event);
-                    sm.waitForEvents((continuousModeOn)?SimpleShooterState.PULL_BACK:SimpleShooterState.DONE);
+                    sm.waitForEvents(continuousModeOn? SimpleShooterState.START:SimpleShooterState.DONE);
                     break;
 
                 default:

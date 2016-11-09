@@ -181,7 +181,7 @@ public class SimpleShooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                     break;
 
                 case PULL_BACK:
-                    shooterMotor.setPower(RobotInfo.SHOOTER_HIGH_POWER);
+                    shooterMotor.setPower(RobotInfo.SHOOTER_POWER);
                     if (shooterMotor.getPosition() > shooterPullbackPos) {
                         shooterMotor.setPower(0.0);
                         sm.setState(SimpleShooterState.OPEN_BALL_GATE);
@@ -209,7 +209,7 @@ public class SimpleShooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                     //pidMotor.setTarget(oneShotDistance, event, 0.0);
                     //sm.addEvent(event);
                     //sm.waitForEvents((continuousModeOn)?SimpleShooterState.PULL_BACK:SimpleShooterState.DONE);
-                    shooterMotor.setPower(RobotInfo.SHOOTER_HIGH_POWER);
+                    shooterMotor.setPower(RobotInfo.SHOOTER_POWER);
                     if (((shooterSensor == null) && (shooterMotor.getPosition() > shooterFirePos))||
                             (shooterSensor != null) && (shooterSensor.isActive())){
                         shooterMotor.setPower(0.0);

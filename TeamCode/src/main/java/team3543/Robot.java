@@ -12,9 +12,7 @@ import ftclib.FtcMRGyro;
 import ftclib.FtcMRI2cColorSensor;
 import ftclib.FtcOpMode;
 import ftclib.FtcServo;
-import ftclib.FtcTouchSensor;
 import hallib.HalDashboard;
-import hallib.HalUtil;
 import trclib.TrcAnalogTrigger;
 import trclib.TrcDriveBase;
 import trclib.TrcPidController;
@@ -55,13 +53,11 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public TrcAnalogTrigger lineTrigger;
 
     // subsystems
-    public SimpleShooter shooter;
+    public Shooter shooter;
     public FtcServo leftButtonPusher;
     public FtcServo rightButtonPusher;
     public FtcDcMotor ballPickUp;
-    public FtcServo ballGate;
     public FtcDcMotor conveyor;
-    public FtcTouchSensor touchSensor;
 
     public Robot(TrcRobot.RunMode runMode)
     {
@@ -127,20 +123,16 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         // Initialize subsystems.
         //
 
+        shooter = new Shooter("shooter");
+
         leftButtonPusher = new FtcServo("leftButtonPusherServo");
         leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
-
         rightButtonPusher = new FtcServo("rightButtonPusherServo");
         rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
 
         ballPickUp = new FtcDcMotor("pickUpMotor");
         ballPickUp.setInverted(true);
 
-        ballGate = new FtcServo("gateServo");
-        ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
-
-        touchSensor = new FtcTouchSensor(hardwareMap,"touchSensor");
-        shooter = new SimpleShooter("shooter",ballGate,touchSensor);
         conveyor = new FtcDcMotor("conveyorMotor");
     }   //Robot
 

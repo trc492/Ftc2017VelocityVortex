@@ -1,19 +1,22 @@
 package team3543;
 
 import ftclib.FtcDcMotor;
+import ftclib.FtcServo;
+import ftclib.FtcTouchSensor;
 import trclib.TrcEvent;
 import trclib.TrcPidController;
 import trclib.TrcPidMotor;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTaskMgr;
+import trclib.TrcTimer;
 
 public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
 {
     private enum ShooterState
     {
+        LOAD_PARTICLE,
         ARM_AND_FIRE,
-        REENGAGE,
         PULL_BACK,
         DONE
     }   //enum State
@@ -22,12 +25,13 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
     private FtcDcMotor shooterMotor;
     private TrcPidController pidCtrl;
     private TrcPidMotor pidMotor;
+    private FtcTouchSensor touchSensor;
+    private FtcServo ballGate;
     private TrcStateMachine sm;
+    private TrcTimer timer;
     private TrcEvent event;
+    private TrcEvent completionEvent = null;
     private boolean continuousModeOn = false;
-    private double highThreshold = RobotInfo.SHOOTER_SPEED_HIGH_THRESHOLD;
-    private double lowThreshold = RobotInfo.SHOOTER_SPEED_LOW_THRESHOLD;
-    private double pullbackTarget = RobotInfo.SHOOTER_PULLBACK_TARGET;
 
     public Shooter(String instanceName)
     {
@@ -36,14 +40,18 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         shooterMotor = new FtcDcMotor("shooterMotor");
         shooterMotor.setInverted(true);
         shooterMotor.setBrakeModeEnabled(true);
-        shooterMotor.setSpeedTaskEnabled(true);
         pidCtrl = new TrcPidController(
                 instanceName,
                 RobotInfo.SHOOTER_KP, RobotInfo.SHOOTER_KI, RobotInfo.SHOOTER_KD, RobotInfo.SHOOTER_KF,
                 RobotInfo.SHOOTER_TOLERANCE, RobotInfo.SHOOTER_SETTLING, this);
         pidMotor = new TrcPidMotor(instanceName, shooterMotor, pidCtrl);
+        touchSensor = new FtcTouchSensor("touchSensor");
+
+        ballGate = new FtcServo("gateServo");
+        ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
 
         sm = new TrcStateMachine(instanceName);
+        timer = new TrcTimer(instanceName);
         event = new TrcEvent(instanceName);
     }
 
@@ -52,10 +60,12 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         if (enabled)
         {
             TrcTaskMgr.getInstance().registerTask(instanceName, this, TrcTaskMgr.TaskType.POSTCONTINUOUS_TASK);
+            TrcTaskMgr.getInstance().registerTask(instanceName, this, TrcTaskMgr.TaskType.STOP_TASK);
         }
         else
         {
             TrcTaskMgr.getInstance().unregisterTask(this, TrcTaskMgr.TaskType.POSTCONTINUOUS_TASK);
+            TrcTaskMgr.getInstance().unregisterTask(this, TrcTaskMgr.TaskType.STOP_TASK);
         }
     }
 
@@ -70,29 +80,45 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         shooterMotor.setPower(0.0);
     }
 
-    public double getSpeed()
-    {
-        return shooterMotor.getSpeed();
-    }
-
     public double getPosition()
     {
         return shooterMotor.getPosition();
     }
 
-    private void fire(boolean continuous)
+    public boolean isTouchActive()
+    {
+        return touchSensor.isActive();
+    }
+
+    public void setPower(double power)
+    {
+        shooterMotor.setPower(power);
+    }
+
+    public void setBallGatePosition(double position)
+    {
+        ballGate.setPosition(position);
+    }
+
+    private void fire(boolean continuous, TrcEvent event)
     {
         continuousModeOn = continuous;
+        this.completionEvent = event;
         if (!sm.isEnabled())
         {
-            sm.start(ShooterState.ARM_AND_FIRE);
+            sm.start(ShooterState.LOAD_PARTICLE);
             setEnabled(true);
         }
     }
 
+    public void fireOneShot(TrcEvent event)
+    {
+        fire(false, event);
+    }
+
     public void fireOneShot()
     {
-        fire(false);
+        fire(false, null);
     }
 
     public void fireContinuous(boolean on)
@@ -100,19 +126,10 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         continuousModeOn = on;
         if (on)
         {
-            fire(true);
+            fire(true, null);
         }
     }
 
-    public void setShooterParameter(double low, double high, double target) {
-        lowThreshold = low;
-        highThreshold = high;
-        pullbackTarget = target;
-    }
-
-    public void setPowerManually(double power) {
-        shooterMotor.setPower(power);
-    }
     //
     // Implements TrcTaskMgr.Task.
     //
@@ -125,6 +142,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
     @Override
     public void stopTask(TrcRobot.RunMode runMode)
     {
+        stop();
     }
 
     @Override
@@ -148,33 +166,41 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         if (sm.isReady())
         {
             ShooterState state = (ShooterState)sm.getState();
+
             switch (state)
             {
-                case ARM_AND_FIRE:
-                    shooterMotor.setPower(RobotInfo.SHOOTER_HIGH_POWER);
-                    if (shooterMotor.getSpeed() > highThreshold)
-                    {
-                        shooterMotor.setPower(0.0);
-                        sm.setState(ShooterState.REENGAGE);
-                    }
+                case LOAD_PARTICLE:
+                    ballGate.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
+                    timer.set(RobotInfo.SHOOTER_BALLGATE_OPEN_TIME, event);
+                    sm.addEvent(event);
+                    sm.waitForEvents(ShooterState.ARM_AND_FIRE);
                     break;
 
-                case REENGAGE:
-                    shooterMotor.setPower(RobotInfo.SHOOTER_LOW_POWER);
-                    if (shooterMotor.getSpeed() < lowThreshold)
+                case ARM_AND_FIRE:
+                    ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
+                    shooterMotor.setPower(RobotInfo.SHOOTER_POWER);
+                    if (touchSensor.isActive())
                     {
-                        sm.setState(ShooterState.PULL_BACK);
+                        shooterMotor.setPower(0.0);
+                        timer.set(RobotInfo.SHOOTER_PAUSE_TIME, event);
+                        sm.addEvent(event);
+                        sm.waitForEvents(ShooterState.PULL_BACK);
                     }
                     break;
 
                 case PULL_BACK:
-                    pidMotor.setTarget(pullbackTarget, event, 0.0);
+                    pidMotor.setTarget(RobotInfo.SHOOTER_PULLBACK_TARGET, event, 0.0);
                     sm.addEvent(event);
-                    sm.waitForEvents(continuousModeOn? ShooterState.ARM_AND_FIRE: ShooterState.DONE);
+                    sm.waitForEvents(continuousModeOn? ShooterState.LOAD_PARTICLE: ShooterState.DONE);
                     break;
 
                 default:
                 case DONE:
+                    if (completionEvent != null)
+                    {
+                        completionEvent.set(true);
+                        completionEvent = null;
+                    }
                     sm.stop();
                     setEnabled(false);
                     break;

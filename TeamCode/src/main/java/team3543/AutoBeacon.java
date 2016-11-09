@@ -2,7 +2,6 @@ package team3543;
 
 import ftclib.FtcOpMode;
 import hallib.HalDashboard;
-import trclib.TrcAnalogInput;
 import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
@@ -13,19 +12,19 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 {
     private enum State
     {
-        DO_DELAY,
-        MOVE_FORWARD,
-        FIND_LINE,
-        CLEAR_DEBRIS,
-        BACK_TO_LINE,
-        FIND_LINE_AGAIN,
-        TURN_TO_LINE,
-        FOLLOW_LINE,
+        SHOOT_PARTICLES,
+        GOTO_BEACONS,
+        ALIGN_WALL,
+        GOTO_WALL,
+        GOTO_FAR_BEACON,
+        GOTO_NEAR_BEACON,
         PUSH_BUTTON,
         RETRACT,
+        NEXT_BEACON_BUTTON,
         MOVE_SOMEWHERE,
         GO_DEFENSE,
-        PARK_FLOOR_GOAL,
+        PARK_CORNER,
+        PARK_CENTER,
         BACK_TO_MOUNTAIN,
         TURN_TO_MOUNTAIN,
         GO_UP_MOUNTAIN,
@@ -41,7 +40,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
     private FtcAuto.Alliance alliance;
     private FtcAuto.StartPosition startPos;
     private double delay;
-    private boolean pushButton;
+    private int shootParticles;
+    private FtcAuto.BeaconButtons beaconButtons;
     private FtcAuto.BeaconOption option;
     private TrcEvent event;
     private TrcTimer timer;
@@ -54,7 +54,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
             FtcAuto.Alliance alliance,
             FtcAuto.StartPosition startPos,
             double delay,
-            boolean pushButton,
+            int shootParticles,
+            FtcAuto.BeaconButtons beaconButtons,
             FtcAuto.BeaconOption option)
     {
         this.robot = robot;
@@ -62,12 +63,13 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
         this.alliance = alliance;
         this.startPos = startPos;
         this.delay = delay;
-        this.pushButton = pushButton;
+        this.shootParticles = shootParticles;
+        this.beaconButtons = beaconButtons;
         this.option = option;
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine(moduleName);
-        sm.start(State.DO_DELAY);
+        sm.start(State.SHOOT_PARTICLES);
     }
 
     @Override
@@ -87,9 +89,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                              */
         }
 
-        dashboard.displayPrintf(1, moduleName + ": %s,%s,delay=%.0f,pushButton=%s,option=%s",
+        dashboard.displayPrintf(1, moduleName + ": %s,%s,delay=%.0f,shootParticles=%d,beaconButtons=%s,option=%s",
                                 alliance.toString(), startPos.toString(), delay,
-                                Boolean.toString(pushButton), option.toString());
+                                shootParticles, beaconButtons.toString(), option.toString());
         dashboard.displayPrintf(2, "RGBAH: [%d,%d,%d,%d,%x]",
                                 robot.beaconColorSensor.red(),
                                 robot.beaconColorSensor.green(),
@@ -105,144 +107,132 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
             switch (state)
             {
-                case DO_DELAY:
+                case SHOOT_PARTICLES:
                     //
-                    // If there is a delay, set the timer for it.
+                    // Fire a particle if any.
                     //
-                    if (delay == 0.0)
+                    if (shootParticles > 0)
                     {
-                        sm.setState(State.MOVE_FORWARD);
+                        robot.shooter.fireOneShot(event);
+                        shootParticles--;
+                        sm.addEvent(event);
+                        sm.waitForEvents(State.SHOOT_PARTICLES);
+                    }
+                    //
+                    // Do delay if any.
+                    //
+                    else if (delay > 0.0)
+                    {
+                        timer.set(delay, event);
+                        sm.addEvent(event);
+                        sm.waitForEvents(State.GOTO_BEACONS);
+                    }
+                    else
+                    {
+                        sm.setState(State.GOTO_BEACONS);
+                    }
+                    break;
+
+                case GOTO_BEACONS:
+                    //
+                    // If we are pressing any beacon buttons, go towards the middle of the two beacons.
+                    //
+                    if (beaconButtons != FtcAuto.BeaconButtons.NONE)
+                    {
+                        robot.pidDrive.setTarget(0.0, 60.0, 0.0, false, event, 0.0);
+                        sm.addEvent(event);
+                        sm.waitForEvents(State.ALIGN_WALL);
+                    }
+                    else
+                    {
+//                        sm.setState(State.); //???
+                    }
+                    break;
+
+                case ALIGN_WALL:
+                    //
+                    // Turn to parallel the wall.
+                    //
+                    robot.pidDrive.setTarget(
+                            0.0, 0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: -45.0, false, event, 0.0);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.GOTO_WALL);
+                    break;
+
+                case GOTO_WALL:
+                    //
+                    // Crab towards the wall.
+                    //
+                    robot.pidDrive.setTarget(
+                            alliance == FtcAuto.Alliance.RED_ALLIANCE? -30.0: 30.0, 0.0, 0.0, false, event, 0.0);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.GOTO_FAR_BEACON);
+                    break;
+
+                case GOTO_FAR_BEACON:
+                    if (beaconButtons == FtcAuto.BeaconButtons.NEAR_BEACON)
+                    {
+                        //
+                        // Skipping the far beacon.
+                        //
+                        sm.setState(State.GOTO_NEAR_BEACON);
                     }
                     else
                     {
                         //
-                        // Set timer for delay time.
+                        // Go towards the far beacon.
                         //
-                        timer.set(delay, event);
+                        robot.lineTrigger.setEnabled(true);
+                        robot.pidDrive.setTarget(
+                                0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? -24.0: 24.0, 0.0, false, event, 0.0);
                         sm.addEvent(event);
-                        sm.waitForEvents(State.MOVE_FORWARD);
+                        sm.waitForEvents(State.PUSH_BUTTON);
                     }
                     break;
 
-                case MOVE_FORWARD:
+                case GOTO_NEAR_BEACON:
                     //
-                    // Go forward fast.
-                    //
-                    robot.pidDrive.setTarget(
-                            startPos == FtcAuto.StartPosition.NEAR_MOUNTAIN? 65.0: 95.0, 0.0,
-                            false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.FIND_LINE);
-                    break;
-
-                case FIND_LINE:
-                    //
-                    // Drive forward slowly until we reach the line.
-                    // If line is detected, it will interrupt PID drive.
+                    // Go towards the near beacon.
                     //
                     robot.lineTrigger.setEnabled(true);
-                    robot.encoderYPidCtrl.setOutputRange(-0.3, 0.3);
-                    robot.pidDrive.setTarget(15.0, 0.0, false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.CLEAR_DEBRIS);
-                    break;
-
-                case CLEAR_DEBRIS:
-                    robot.lineTrigger.setEnabled(false);
-                    robot.pidDrive.setTarget(20.0, 0.0, false, event, 2.0);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.BACK_TO_LINE);
-                    break;
-
-                case BACK_TO_LINE:
-                    robot.pidDrive.setTarget(-20.0,
-                                             alliance == FtcAuto.Alliance.RED_ALLIANCE? 5.0: -5.0,
-                                             false, event, 2.0);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.FIND_LINE_AGAIN);
-                    break;
-
-                case FIND_LINE_AGAIN:
-//                    robot.lineTrigger.setTriggerPoints(robot.color2Zones);
-//                    robot.colorTrigger.setEnabled(true);
-                    robot.encoderYPidCtrl.setOutputRange(-0.2, 0.2);
-                    robot.pidDrive.setTarget(15.0, 0.0, false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.TURN_TO_LINE);
-                    break;
-
-                case TURN_TO_LINE:
-                    //
-                    // Turn slowly to find the edge of the line.
-                    // If line is detected, it will interrupt PID turn.
-                    //
-                    robot.gyroPidCtrl.setOutputRange(-0.75, 0.75);
+                    double dir = alliance == FtcAuto.Alliance.RED_ALLIANCE? 1.0: -1.0;
                     robot.pidDrive.setTarget(
-                            0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? -90.0: 90.0,
-                            false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.FOLLOW_LINE);
-                    break;
-
-                case FOLLOW_LINE:
-                    //
-                    // Follow the line until we are in front of the beacon .
-                    //
-                    /*
-                    robot.colorTrigger.setEnabled(false);
-                    robot.sonarPidCtrl.setOutputRange(-0.3, 0.3);;
-                    robot.colorPidCtrl.setOutputRange(-0.5, 0.5);
-                    robot.colorPidCtrl.setInverted(alliance == FtcAuto.Alliance.RED_ALLIANCE);
-                    robot.pidLineFollow.setTarget(
-                            RobotInfo.SONAR_BEACON_DISTANCE,
-                            RobotInfo.COLOR_LINE_EDGE_LEVEL,
-                            false, event, 4.0);
+                            0.0, beaconButtons == FtcAuto.BeaconButtons.NEAR_BEACON? dir*24.0: dir*48.0, 0.0,
+                            false, event, 0.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.PUSH_BUTTON);
-                    */
                     break;
 
                 case PUSH_BUTTON:
                     //
                     // Determine which button to press and press it.
-                    // Simultaneously dump the climbers into the bin and
-                    // wait for it to finish.
                     //
-//                    robot.colorPidCtrl.setOutputRange(-1.0, 1.0);
-//                    robot.sonarPidCtrl.setOutputRange(-1.0, 1.0);
-                    robot.gyroPidCtrl.setOutputRange(-1.0, 1.0);;
-                    robot.encoderYPidCtrl.setOutputRange(-1.0, 1.0);
-                    if (pushButton)
+                    robot.lineTrigger.setEnabled(false);
+                    int redValue = robot.beaconColorSensor.red();
+                    int greenValue = robot.beaconColorSensor.green();
+                    int blueValue = robot.beaconColorSensor.blue();
+                    boolean isRed = redValue > blueValue && redValue > greenValue;
+                    boolean isBlue = blueValue > redValue && blueValue > greenValue;
+                    tracer.traceInfo(
+                            moduleName, "[%d,%d,%d]isRed=%s,isBlue=%s",
+                            redValue, greenValue, blueValue, isRed? "true": "false", isBlue? "true": "false");
+                    //
+                    // Determine which button to push and do it.
+                    //
+                    if (alliance == FtcAuto.Alliance.RED_ALLIANCE && isRed ||
+                        alliance == FtcAuto.Alliance.BLUE_ALLIANCE && isBlue)
                     {
-                        int redValue = robot.beaconColorSensor.red();
-                        int greenValue = robot.beaconColorSensor.green();
-                        int blueValue = robot.beaconColorSensor.blue();
-                        boolean isRed = redValue > blueValue && redValue > greenValue;
-                        boolean isBlue = blueValue > redValue && blueValue > greenValue;
-                        tracer.traceInfo(
-                                moduleName, "[%d,%d,%d]isRed=%s,isBlue=%s",
-                                redValue, greenValue, blueValue,
-                                isRed? "true": "false",
-                                isBlue? "true": "false");
-                        //
-                        // Determine which button to push and do it.
-                        //
-                        if (alliance == FtcAuto.Alliance.RED_ALLIANCE && isRed ||
-                            alliance == FtcAuto.Alliance.BLUE_ALLIANCE && isBlue)
-                        {
-                            robot.rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_EXTEND_POSITION);
-                            rightPusherExtended = true;
-                        }
-                        else if (alliance == FtcAuto.Alliance.RED_ALLIANCE && isBlue ||
-                                 alliance == FtcAuto.Alliance.BLUE_ALLIANCE && isRed)
-                        {
-                            robot.leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_EXTEND_POSITION);
-                            leftPusherExtended = true;
-                        }
+                        robot.leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_EXTEND_POSITION);
+                        leftPusherExtended = true;
+                    }
+                    else if (alliance == FtcAuto.Alliance.RED_ALLIANCE && isBlue ||
+                             alliance == FtcAuto.Alliance.BLUE_ALLIANCE && isRed)
+                    {
+                        robot.rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_EXTEND_POSITION);
+                        rightPusherExtended = true;
                     }
                     //
-                    // It takes sometime for the arm to move and deposit the climber.
-                    // So set a timer to wait for it.
+                    // It takes sometime for the button pusher to extend, set a timer to wait for it.
                     //
                     timer.set(3.0, event);
                     sm.addEvent(event);
@@ -265,8 +255,21 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         rightPusherExtended = false;
                     }
 
+                    //
+                    // It takes sometime for the button pusher to retract, set a timer to wait for it.
+                    //
+                    timer.set(0.5, event);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.NEXT_BEACON_BUTTON);
+                    break;
 
-                    if (option == FtcAuto.BeaconOption.DO_NOTHING)
+                case NEXT_BEACON_BUTTON:
+                    if (beaconButtons == FtcAuto.BeaconButtons.BOTH)
+                    {
+                        beaconButtons = FtcAuto.BeaconButtons.NEAR_BEACON;
+                        sm.setState(State.GOTO_NEAR_BEACON);
+                    }
+                    else if (option == FtcAuto.BeaconOption.DO_NOTHING)
                     {
                         //
                         // Stay there, we are done!
@@ -298,7 +301,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                             sm.setState(State.GO_DEFENSE);
                         }
                     }
-                    else if (option == FtcAuto.BeaconOption.PARK_FLOOR_GOAL)
+                    else if (option == FtcAuto.BeaconOption.PARK_CENTER)
                     {
                         //
                         // Turn to face the floor goal.
@@ -307,9 +310,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                                 0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? 90.0: -90.0,
                                 false, event);
                         sm.addEvent(event);
-                        sm.waitForEvents(State.PARK_FLOOR_GOAL);
+                        sm.waitForEvents(State.PARK_CENTER);
                     }
-                    else if (option == FtcAuto.BeaconOption.PARK_MOUNTAIN)
+                    else if (option == FtcAuto.BeaconOption.PARK_CORNER)
                     {
                         //
                         // Turn to parallel the mountain.
@@ -333,7 +336,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     sm.waitForEvents(State.DONE);
                     break;
 
-                case PARK_FLOOR_GOAL:
+                case PARK_CORNER:
                     //
                     // Go into the floor goal.
                     //

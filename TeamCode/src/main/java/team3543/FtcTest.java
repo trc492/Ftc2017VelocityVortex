@@ -199,20 +199,17 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         dashboard.displayPrintf(11, LABEL_WIDTH, "Gyro: ", "Rate=%.1f,Heading=%.1f",
                                 robot.gyro.getZRotationRate().value,
                                 robot.gyro.getZHeading().value);
-        dashboard.displayPrintf(12, LABEL_WIDTH, "Shooter: ", "Pos=%.3f,Speed=%.3f",
-                                robot.shooter.getPosition(), robot.shooter.getSpeed());
+        dashboard.displayPrintf(12, LABEL_WIDTH, "Shooter: ", "Pos=%.3f,touch=%s",
+                                robot.shooter.getPosition(), Boolean.toString(robot.shooter.isTouchActive()));
         dashboard.displayPrintf(13, LABEL_WIDTH, "Beacon: ", "RGBAH=[%d,%d,%d,%d,%x]",
                                 robot.beaconColorSensor.red(),
                                 robot.beaconColorSensor.green(),
                                 robot.beaconColorSensor.blue(),
                                 robot.beaconColorSensor.alpha(),
                                 robot.beaconColorSensor.argb());
-
-        dashboard.displayPrintf(14, LABEL_WIDTH, "Line: ", "color=%d,white=%d", "touch sensor = %s",
+        dashboard.displayPrintf(14, LABEL_WIDTH, "Line: ", "color=%d,white=%d",
                                 (Integer)robot.lineDetectionSensor.getColorNumber().value,
-                                (Integer)robot.lineDetectionSensor.getWhiteValue().value,
-                                (robot.touchSensor.isActive()?"Active":"Inactive"));
-
+                                (Integer)robot.lineDetectionSensor.getWhiteValue().value);
         dashboard.displayPrintf(15, LABEL_WIDTH, "ServoPos: ", "BallGate=%.2f,Pusher=%.2f",
                                 ballGatePos, buttonPusherPos);
     }   //doSensorsTest
@@ -385,7 +382,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     {
                         ballGatePos += 0.01;
                         if (ballGatePos > 1.0) ballGatePos = 1.0;
-                        robot.ballGate.setPosition(ballGatePos);
+                        robot.shooter.setBallGatePosition(ballGatePos);
                     }
                     processed = true;
                     break;
@@ -395,7 +392,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     {
                         ballGatePos -= 0.01;
                         if (ballGatePos < 0.0) ballGatePos = 0.0;
-                        robot.ballGate.setPosition(ballGatePos);
+                        robot.shooter.setBallGatePosition(ballGatePos);
                     }
                     processed = true;
                     break;

@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import ftclib.FtcGamepad;
 import ftclib.FtcOpMode;
 import hallib.HalDashboard;
-import hallib.HalUtil;
 import trclib.TrcRobot;
 
 @TeleOp(name="TeleOp", group="3543TeleOp")
@@ -14,8 +13,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
     private enum DriveMode
     {
         TANK_MODE,
-        MECANUM_MODE_ONE_STICK,
-        MECANUM_MODE_TWO_STICKS
+        MECANUM_MODE,
     }   //enum DriveMode
 
     protected HalDashboard dashboard;
@@ -25,11 +23,12 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
     protected FtcGamepad operatorGamepad;
 
     private boolean invertedDrive = false;
-    private DriveMode   driveMode = DriveMode.MECANUM_MODE_ONE_STICK;
+    private DriveMode driveMode = DriveMode.MECANUM_MODE;
     private boolean conveyorOn = false;
-    private boolean ballGateOpen = false;
-    private boolean leftPusherExtend = false;
-    private boolean rightPusherExtend = false;
+    private boolean ballGateOpened = false;
+    private boolean leftPusherExtended = false;
+    private boolean rightPusherExtended = false;
+
     //
     // Implements FtcOpMode abstract method.
     //
@@ -81,51 +80,28 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         //
         // DriveBase subsystem.
         //
-        double x=0.0,y=0.0,rotation=0.0;
-
         switch(driveMode)
         {
             case TANK_MODE:
-            {
-                x = driverGamepad.getLeftStickY(true);
-                y = driverGamepad.getRightStickY(true);
+                double leftPower = driverGamepad.getLeftStickY(true);
+                double rightPower = driverGamepad.getRightStickY(true);
+                robot.driveBase.tankDrive(leftPower, rightPower, invertedDrive);
+                dashboard.displayPrintf(1, "Tank:left=%.2f,right=%.2f,inverted=%s",
+                        leftPower, rightPower, Boolean.toString(invertedDrive));
                 break;
-            }
-            case MECANUM_MODE_ONE_STICK:
-            {
-                x = driverGamepad.getLeftStickX(true);
-                y = driverGamepad.getLeftStickY(true);
-                rotation = driverGamepad.getRightTrigger(true)-driverGamepad.getLeftTrigger(true);
-                break;
-            }
-            case MECANUM_MODE_TWO_STICKS:
-            default:
-            {
-                x = driverGamepad.getRightStickX(true);
-                y = driverGamepad.getLeftStickY(true);
-                rotation = driverGamepad.getRightTrigger(true)-driverGamepad.getLeftTrigger(true);
-            }
 
+            case MECANUM_MODE:
+                double x = driverGamepad.getLeftStickX(true);
+                double y = driverGamepad.getRightStickY(true);
+                double rot = driverGamepad.getRightTrigger(true) - driverGamepad.getLeftTrigger(true);
+                robot.driveBase.mecanumDrive_Cartesian(x, y, rot, invertedDrive);
+                dashboard.displayPrintf(1, "Mecanum:x=%.2f,y=%.2f,rot=%.2f,inverted=%s",
+                        x, y, rot, Boolean.toString(invertedDrive));
+                break;
         }
-        if (driveMode != DriveMode.TANK_MODE)
-            robot.driveBase.mecanumDrive_Cartesian(x,y,rotation);
-        else
-            robot.driveBase.tankDrive(x,y);
-
-        dashboard.displayPrintf(1, "mode=%s,x=%.2f,y=%.2f,rot=%.2f",driveMode.toString(),x,y,rotation);
-        dashboard.displayPrintf(2, "yPos=%.2f,heading=%.2f",
-                               robot.driveBase.getYPosition(), robot.driveBase.getHeading());
-        //dashboard.displayPrintf(12,"ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
-        //getOpModeTracer().traceInfo("runPeriodic", "ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
+        dashboard.displayPrintf(2, "xPos=%.2f,yPos=%.2f,heading=%.2f",
+                robot.driveBase.getXPosition(), robot.driveBase.getYPosition(), robot.driveBase.getHeading());
     }   //runPeriodic
-
-    @Override
-    public void runContinuous(double elapsedTime)
-    {
-        super.runContinuous(elapsedTime);
-        dashboard.displayPrintf(12,"ShooterSpeed = %.3f, position = %.3f", robot.shooter.getSpeed(),robot.shooter.getPosition());
-        getOpModeTracer().traceInfo("runPeriodic", "ts = %.3f ShooterSpeed = %.3f, position = %.3f", HalUtil.getCurrentTime(),robot.shooter.getSpeed(),robot.shooter.getPosition());
-    }
 
     //
     // Implements FtcGamepad.ButtonHandler interface.
@@ -142,17 +118,15 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
             {
                 case FtcGamepad.GAMEPAD_A:
                     if (pressed)
-                        driveMode = DriveMode.MECANUM_MODE_ONE_STICK;
+                        driveMode = DriveMode.MECANUM_MODE;
                     break;
 
                 case FtcGamepad.GAMEPAD_B:
                     if (pressed)
-                        driveMode = DriveMode.MECANUM_MODE_TWO_STICKS;
+                        driveMode = DriveMode.TANK_MODE;
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
-                    if (pressed)
-                        driveMode = DriveMode.TANK_MODE;
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:
@@ -174,37 +148,46 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
                 case FtcGamepad.GAMEPAD_B:
                     if (pressed)
-                        robot.shooter.setPowerManually(1.0);
+                        robot.shooter.setPower(RobotInfo.SHOOTER_POWER);
                     else
-                        robot.shooter.setPowerManually(0.0);
+                        robot.shooter.setPower(0.0);
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:
-                    if (pressed) {
-                        ballGateOpen = !ballGateOpen;
-                        robot.ballGate.setPosition(ballGateOpen?RobotInfo.BALLGATE_OPEN_POSITION:RobotInfo.BALLGATE_CLOSE_POSITION);
+                    if (pressed)
+                    {
+                        ballGateOpened = !ballGateOpened;
+                        robot.shooter.setBallGatePosition(
+                                ballGateOpened? RobotInfo.BALLGATE_OPEN_POSITION: RobotInfo.BALLGATE_CLOSE_POSITION);
                     }
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
-                    if (pressed) {
+                    if (pressed)
+                    {
                         conveyorOn = !conveyorOn;
-                        robot.ballPickUp.setPower(conveyorOn?RobotInfo.BALL_PICKUP_MOTOR_POWER:0.0);
-                        robot.conveyor.setPower(conveyorOn?RobotInfo.CONVEYOR_MOTOR_POWER:0.0);
+                        robot.ballPickUp.setPower(conveyorOn? RobotInfo.BALL_PICKUP_MOTOR_POWER: 0.0);
+                        robot.conveyor.setPower(conveyorOn? RobotInfo.CONVEYOR_MOTOR_POWER: 0.0);
                     }
                     break;
 
                 case FtcGamepad.GAMEPAD_LBUMPER:
-                    if (pressed) {
-                        leftPusherExtend = !leftPusherExtend;
-                        robot.leftButtonPusher.setPosition(leftPusherExtend ? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION : RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+                    if (pressed)
+                    {
+                        leftPusherExtended = !leftPusherExtended;
+                        robot.leftButtonPusher.setPosition(
+                                leftPusherExtended? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION:
+                                                    RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
                     }
                     break;
 
                 case FtcGamepad.GAMEPAD_RBUMPER:
-                    if (pressed) {
-                        rightPusherExtend = !rightPusherExtend;
-                        robot.rightButtonPusher.setPosition(rightPusherExtend ? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION : RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+                    if (pressed)
+                    {
+                        rightPusherExtended = !rightPusherExtended;
+                        robot.rightButtonPusher.setPosition(
+                                rightPusherExtended? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION:
+                                                     RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
                     }
                     break;
 

@@ -43,10 +43,9 @@ public class RobotInfo
     public static final double SHOOTER_KF                       = 0.0;
     public static final double SHOOTER_TOLERANCE                = 2.0;
     public static final double SHOOTER_SETTLING                 = 0.2;
-    public static final double SHOOTER_HIGH_POWER               = 1.0;
-    public static final double SHOOTER_LOW_POWER                = 0.3;
-    public static final double SHOOTER_SPEED_HIGH_THRESHOLD     = 1667.0;
-    public static final double SHOOTER_SPEED_LOW_THRESHOLD      = 500.0;
+    public static final double SHOOTER_POWER                    = 1.0;
+    public static final double SHOOTER_BALLGATE_OPEN_TIME       = 0.5;
+    public static final double SHOOTER_PAUSE_TIME               = 0.1;
     public static final double SHOOTER_PULLBACK_TARGET          = 100.0;
 
     public static final double SHOOTER_SIMPLE_PULLBACK_TARGET   = 200.0; //initial pull back distance

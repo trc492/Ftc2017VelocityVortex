@@ -142,33 +142,39 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
             switch (button)
             {
                 case FtcGamepad.GAMEPAD_A:
-                    if (pressed)
-                        robot.shooter.fireOneShot();
+                    //
+                    // Load particle.
+                    //
+                    robot.shooter.setBallGatePosition(
+                            pressed? RobotInfo.BALLGATE_OPEN_POSITION: RobotInfo.BALLGATE_CLOSE_POSITION);
                     break;
 
                 case FtcGamepad.GAMEPAD_B:
-                    if (pressed)
-                        robot.shooter.setPower(RobotInfo.SHOOTER_POWER);
-                    else
-                        robot.shooter.setPower(0.0);
-                    break;
-
-                case FtcGamepad.GAMEPAD_Y:
+                    //
+                    // Arm and fire the particle.
+                    //
                     if (pressed)
                     {
-                        ballGateOpened = !ballGateOpened;
-                        robot.shooter.setBallGatePosition(
-                                ballGateOpened? RobotInfo.BALLGATE_OPEN_POSITION: RobotInfo.BALLGATE_CLOSE_POSITION);
+                        robot.shooter.fireOneShot();
                     }
                     break;
 
                 case FtcGamepad.GAMEPAD_X:
+                    //
+                    // Load particle, arm and fire the particle.
+                    // This is basically combining button A and B.
+                    //
                     if (pressed)
                     {
-                        conveyorOn = !conveyorOn;
-                        robot.ballPickUp.setPower(conveyorOn? RobotInfo.BALL_PICKUP_MOTOR_POWER: 0.0);
-                        robot.conveyor.setPower(conveyorOn? RobotInfo.CONVEYOR_MOTOR_POWER: 0.0);
+                        robot.shooter.loadAndFireOneShot();
                     }
+                    break;
+
+                case FtcGamepad.GAMEPAD_Y:
+                    //
+                    // Manual firing.
+                    //
+                    robot.shooter.setPower(pressed? RobotInfo.SHOOTER_POWER: 0.0);
                     break;
 
                 case FtcGamepad.GAMEPAD_LBUMPER:
@@ -199,16 +205,38 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
                 case FtcGamepad.GAMEPAD_DPAD_UP:
                     if (pressed)
-                        robot.shooter.fireContinuous(true);
+                    {
+                        robot.ballPickUp.setPower(RobotInfo.BALL_PICKUP_MOTOR_POWER);
+                        robot.conveyor.setPower(RobotInfo.CONVEYOR_MOTOR_POWER);
+                    }
+                    else
+                    {
+                        robot.ballPickUp.setPower(0.0);
+                        robot.conveyor.setPower(0.0);
+                    }
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_DOWN:
+                    if (pressed)
+                    {
+                        robot.ballPickUp.setPower(-RobotInfo.BALL_PICKUP_MOTOR_POWER);
+                        robot.conveyor.setPower(-RobotInfo.CONVEYOR_MOTOR_POWER);
+                    }
+                    else
+                    {
+                        robot.ballPickUp.setPower(0.0);
+                        robot.conveyor.setPower(0.0);
+                    }
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_LEFT:
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_RIGHT:
+                    if (pressed)
+                    {
+                        robot.shooter.fireContinuous(true);
+                    }
                     break;
             }
         }

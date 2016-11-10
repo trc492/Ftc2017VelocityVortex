@@ -109,7 +109,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 break;
 
             case X_TIMED_DRIVE:
-                doTimedDrive(0.2, 0.0, 0.0, driveTime);
+                doTimedDrive(0.5, 0.0, 0.0, driveTime);
                 break;
 
             case Y_DISTANCE_DRIVE:

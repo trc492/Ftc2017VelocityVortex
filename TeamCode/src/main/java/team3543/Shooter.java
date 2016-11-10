@@ -19,7 +19,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         ARM_AND_FIRE,
         PULL_BACK,
         DONE
-    }   //enum State
+    }   //enum ShooterState
 
     private String instanceName;
     private FtcDcMotor shooterMotor;
@@ -44,8 +44,9 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                 instanceName,
                 RobotInfo.SHOOTER_KP, RobotInfo.SHOOTER_KI, RobotInfo.SHOOTER_KD, RobotInfo.SHOOTER_KF,
                 RobotInfo.SHOOTER_TOLERANCE, RobotInfo.SHOOTER_SETTLING, this);
+        pidCtrl.setNoOscillation(true);
         pidMotor = new TrcPidMotor(instanceName, shooterMotor, pidCtrl);
-        touchSensor = new FtcTouchSensor("touchSensor");
+        touchSensor = new FtcTouchSensor("shooterTouch");
 
         ballGate = new FtcServo("gateServo");
         ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
@@ -100,25 +101,35 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         ballGate.setPosition(position);
     }
 
-    private void fire(boolean continuous, TrcEvent event)
+    private void fire(ShooterState startState, boolean continuous, TrcEvent event)
     {
         continuousModeOn = continuous;
         this.completionEvent = event;
         if (!sm.isEnabled())
         {
-            sm.start(ShooterState.LOAD_PARTICLE);
+            sm.start(startState);
             setEnabled(true);
         }
     }
 
     public void fireOneShot(TrcEvent event)
     {
-        fire(false, event);
+        fire(ShooterState.ARM_AND_FIRE, false, event);
     }
 
     public void fireOneShot()
     {
-        fire(false, null);
+        fire(ShooterState.ARM_AND_FIRE, false, null);
+    }
+
+    public void loadAndFireOneShot(TrcEvent event)
+    {
+        fire(ShooterState.LOAD_PARTICLE, false, event);
+    }
+
+    public void loadAndFireOneShot()
+    {
+        fire(ShooterState.LOAD_PARTICLE, false, null);
     }
 
     public void fireContinuous(boolean on)
@@ -126,7 +137,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         continuousModeOn = on;
         if (on)
         {
-            fire(true, null);
+            fire(ShooterState.LOAD_PARTICLE, true, null);
         }
     }
 

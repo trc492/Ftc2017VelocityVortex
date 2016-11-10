@@ -5,13 +5,13 @@ public class RobotInfo
     //
     // DriveBase subsystem.
     //
-    public static final double ENCODER_X_KP                     = 0.03;
+    public static final double ENCODER_X_KP                     = 0.5;
     public static final double ENCODER_X_KI                     = 0.0;
     public static final double ENCODER_X_KD                     = 0.0;
     public static final double ENCODER_X_KF                     = 0.0;
     public static final double ENCODER_X_TOLERANCE              = 2.0;
     public static final double ENCODER_X_SETTLING               = 0.2;
-    public static final double ENCODER_X_INCHES_PER_COUNT       = (103.0/9212.25);
+    public static final double ENCODER_X_INCHES_PER_COUNT       = (108.0/5248.2);
 
     public static final double ENCODER_Y_KP                     = 0.03;
     public static final double ENCODER_Y_KI                     = 0.0;
@@ -37,22 +37,28 @@ public class RobotInfo
     //
     // Shooter subsystem.
     //
-    public static final double SHOOTER_KP                       = 0.01;
+    public static final double SHOOTER_KP                       = 0.002;
     public static final double SHOOTER_KI                       = 0.0;
     public static final double SHOOTER_KD                       = 0.0;
     public static final double SHOOTER_KF                       = 0.0;
     public static final double SHOOTER_TOLERANCE                = 2.0;
     public static final double SHOOTER_SETTLING                 = 0.2;
     public static final double SHOOTER_POWER                    = 1.0;
-    public static final double SHOOTER_BALLGATE_OPEN_TIME       = 0.5;
+    public static final double SHOOTER_BALLGATE_OPEN_TIME       = 1.0;
     public static final double SHOOTER_PAUSE_TIME               = 0.1;
-    public static final double SHOOTER_PULLBACK_TARGET          = 100.0;
+    public static final double SHOOTER_PULLBACK_TARGET          = 380.0;
 
     public static final double SHOOTER_SIMPLE_PULLBACK_TARGET   = 200.0; //initial pull back distance
     public static final double SHOOTER_SIMPLE_ONESHOT_TARGET    = 1667.0 - SHOOTER_SIMPLE_PULLBACK_TARGET; //encoder distance for one shot minus pull back
     public static final double SHOOTER_SIMPLE_OPEN_GATE_DELAY   = 1.0; //delay for opening ball gate (in second)
     public static final double SHOOTER_SIPMLE_CLOSE_GATE_DELAY  = 1.0; //delay for closing ball gate
     public static final double SHOOTER_SIPMLE_AFTER_FIRE_DELAY  = 0.5;
+
+    //
+    // Ball gate subsystem.
+    //
+    public static final double BALLGATE_CLOSE_POSITION          = 0.69;
+    public static final double BALLGATE_OPEN_POSITION           = 0.56;
 
     //
     // Button pusher subsystem.
@@ -65,11 +71,6 @@ public class RobotInfo
     //
     public static final double BALL_PICKUP_MOTOR_POWER          = 1.0;
 
-    //
-    // Ball gate subsystem.
-    //
-    public static final double BALLGATE_CLOSE_POSITION          = 0.69;
-    public static final double BALLGATE_OPEN_POSITION           = 0.56;
     //
     // Conveyor subsystem.
     //

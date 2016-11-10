@@ -34,7 +34,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public FtcMRGyro gyro;
     public ColorSensor beaconColorSensor;
     public FtcMRI2cColorSensor lineDetectionSensor;
-
     //
     // DriveBase subsystem.
     //
@@ -51,8 +50,9 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
     public double[] lightZones = {RobotInfo.LINE_DARK_LEVEL, RobotInfo.LINE_WHITE_LEVEL};
     public TrcAnalogTrigger lineTrigger;
-
-    // subsystems
+    //
+    // Other subsystems.
+    //
     public Shooter shooter;
     public FtcServo leftButtonPusher;
     public FtcServo rightButtonPusher;
@@ -62,7 +62,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public Robot(TrcRobot.RunMode runMode)
     {
         //
-        // Global initialization.
+        // Initialize global objects.
         //
         opmode = FtcOpMode.getInstance();
         hardwareMap = opmode.hardwareMap;
@@ -70,7 +70,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         activity = (FtcRobotControllerActivity)hardwareMap.appContext;
         hardwareMap.logDevices();
         dashboard.setTextView((TextView)activity.findViewById(FtcSampleCode.R.id.textOpMode));
-
         //
         // Initialize sensors.
         //
@@ -80,7 +79,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         beaconColorSensor.enableLed(false);
         lineDetectionSensor = new FtcMRI2cColorSensor("lineDetectionSensor", 0x40, false);
         lineDetectionSensor.setLEDEnabled(true);
-
         //
         // Initialize DriveBase.
         //
@@ -120,7 +118,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 "lineTrigger", lineDetectionSensor, 0, lightZones, this);
 
         //
-        // Initialize subsystems.
+        // Initialize other subsystems.
         //
 
         shooter = new Shooter("shooter");
@@ -190,7 +188,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             if (zoneIndex > 0)
             {
                 //
-                // Encountering blue, red or white line, abort PID drive.
+                // Encountering white line, abort PID drive.
                 //
                 pidDrive.cancel();
             }

@@ -105,11 +105,12 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
     {
         continuousModeOn = continuous;
         this.completionEvent = event;
-        if (!sm.isEnabled())
+        if (sm.isEnabled())
         {
-            sm.start(startState);
-            setEnabled(true);
+            stop();
         }
+        sm.start(startState);
+        setEnabled(true);
     }
 
     public void fireOneShot(TrcEvent event)

@@ -21,7 +21,7 @@ public class RobotInfo
     public static final double ENCODER_Y_SETTLING               = 0.2;
     public static final double ENOCDER_Y_INCHES_PER_COUNT       = (103.0/9212.25);
 
-    public static final double GYRO_KP                          = 0.012;
+    public static final double GYRO_KP                          = 0.015;
     public static final double GYRO_KI                          = 0.0;
     public static final double GYRO_KD                          = 0.1;
     public static final double GYRO_KF                          = 0.0;
@@ -31,13 +31,13 @@ public class RobotInfo
     //
     // Line detection.
     //
-    public static final double LINE_DARK_LEVEL                  = 0.0;
-    public static final double LINE_WHITE_LEVEL                 = 3.0;
+    public static final double LINE_DARK_LEVEL                  = 2.0;
+    public static final double LINE_WHITE_LEVEL                 = 21.0;
 
     //
     // Shooter subsystem.
     //
-    public static final double SHOOTER_KP                       = 0.002;
+    public static final double SHOOTER_KP                       = 0.0025;
     public static final double SHOOTER_KI                       = 0.0;
     public static final double SHOOTER_KD                       = 0.0;
     public static final double SHOOTER_KF                       = 0.0;
@@ -57,7 +57,7 @@ public class RobotInfo
     //
     // Ball gate subsystem.
     //
-    public static final double BALLGATE_CLOSE_POSITION          = 0.69;
+    public static final double BALLGATE_CLOSE_POSITION          = 0.70;
     public static final double BALLGATE_OPEN_POSITION           = 0.56;
 
     //

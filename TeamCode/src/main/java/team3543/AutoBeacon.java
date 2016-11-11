@@ -121,9 +121,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     // Do delay if any.
                     //
-                    else if (delay > 0.0)
+                    else if (delay > 0.0 && delay - elapsedTime > 0)
                     {
-                        timer.set(delay, event);
+                        timer.set(delay - elapsedTime, event);
                         sm.addEvent(event);
                         sm.waitForEvents(State.GOTO_BEACONS);
                     }
@@ -184,7 +184,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         //
                         robot.lineTrigger.setEnabled(true);
                         robot.pidDrive.setTarget(
-                                0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? -24.0: 24.0, 0.0, false, event, 0.0);
+                                0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? 24.0: -24.0, 0.0, false, event, 0.0);
                         sm.addEvent(event);
                         sm.waitForEvents(State.PUSH_BUTTON);
                     }

@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import ftclib.FtcGamepad;
 import ftclib.FtcOpMode;
 import hallib.HalDashboard;
+import trclib.TrcBooleanState;
 import trclib.TrcRobot;
 
 @TeleOp(name="TeleOp", group="3543TeleOp")
@@ -16,6 +17,13 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         MECANUM_MODE,
     }   //enum DriveMode
 
+    private enum ConveyorMode
+    {
+        CONVEYOR_OFF,
+        CONVEYOR_FORWARD,
+        CONVEYOR_REVERSE
+    }   //enum ConveyorMode
+
     protected HalDashboard dashboard;
     protected Robot robot;
 
@@ -24,10 +32,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 
     private boolean invertedDrive = false;
     private DriveMode driveMode = DriveMode.MECANUM_MODE;
-    private boolean conveyorOn = false;
-    private boolean ballGateOpened = false;
-    private boolean leftPusherExtended = false;
-    private boolean rightPusherExtended = false;
+    private ConveyorMode conveyorMode = ConveyorMode.CONVEYOR_OFF;
 
     //
     // Implements FtcOpMode abstract method.
@@ -178,23 +183,13 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                     break;
 
                 case FtcGamepad.GAMEPAD_LBUMPER:
-                    if (pressed)
-                    {
-                        leftPusherExtended = !leftPusherExtended;
-                        robot.leftButtonPusher.setPosition(
-                                leftPusherExtended? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION:
-                                                    RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
-                    }
+                    robot.leftButtonPusher.setPosition(
+                            pressed? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION: RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
                     break;
 
                 case FtcGamepad.GAMEPAD_RBUMPER:
-                    if (pressed)
-                    {
-                        rightPusherExtended = !rightPusherExtended;
-                        robot.rightButtonPusher.setPosition(
-                                rightPusherExtended? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION:
-                                                     RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
-                    }
+                    robot.rightButtonPusher.setPosition(
+                            pressed? RobotInfo.BUTTON_PUSHER_EXTEND_POSITION: RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
                     break;
 
                 case FtcGamepad.GAMEPAD_BACK:
@@ -206,26 +201,36 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                 case FtcGamepad.GAMEPAD_DPAD_UP:
                     if (pressed)
                     {
-                        robot.ballPickUp.setPower(RobotInfo.BALL_PICKUP_MOTOR_POWER);
-                        robot.conveyor.setPower(RobotInfo.CONVEYOR_MOTOR_POWER);
-                    }
-                    else
-                    {
-                        robot.ballPickUp.setPower(0.0);
-                        robot.conveyor.setPower(0.0);
+                        conveyorMode = conveyorMode == ConveyorMode.CONVEYOR_FORWARD?
+                                ConveyorMode.CONVEYOR_OFF: ConveyorMode.CONVEYOR_FORWARD;
+                        if (conveyorMode == ConveyorMode.CONVEYOR_FORWARD)
+                        {
+                            robot.ballPickUp.setPower(RobotInfo.BALL_PICKUP_MOTOR_POWER);
+                            robot.conveyor.setPower(RobotInfo.CONVEYOR_MOTOR_POWER);
+                        }
+                        else
+                        {
+                            robot.ballPickUp.setPower(0.0);
+                            robot.conveyor.setPower(0.0);
+                        }
                     }
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_DOWN:
                     if (pressed)
                     {
-                        robot.ballPickUp.setPower(-RobotInfo.BALL_PICKUP_MOTOR_POWER);
-                        robot.conveyor.setPower(-RobotInfo.CONVEYOR_MOTOR_POWER);
-                    }
-                    else
-                    {
-                        robot.ballPickUp.setPower(0.0);
-                        robot.conveyor.setPower(0.0);
+                        conveyorMode = conveyorMode == ConveyorMode.CONVEYOR_REVERSE?
+                                ConveyorMode.CONVEYOR_OFF: ConveyorMode.CONVEYOR_REVERSE;
+                        if (conveyorMode == ConveyorMode.CONVEYOR_REVERSE)
+                        {
+                            robot.ballPickUp.setPower(-RobotInfo.BALL_PICKUP_MOTOR_POWER);
+                            robot.conveyor.setPower(-RobotInfo.CONVEYOR_MOTOR_POWER);
+                        }
+                        else
+                        {
+                            robot.ballPickUp.setPower(0.0);
+                            robot.conveyor.setPower(0.0);
+                        }
                     }
                     break;
 
@@ -233,10 +238,12 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_RIGHT:
+                    /*
                     if (pressed)
                     {
                         robot.shooter.fireContinuous(true);
                     }
+                    */
                     break;
             }
         }

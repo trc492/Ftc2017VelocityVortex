@@ -219,6 +219,8 @@ public class FtcAutoK9 extends FtcOpMode implements TrcPidController.PidInput,
                                                     -360.0, 360.0, 90.0, 360.0, "%.0f deg");
         FtcChoiceMenu allianceMenu = new FtcChoiceMenu("Alliance:", strategyMenu, this);
 
+        delayMenu.setChildMenu(strategyMenu);
+
         strategyMenu.addChoice("Do nothing", AutoStrategy.DO_NOTHING);
         strategyMenu.addChoice("Timed drive", AutoStrategy.TIMED_DRIVE, driveTimeMenu);
         strategyMenu.addChoice("Drive forward", AutoStrategy.DRIVE_AND_TURN, distanceMenu);
@@ -571,9 +573,9 @@ public class FtcAutoK9 extends FtcOpMode implements TrcPidController.PidInput,
 
                 case DRIVE:
                     //
-                    // Drive the given distance.
+                    // Drive the given distance in feet.
                     //
-                    pidDrive.setTarget(distance, 0.0, false, event);
+                    pidDrive.setTarget(distance*12.0, 0.0, false, event);
                     sm.addEvent(event);
                     sm.waitForEvents(DriveAndTurnState.TURN);
                     break;

@@ -43,7 +43,7 @@ import ftclib.FtcVuforia;
 import hallib.HalDashboard;
 
 @TeleOp(name="Test: Vuforia Targets Tracking", group="3543TestSamples")
-//@Disabled
+@Disabled
 public class FtcTestVuforia extends FtcOpMode
 {
     private final float MM_PER_INCH = 25.4f;

@@ -183,7 +183,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     {
         if (analogTrigger == lineTrigger && pidDrive.isEnabled())
         {
-            FtcOpMode.getOpModeTracer().traceInfo("Robot", "Entering zone %d (%.0f).",
+            FtcOpMode.getGlobalTracer().traceInfo("Robot", "Entering zone %d (%.0f).",
                                                   zoneIndex, zoneValue);
             if (zoneIndex > 0)
             {

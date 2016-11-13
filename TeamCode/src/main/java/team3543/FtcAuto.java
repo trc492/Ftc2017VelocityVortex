@@ -27,8 +27,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     public enum Strategy
     {
         DO_NOTHING,
-        DEFENSE,
-        BEACON
+        BEACON,
+        DEFENSE
     }   //enum Strategy
 
     public enum BeaconButtons
@@ -43,8 +43,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     {
         DO_NOTHING,
         PARK_CORNER,
-        PARK_CENTER,
-        DEFENSE,
+        PARK_CENTER
     }   //enum BeaconOption
 
     private HalDashboard dashboard;
@@ -81,13 +80,13 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         switch (strategy)
         {
-            case DEFENSE:
-                autoStrategy = new AutoDefense(robot, delay, driveDistance);
-                break;
-
             case BEACON:
                 autoStrategy = new AutoBeacon(
                         robot, alliance, startPos, delay, shootParticles, beaconButtons, beaconOption);
+                break;
+
+            case DEFENSE:
+                autoStrategy = new AutoDefense(robot, delay, driveDistance);
                 break;
 
             case DO_NOTHING:
@@ -96,7 +95,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 break;
         }
 
-        getOpModeTracer().traceInfo(
+        getGlobalTracer().traceInfo(
                 getOpModeName(),
                 "Strategy: %s(alliance=%s, startPos=%s, delay=%.0f, shootParticles=%d, beaconButton=%s, beaconOption=%s",
                 strategy.toString(), alliance.toString(), startPos.toString(), delay, shootParticles,
@@ -182,8 +181,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         delayMenu.setChildMenu(strategyMenu);
 
         strategyMenu.addChoice("Do nothing", Strategy.DO_NOTHING);
-        strategyMenu.addChoice("Defense", Strategy.DEFENSE, distanceMenu);
         strategyMenu.addChoice("Beacon", Strategy.BEACON, shootParticlesMenu);
+        strategyMenu.addChoice("Defense", Strategy.DEFENSE, distanceMenu);
 
         shootParticlesMenu.setChildMenu(beaconButtonsMenu);
 
@@ -193,7 +192,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         beaconButtonsMenu.addChoice("Both", BeaconButtons.BOTH, beaconOptionMenu);
 
         beaconOptionMenu.addChoice("Do nothing", BeaconOption.DO_NOTHING);
-        beaconOptionMenu.addChoice("Do defense", BeaconOption.DEFENSE);
         beaconOptionMenu.addChoice("Park center", BeaconOption.PARK_CENTER);
         beaconOptionMenu.addChoice("Park corner", BeaconOption.PARK_CORNER);
 

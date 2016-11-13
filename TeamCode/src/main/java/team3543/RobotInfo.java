@@ -37,7 +37,7 @@ public class RobotInfo
     //
     // Shooter subsystem.
     //
-    public static final double SHOOTER_KP                       = 0.0025;
+    public static final double SHOOTER_KP                       = 0.02;
     public static final double SHOOTER_KI                       = 0.0;
     public static final double SHOOTER_KD                       = 0.0;
     public static final double SHOOTER_KF                       = 0.0;
@@ -46,7 +46,8 @@ public class RobotInfo
     public static final double SHOOTER_POWER                    = 1.0;
     public static final double SHOOTER_BALLGATE_OPEN_TIME       = 1.0;
     public static final double SHOOTER_PAUSE_TIME               = 0.1;
-    public static final double SHOOTER_PULLBACK_TARGET          = 380.0;
+    public static final double SHOOTER_DEGREES_PER_COUNT        = (360.0/1680.0);
+    public static final double SHOOTER_PULLBACK_TARGET          = 80.0; //in degrees
 
     public static final double SHOOTER_SIMPLE_PULLBACK_TARGET   = 200.0; //initial pull back distance
     public static final double SHOOTER_SIMPLE_ONESHOT_TARGET    = 1667.0 - SHOOTER_SIMPLE_PULLBACK_TARGET; //encoder distance for one shot minus pull back

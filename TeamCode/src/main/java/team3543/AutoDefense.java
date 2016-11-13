@@ -20,7 +20,7 @@ public class AutoDefense implements TrcRobot.AutoStrategy
     private static final String moduleName = "AutoDefense";
 
     private HalDashboard dashboard;
-    private TrcDbgTrace tracer = FtcOpMode.getOpModeTracer();
+    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private Robot robot;
     private double delay;

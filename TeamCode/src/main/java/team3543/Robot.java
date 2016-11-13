@@ -113,6 +113,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 RobotInfo.GYRO_KD, RobotInfo.GYRO_KF,
                 RobotInfo.GYRO_TOLERANCE, RobotInfo.GYRO_SETTLING,
                 this);
+        gyroPidCtrl.setAbsoluteSetPoint(true);
         pidDrive = new TrcPidDrive("pidDrive", driveBase, encoderXPidCtrl, encoderYPidCtrl, gyroPidCtrl);
         lineTrigger = new TrcAnalogTrigger(
                 "lineTrigger", lineDetectionSensor, 0, lightZones, this);

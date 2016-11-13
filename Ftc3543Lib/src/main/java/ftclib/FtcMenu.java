@@ -155,7 +155,7 @@ public abstract class FtcMenu
             throw new NullPointerException("menuTitle/menuButtons cannot be null.");
         }
 
-        dashboard = FtcOpMode.getDashboard();
+        dashboard = HalDashboard.getInstance();
         this.menuTitle = menuTitle;
         this.parent = parent;
         this.menuButtons = menuButtons;
@@ -224,6 +224,7 @@ public abstract class FtcMenu
     public static void walkMenuTree(FtcMenu rootMenu)
     {
         setRootMenu(rootMenu);
+//        rootMenu.displayMenu();
         while (!runMenus())
         {
             HalUtil.sleep(LOOP_INTERVAL);
@@ -250,10 +251,6 @@ public abstract class FtcMenu
         {
             int currButtonStates = currMenu.getMenuButtons();
             int changedButtons = currButtonStates ^ prevButtonStates;
-            //
-            // Refresh the display to update the menu state.
-            //
-            currMenu.displayMenu();
             //
             // Check if any menu buttons changed states.
             //
@@ -295,8 +292,11 @@ public abstract class FtcMenu
                 {
                     currMenu.menuDown();
                 }
-
                 prevButtonStates = currButtonStates;
+                //
+                // Refresh the display to update the menu state.
+                //
+                currMenu.displayMenu();
             }
         }
 

@@ -176,7 +176,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     // Turn to parallel the wall.
                     //
                     robot.pidDrive.setTarget(
-                            0.0, 0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 100.0, false, event, 0.0);
+                            0.0, 0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? 15.0: 140.0, false, event, 0.0);
                     sm.addEvent(event);
                     nextState =
                             beaconButtons == FtcAuto.BeaconButtons.NEAR_BEACON.NEAR_BEACON?
@@ -220,7 +220,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                 case FIND_LINE:
                     robot.lineTrigger.setEnabled(true);
-                    robot.encoderYPidCtrl.setOutputRange(-0.5, 0.5);
+                    robot.encoderYPidCtrl.setOutputRange(-0.3, 0.3);
                     robot.pidDrive.setTarget(
                             0.0, alliance == FtcAuto.Alliance.RED_ALLIANCE? -8.0: 8.0, 0.0, false, event, 0.0);
                     sm.addEvent(event);
@@ -234,7 +234,6 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     robot.lineTrigger.setEnabled(false);
                     robot.encoderYPidCtrl.setOutputRange(-1.0, 1.0);
                     int redValue = robot.beaconColorSensor.red();
-                    robot.encoderYPidCtrl.setOutputRange(-0.5, 0.5);
                     int greenValue = robot.beaconColorSensor.green();
                     int blueValue = robot.beaconColorSensor.blue();
                     boolean isRed = redValue > blueValue && redValue > greenValue;

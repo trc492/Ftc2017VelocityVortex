@@ -224,7 +224,7 @@ public abstract class FtcMenu
     public static void walkMenuTree(FtcMenu rootMenu)
     {
         setRootMenu(rootMenu);
-//        rootMenu.displayMenu();
+        rootMenu.displayMenu();
         while (!runMenus())
         {
             HalUtil.sleep(LOOP_INTERVAL);
@@ -276,13 +276,6 @@ public abstract class FtcMenu
                     // MenuEnter is pressed, goto the child menu. If there is none, we are done.
                     //
                     currMenu = currMenu.getChildMenu();
-                    if (currMenu == null)
-                    {
-                        //
-                        // We are done with the menus. Let's clear the dashboard.
-                        //
-                        FtcOpMode.getDashboard().clearDisplay();
-                    }
                 }
                 else if ((buttonsPressed & MENUBUTTON_UP) != 0)
                 {
@@ -292,11 +285,21 @@ public abstract class FtcMenu
                 {
                     currMenu.menuDown();
                 }
-                prevButtonStates = currButtonStates;
                 //
                 // Refresh the display to update the menu state.
                 //
-                currMenu.displayMenu();
+                if (currMenu != null)
+                {
+                    currMenu.displayMenu();
+                }
+                else
+                {
+                    //
+                    // We are done with the menus. Let's clear the dashboard.
+                    //
+                    FtcOpMode.getDashboard().clearDisplay();
+                }
+                prevButtonStates = currButtonStates;
             }
         }
 

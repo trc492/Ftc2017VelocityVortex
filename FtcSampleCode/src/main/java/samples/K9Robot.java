@@ -180,7 +180,7 @@ public class K9Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trig
         //
         opmode = FtcOpMode.getInstance();
         hardwareMap = opmode.hardwareMap;
-        dashboard = opmode.getDashboard();
+        dashboard = HalDashboard.getInstance();
         activity = (FtcRobotControllerActivity) hardwareMap.appContext;
         hardwareMap.logDevices();
         dashboard.setTextView((TextView) activity.findViewById(FtcSampleCode.R.id.textOpMode));

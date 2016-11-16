@@ -58,7 +58,7 @@ public class FtcTeleOpVariableSpeedServo extends FtcOpMode
     public void initRobot()
     {
         hardwareMap.logDevices();
-        dashboard = getDashboard();
+        dashboard = HalDashboard.getInstance();
         //
         // Initializing Gamepad.
         //

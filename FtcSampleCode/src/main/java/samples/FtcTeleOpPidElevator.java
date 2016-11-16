@@ -51,7 +51,7 @@ public class FtcTeleOpPidElevator extends FtcOpMode implements FtcGamepad.Button
     public void initRobot()
     {
         hardwareMap.logDevices();
-        dashboard = getDashboard();
+        dashboard = HalDashboard.getInstance();
         //
         // Initializing Gamepad.
         //

@@ -88,7 +88,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         opmode = FtcOpMode.getInstance();
         hardwareMap = opmode.hardwareMap;
-        dashboard = opmode.getDashboard();
+        dashboard = HalDashboard.getInstance();
         activity = (FtcRobotControllerActivity)hardwareMap.appContext;
         hardwareMap.logDevices();
         dashboard.setTextView((TextView)activity.findViewById(FtcSampleCode.R.id.textOpMode));

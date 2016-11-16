@@ -69,9 +69,9 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         pidCtrl.setNoOscillation(true);
         pidMotor = new TrcPidMotor(instanceName, shooterMotor, pidCtrl);
         pidMotor.setPositionScale(RobotInfo.SHOOTER_DEGREES_PER_COUNT);
-        touchSensor = new FtcTouchSensor("shooterTouch");
+        touchSensor = new FtcTouchSensor("shooterTouchSensor");
 
-        ballGate = new FtcServo("gateServo");
+        ballGate = new FtcServo("ballGateServo");
         ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
 
         sm = new TrcStateMachine(instanceName);

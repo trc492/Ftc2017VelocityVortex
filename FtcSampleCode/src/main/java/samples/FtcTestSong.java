@@ -138,7 +138,7 @@ public class FtcTestSong extends FtcOpMode
     public void initRobot()
     {
         hardwareMap.logDevices();
-        dashboard = getDashboard();
+        dashboard = HalDashboard.getInstance();
 
         androidTone = new FtcAndroidTone("AndroidTone", WAVE_FORM, SAMPLE_RATE);
         androidTone.setSoundEnvelope(ATTACK, DECAY, SUSTAIN, RELEASE);

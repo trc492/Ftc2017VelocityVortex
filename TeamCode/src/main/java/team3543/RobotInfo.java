@@ -71,12 +71,6 @@ public class RobotInfo
     public static final double SHOOTER_DEGREES_PER_COUNT        = (360.0/1680.0);
     public static final double SHOOTER_PULLBACK_TARGET          = 80.0; //in degrees
 
-    public static final double SHOOTER_SIMPLE_PULLBACK_TARGET   = 200.0; //initial pull back distance
-    public static final double SHOOTER_SIMPLE_ONESHOT_TARGET    = 1667.0 - SHOOTER_SIMPLE_PULLBACK_TARGET; //encoder distance for one shot minus pull back
-    public static final double SHOOTER_SIMPLE_OPEN_GATE_DELAY   = 1.0; //delay for opening ball gate (in second)
-    public static final double SHOOTER_SIPMLE_CLOSE_GATE_DELAY  = 1.0; //delay for closing ball gate
-    public static final double SHOOTER_SIPMLE_AFTER_FIRE_DELAY  = 0.5;
-
     //
     // Ball gate subsystem.
     //
@@ -86,7 +80,7 @@ public class RobotInfo
     //
     // Button pusher subsystem.
     //
-    public static final double BUTTON_PUSHER_RETRACT_POSITION   = 0.2;
+    public static final double BUTTON_PUSHER_RETRACT_POSITION   = 0.0;
     public static final double BUTTON_PUSHER_EXTEND_POSITION    = 0.8;
 
     //

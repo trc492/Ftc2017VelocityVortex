@@ -51,7 +51,7 @@ public class FtcTestMRI2cGyro extends FtcOpMode
 
     {
         hardwareMap.logDevices();
-        dashboard = getDashboard();
+        dashboard = HalDashboard.getInstance();
         FtcRobotControllerActivity activity = (FtcRobotControllerActivity)hardwareMap.appContext;
         dashboard.setTextView((TextView)activity.findViewById(R.id.textOpMode));
         gyro = new FtcMRI2cGyro("mrGyro");

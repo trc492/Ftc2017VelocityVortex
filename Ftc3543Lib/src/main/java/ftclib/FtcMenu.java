@@ -297,7 +297,7 @@ public abstract class FtcMenu
                     //
                     // We are done with the menus. Let's clear the dashboard.
                     //
-                    FtcOpMode.getDashboard().clearDisplay();
+                    HalDashboard.getInstance().clearDisplay();
                 }
                 prevButtonStates = currButtonStates;
             }

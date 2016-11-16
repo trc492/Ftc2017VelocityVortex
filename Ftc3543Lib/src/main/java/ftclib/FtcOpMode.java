@@ -41,8 +41,8 @@ public abstract class FtcOpMode extends LinearOpMode implements TrcRobot.RobotMo
     private TrcDbgTrace dbgTrace = null;
 
     private static TrcDbgTrace globalTracer = null;
-    private static HalDashboard dashboard = null;
     private static String opModeName = null;
+    private HalDashboard dashboard = null;
 
     /**
      * This method is called to initialize the robot. In FTC, this is called when the
@@ -107,16 +107,6 @@ public abstract class FtcOpMode extends LinearOpMode implements TrcRobot.RobotMo
 
         return globalTracer;
     }   //getGlobalTracer
-
-    /**
-     * This method returns a global dashboard object for accessing the dashboard on the Driver Station.
-     *
-     * @return dashboard object.
-     */
-    public static HalDashboard getDashboard()
-    {
-        return dashboard;
-    }   //getDashboard
 
     /**
      * This method sets the global tracer configuration. The OpMode trace object was

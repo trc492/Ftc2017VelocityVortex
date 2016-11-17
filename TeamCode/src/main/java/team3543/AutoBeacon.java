@@ -34,21 +34,25 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
     private enum State
     {
         SHOOT_PARTICLES,
-        NEAR_GOTO_BEACON,
-        FAR_GOTO_BEACON,
+        MOVE_OUT,
+        TURN_TO_CAPBALL,
+        KNOCK_OUT_CAPBALL,
+        BACKUP,
+        TURN_TO_CENTER1,
+        PARK_CENTER1,
+        TURN_TO_CORNER1,
+        PARK_CORNER1,
         ALIGN_WALL,
         GOTO_WALL,
         FIND_LINE,
         PUSH_BUTTON,
         RETRACT,
         NEXT_BEACON,
-        TURN_TO_CENTER,
-        GOTO_CENTER,
-        KNOCK_OUT_BALL,
-        PARK_CENTER1,
-        PARK_CENTER2,
-        TURN_TO_CORNER,
-        KNOCK_OUT_CAPBALL,
+        TURN_TO_CENTER2,
+        GOTO_CENTER2,
+        GOTO_CORNER2,
+        TURN_TO_CORNER2,
+        PARK_CORNER2,
         DONE
     }   //enum State
 
@@ -62,7 +66,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
     private double delay;
     private int shootParticles;
     private int beaconButtons;
-    private FtcAuto.BeaconOption option;
+    private FtcAuto.ParkOption parkOption;
     private TrcEvent event;
     private TrcTimer timer;
     private TrcStateMachine sm;
@@ -70,6 +74,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
     private boolean leftPusherExtended = false;
     private boolean rightPusherExtended = false;
     private double startTime = 0.0;
+    private double heading = 0.0;
+    private int remainingBeaconButtons = 0;
 
     public AutoBeacon(
             Robot robot,
@@ -78,7 +84,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
             double delay,
             int shootParticles,
             int beaconButtons,
-            FtcAuto.BeaconOption option)
+            FtcAuto.ParkOption parkOption)
     {
         this.robot = robot;
         this.alliance = alliance;
@@ -86,7 +92,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
         this.delay = delay;
         this.shootParticles = shootParticles;
         this.beaconButtons = beaconButtons;
-        this.option = option;
+        this.remainingBeaconButtons = beaconButtons;
+        this.parkOption = parkOption;
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine(moduleName);
@@ -96,7 +103,6 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
     @Override
     public void autoPeriodic(double elapsedTime)
     {
-        State nextState;
         //
         // Print debug info.
         //
@@ -122,6 +128,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
         if (sm.isReady())
         {
             State state = (State)sm.getState();
+            State nextState;
+            double driveDistance;
+            double timeout;
 
             switch (state)
             {
@@ -150,45 +159,111 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         sm.addEvent(event);
                         sm.waitForEvents(State.SHOOT_PARTICLES);
                     }
+                    //
+                    // Do delay if any.
+                    //
+                    else if (delay > 0.0 && delay - elapsedTime > 0)
+                    {
+                        timer.set(delay - elapsedTime, event);
+                        sm.addEvent(event);
+                        sm.waitForEvents(State.MOVE_OUT);
+                    }
                     else
                     {
-                        nextState = beaconButtons == 0?
-                                            State.KNOCK_OUT_CAPBALL:
-                                    startPos == FtcAuto.StartPosition.NEAR?
-                                            State.NEAR_GOTO_BEACON: State.FAR_GOTO_BEACON;
-                        //
-                        // Do delay if any.
-                        //
-                        if (delay > 0.0 && delay - elapsedTime > 0)
-                        {
-                            timer.set(delay - elapsedTime, event);
-                            sm.addEvent(event);
-                            sm.waitForEvents(nextState);
-                        }
-                        else
-                        {
-                            sm.setState(nextState);
-                        }
+                        sm.setState(State.MOVE_OUT);
                     }
                     break;
 
-                case NEAR_GOTO_BEACON:
+                case MOVE_OUT:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 80.0, -50.0, false, event, 6.0);
+                    robot.pidDrive.setTarget(0.0, 12.0, heading, false, event, 2.0);
                     sm.addEvent(event);
-                    sm.waitForEvents(State.ALIGN_WALL);
+                    sm.waitForEvents(State.TURN_TO_CAPBALL);
                     break;
 
-                case FAR_GOTO_BEACON:
+                case TURN_TO_CAPBALL:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
+                    heading = -16.0;
+                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, 1.0);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.KNOCK_OUT_CAPBALL);
+                    break;
+
+                case KNOCK_OUT_CAPBALL:
+                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
+                    startTime = elapsedTime;
+                    if (beaconButtons == 0)
+                    {
+                        nextState = State.BACKUP;
+                    }
+                    else
+                    {
+                        nextState = State.ALIGN_WALL;
+                    }
+                    robot.pidDrive.setTarget(0.0, 60.0, heading, false, event, 6.0);
+                    sm.addEvent(event);
+                    sm.waitForEvents(nextState);
+                    break;
+
+                case BACKUP:
+                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
+                    startTime = elapsedTime;
+                    if (parkOption == FtcAuto.ParkOption.PARK_CORNER)
+                    {
+                        driveDistance = -30.0;
+                        timeout = 4.0;
+                    }
+                    else
+                    {
+                        driveDistance = -64.0;
+                        timeout = 6.0;
+                    }
+                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
+                    nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER? State.TURN_TO_CENTER1:
+                                parkOption == FtcAuto.ParkOption.PARK_CORNER? State.TURN_TO_CORNER1: State.DONE;
+                    sm.addEvent(event);
+                    sm.waitForEvents(nextState);
+                    break;
+
+                case TURN_TO_CENTER1:
+                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
+                    startTime = elapsedTime;
+                    heading = 10.0;
+                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, 2.0);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.PARK_CENTER1);
+                    break;
+
+                case PARK_CENTER1:
+                    robot.pidDrive.setTarget(0.0, 48.0, heading, false, event, 2.0);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.DONE);
+                    break;
+
+                case TURN_TO_CORNER1:
+                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
+                    startTime = elapsedTime;
+                    heading = -135.0;
+                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, 3.0);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.PARK_CORNER1);
+                    break;
+
+                case PARK_CORNER1:
+                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
+                    startTime = elapsedTime;
+                    robot.pidDrive.setTarget(0.0, 60.0, heading, false, event, 3.0);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.DONE);
                     break;
 
                 case ALIGN_WALL:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 0.0, 0.0, false, event, 2.0);
+                    heading = 0.0;
+                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, 2.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.GOTO_WALL);
                     break;
@@ -196,7 +271,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case GOTO_WALL:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    robot.pidDrive.setTarget(-24.0, 0.0, 0.0, false, event, 3.0);
+                    robot.pidDrive.setTarget(-24.0, 0.0, heading, false, event, 3.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.FIND_LINE);
                     break;
@@ -206,7 +281,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     startTime = elapsedTime;
                     robot.lineTrigger.setEnabled(true);
                     robot.encoderYPidCtrl.setOutputRange(-0.12, 0.12);
-                    robot.pidDrive.setTarget(0.0, -30.0, 0.0, false, event, 3.0);
+                    robot.pidDrive.setTarget(0.0, -30.0, heading, false, event, 3.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.PUSH_BUTTON);
                     break;
@@ -250,7 +325,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     if (leftPusherExtended || rightPusherExtended)
                     {
-                        timer.set(1.0, event);
+                        timer.set(3.0, event);
                         sm.addEvent(event);
                         sm.waitForEvents(State.RETRACT);
                     }
@@ -288,14 +363,14 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case NEXT_BEACON:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    if (beaconButtons == 2)
+                    if (remainingBeaconButtons == 2)
                     {
-                        robot.pidDrive.setTarget(0.0, 55.0, 0.0, false, event, 0.0);
-                        beaconButtons--;
+                        robot.pidDrive.setTarget(0.0, 55.0, heading, false, event, 4.0);
+                        remainingBeaconButtons--;
                         sm.addEvent(event);
                         sm.waitForEvents(State.FIND_LINE);
                     }
-                    else if (option == FtcAuto.BeaconOption.DO_NOTHING)
+                    else if (parkOption == FtcAuto.ParkOption.DO_NOTHING)
                     {
                         //
                         // Stay there, we are done!
@@ -304,65 +379,86 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     }
                     else
                     {
-                        robot.pidDrive.setTarget(12.0, 0.0, 0.0, false, event, 2.0);
+                        //
+                        // We are going somewhere. let's get off the wall so we can turn.
+                        //
+                        robot.pidDrive.setTarget(12.0, 0.0, heading, false, event, 2.0);
+                        nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER?
+                                State.TURN_TO_CENTER2: State.GOTO_CORNER2;
                         sm.addEvent(event);
-                        nextState = option == FtcAuto.BeaconOption.PARK_CENTER?
-                                State.TURN_TO_CENTER: State.TURN_TO_CORNER;
                         sm.waitForEvents(nextState);
                     }
                     break;
 
-                case KNOCK_OUT_CAPBALL:
+                case TURN_TO_CENTER2:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 60.0, 0.0, false, event, 0.0);
+                    if (beaconButtons == 2)
+                    {
+                        heading = 135.0;
+                        timeout = 3.0;
+                    }
+                    else
+                    {
+                        heading = 45.0;
+                        timeout = 2.0;
+                    }
+                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
+                    sm.addEvent(event);
+                    sm.waitForEvents(State.GOTO_CENTER2);
+                    break;
+
+                case GOTO_CENTER2:
+                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
+                    startTime = elapsedTime;
+                    if (beaconButtons == 2)
+                    {
+                        driveDistance = 60.0;
+                        timeout = 5.0;
+                    }
+                    else
+                    {
+                        driveDistance = 48.0;
+                        timeout = 3.0;
+                    }
+                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
                     sm.addEvent(event);
                     sm.waitForEvents(State.DONE);
                     break;
 
-                case TURN_TO_CENTER:
+                case GOTO_CORNER2:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 0.0, 90.0, false, event, 2.0);
+                    if (beaconButtons == 2)
+                    {
+                        driveDistance = -60.0;
+                        timeout = 6.0;
+                    }
+                    else
+                    {
+                        driveDistance = -30.0;
+                        timeout = 3.0;
+                    }
+                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
                     sm.addEvent(event);
-                    sm.waitForEvents(State.GOTO_CENTER);
+                    sm.waitForEvents(State.TURN_TO_CORNER2);
                     break;
 
-                case GOTO_CENTER:
+                case TURN_TO_CORNER2:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 30.0, 90.0, false, event, 3.0);
+                    heading = 45.0;
+                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, 2.0);
                     sm.addEvent(event);
-                    sm.waitForEvents(State.KNOCK_OUT_BALL);
+                    sm.waitForEvents(State.PARK_CORNER2);
                     break;
 
-                case KNOCK_OUT_BALL:
+                case PARK_CORNER2:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 0.0, 120.0, false, event, 1.0);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.PARK_CENTER1);
-                    break;
-
-                case PARK_CENTER1:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 16.0, 240.0, false, event, 1.0);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
-                    break;
-
-                case PARK_CENTER2:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 30.0, 240.0, false, event, 1.0);
+                    robot.pidDrive.setTarget(0.0, -24.0, heading, false, event, 2.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.DONE);
-                    break;
-
-                case TURN_TO_CORNER:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
                     break;
 
                 case DONE:

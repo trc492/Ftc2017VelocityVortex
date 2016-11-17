@@ -185,7 +185,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case TURN_TO_CAPBALL:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    heading = -16.0;
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -16.0: 22.0;
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, 1.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.KNOCK_OUT_CAPBALL);
@@ -194,14 +194,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case KNOCK_OUT_CAPBALL:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    if (beaconButtons == 0)
-                    {
-                        nextState = State.BACKUP;
-                    }
-                    else
-                    {
-                        nextState = State.ALIGN_WALL;
-                    }
+                    nextState = beaconButtons == 0? State.BACKUP: State.ALIGN_WALL;
                     robot.pidDrive.setTarget(0.0, 60.0, heading, false, event, 6.0);
                     sm.addEvent(event);
                     sm.waitForEvents(nextState);
@@ -212,7 +205,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     startTime = elapsedTime;
                     if (parkOption == FtcAuto.ParkOption.PARK_CORNER)
                     {
-                        driveDistance = -30.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -30.0: -25.0;
                         timeout = 4.0;
                     }
                     else
@@ -230,7 +223,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case TURN_TO_CENTER1:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    heading = 10.0;
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 10.0: -10.0;
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, 2.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.PARK_CENTER1);
@@ -245,7 +238,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case TURN_TO_CORNER1:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    heading = -135.0;
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -135.0: 135.0;
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, 3.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.PARK_CORNER1);
@@ -254,7 +247,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case PARK_CORNER1:
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
-                    robot.pidDrive.setTarget(0.0, 60.0, heading, false, event, 3.0);
+                    driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 60.0: 56.0;
+                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, 3.0);
                     sm.addEvent(event);
                     sm.waitForEvents(State.DONE);
                     break;

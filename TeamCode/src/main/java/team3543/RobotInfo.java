@@ -80,8 +80,8 @@ public class RobotInfo
     //
     // Button pusher subsystem.
     //
-    public static final double BUTTON_PUSHER_RETRACT_POSITION   = 0.0;
-    public static final double BUTTON_PUSHER_EXTEND_POSITION    = 0.8;
+    public static final double BUTTON_PUSHER_RETRACT_POSITION   = (55.0/255.0);
+    public static final double BUTTON_PUSHER_EXTEND_POSITION    = (200.0/255.0);
 
     //
     // Ball pickup subsystem.

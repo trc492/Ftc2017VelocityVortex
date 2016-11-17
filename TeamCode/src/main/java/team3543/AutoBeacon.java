@@ -151,8 +151,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.AIM_CENTER_VORTEX);
+                    sm.waitForSingleEvent(event, State.AIM_CENTER_VORTEX);
                     break;
 
                 case AIM_CENTER_VORTEX:
@@ -166,8 +165,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.GOTO_CENTER_VORTEX);
+                    sm.waitForSingleEvent(event, State.GOTO_CENTER_VORTEX);
                     break;
 
                 case GOTO_CENTER_VORTEX:
@@ -181,15 +179,13 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.SHOOT_PARTICLES);
+                    sm.waitForSingleEvent(event, State.SHOOT_PARTICLES);
                     break;
 
                 case SHOOT_PARTICLES:
                     if (startTime > 0.0)
                     {
-                        tracer.traceInfo(state.toString(), "[%5.3f] particles=%d",
-                                elapsedTime - startTime, shootParticles);
+                        tracer.traceInfo(state.toString(), "[%5.3f] particles=%d", elapsedTime - startTime, shootParticles);
                     }
                     startTime = elapsedTime;
                     //
@@ -207,8 +203,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                             robot.shooter.loadAndFireOneShot(event);
                         }
                         shootParticles--;
-                        sm.addEvent(event);
-                        sm.waitForEvents(State.SHOOT_PARTICLES);
+                        sm.waitForSingleEvent(event, State.SHOOT_PARTICLES);
                     }
                     //
                     // Do delay if any.
@@ -219,8 +214,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         if (delay > 0.0 && delay - elapsedTime > 0)
                         {
                             timer.set(delay - elapsedTime, event);
-                            sm.addEvent(event);
-                            sm.waitForEvents(nextState);
+                            sm.waitForSingleEvent(event, nextState);
                         }
                         else
                         {
@@ -237,8 +231,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.TURN_TO_CAPBALL);
+                    sm.waitForSingleEvent(event, State.TURN_TO_CAPBALL);
                     break;
 
                 case TURN_TO_CAPBALL:
@@ -249,8 +242,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = selectParameter(startPos, alliance, 1.0, 1.0, 2.0, 2.0);
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.KNOCK_OUT_CAPBALL);
+                    sm.waitForSingleEvent(event, State.KNOCK_OUT_CAPBALL);
                     break;
 
                 case KNOCK_OUT_CAPBALL:
@@ -263,8 +255,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 6.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(nextState);
+                    sm.waitForSingleEvent(event, nextState);
                     break;
 
                 case BACKUP:
@@ -293,8 +284,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                                 parkOption == FtcAuto.ParkOption.PARK_CORNER? State.TURN_TO_CORNER1: State.DONE;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(nextState);
+                    sm.waitForSingleEvent(event, nextState);
                     break;
 
                 case TURN_TO_CENTER1:
@@ -305,8 +295,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.PARK_CENTER1);
+                    sm.waitForSingleEvent(event, State.PARK_CENTER1);
                     break;
 
                 case PARK_CENTER1:
@@ -317,8 +306,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
+                    sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case TURN_TO_CORNER1:
@@ -329,8 +317,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 3.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.PARK_CORNER1);
+                    sm.waitForSingleEvent(event, State.PARK_CORNER1);
                     break;
 
                 case PARK_CORNER1:
@@ -341,8 +328,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 3.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
+                    sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case ALIGN_WALL:
@@ -353,8 +339,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.GOTO_WALL);
+                    sm.waitForSingleEvent(event, State.GOTO_WALL);
                     break;
 
                 case GOTO_WALL:
@@ -365,8 +350,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 3.0;
 
                     robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.FIND_LINE);
+                    sm.waitForSingleEvent(event, State.FIND_LINE);
                     break;
 
                 case FIND_LINE:
@@ -380,8 +364,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 3.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.PUSH_BUTTON);
+                    sm.waitForSingleEvent(event, State.PUSH_BUTTON);
                     break;
 
                 case PUSH_BUTTON:
@@ -426,8 +409,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     if (leftPusherExtended || rightPusherExtended)
                     {
                         timer.set(3.0, event);
-                        sm.addEvent(event);
-                        sm.waitForEvents(State.RETRACT);
+                        sm.waitForSingleEvent(event, State.RETRACT);
                     }
                     else
                     {
@@ -456,8 +438,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     // It takes sometime for the button pusher to retract, set a timer to wait for it.
                     //
                     timer.set(0.5, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.NEXT_BEACON);
+                    sm.waitForSingleEvent(event, State.NEXT_BEACON);
                     break;
 
                 case NEXT_BEACON:
@@ -470,8 +451,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                         robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
                         remainingBeaconButtons--;
-                        sm.addEvent(event);
-                        sm.waitForEvents(State.FIND_LINE);
+                        sm.waitForSingleEvent(event, State.FIND_LINE);
                     }
                     else if (parkOption == FtcAuto.ParkOption.DO_NOTHING)
                     {
@@ -492,8 +472,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         timeout = 2.0;
 
                         robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);
-                        sm.addEvent(event);
-                        sm.waitForEvents(nextState);
+                        sm.waitForSingleEvent(event, nextState);
                     }
                     break;
 
@@ -513,8 +492,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     }
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.GOTO_CENTER2);
+                    sm.waitForSingleEvent(event, State.GOTO_CENTER2);
                     break;
 
                 case GOTO_CENTER2:
@@ -533,8 +511,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     }
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
+                    sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case GOTO_CORNER2:
@@ -553,8 +530,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     }
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.TURN_TO_CORNER2);
+                    sm.waitForSingleEvent(event, State.TURN_TO_CORNER2);
                     break;
 
                 case TURN_TO_CORNER2:
@@ -565,8 +541,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.PARK_CORNER2);
+                    sm.waitForSingleEvent(event, State.PARK_CORNER2);
                     break;
 
                 case PARK_CORNER2:
@@ -577,8 +552,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
+                    sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case DONE:

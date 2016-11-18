@@ -45,7 +45,7 @@ public class RobotInfo
 
     public static final double GYRO_KP                          = 0.015;
     public static final double GYRO_KI                          = 0.0;
-    public static final double GYRO_KD                          = 0.1;
+    public static final double GYRO_KD                          = 0.05;
     public static final double GYRO_KF                          = 0.0;
     public static final double GYRO_TOLERANCE                   = 2.0;
     public static final double GYRO_SETTLING                    = 0.2;

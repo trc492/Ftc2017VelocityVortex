@@ -140,11 +140,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     // This state is called only for FAR StartPosition.
                     //
-                    if (startTime > 0.0)
-                    {
-                        tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime, shootParticles);
-                    }
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 6.0: 8.0;
                     timeout = 2.0;
@@ -157,8 +153,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     // This state is called only for FAR StartPosition.
                     //
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     heading = selectParameter(startPos, alliance, 0.0, 0.0, -45.0, 40.0);
                     timeout = 2.0;
@@ -171,8 +166,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     // This state is called only for FAR StartPosition.
                     //
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     driveDistance = 6.0;
                     timeout = 2.0;
@@ -182,11 +176,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case SHOOT_PARTICLES:
-                    if (startTime > 0.0)
-                    {
-                        tracer.traceInfo(state.toString(), "[%5.3f] particles=%d", elapsedTime - startTime, shootParticles);
-                    }
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
+                    tracer.traceInfo(state.toString(), "NumParticles=%d", shootParticles);
                     //
                     // Fire a particle if any.
                     //
@@ -223,8 +214,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case MOVE_OUT:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     driveDistance = 12.0;
                     timeout = 2.0;
@@ -234,8 +224,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case TURN_TO_CAPBALL:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     heading = selectParameter(startPos, alliance, -13.0, 18.0, -58.0, 55.0);
                     timeout = selectParameter(startPos, alliance, 2.0, 2.0, 2.0, 2.0);
@@ -245,8 +234,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case KNOCK_OUT_CAPBALL:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     nextState = beaconButtons == 0? State.BACKUP: State.ALIGN_WALL;
 
@@ -258,8 +246,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case BACKUP:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     if (parkOption == FtcAuto.ParkOption.PARK_CORNER)
                     {
@@ -279,8 +266,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case TURN_TO_CENTER1:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     heading = selectParameter(startPos, alliance, 13.0, -11.0, 0.0, -6.0);
                     timeout = 2.0;
@@ -290,8 +276,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case PARK_CENTER1:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     driveDistance = selectParameter(startPos, alliance, 50.0, 50.0, 22.0, 24.0);
                     timeout = selectParameter(startPos, alliance, 5.0, 5.0, 5.0, 5.0);
@@ -301,8 +286,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case TURN_TO_CORNER1:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -135.0: 135.0;
                     timeout = 3.0;
@@ -312,8 +296,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case PARK_CORNER1:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 60.0: 56.0;
                     timeout = 3.0;
@@ -323,8 +306,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case ALIGN_WALL:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
                     timeout = alliance == FtcAuto.Alliance.RED_ALLIANCE? 2.0: 4.0;
@@ -334,8 +316,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case GOTO_WALL:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     if (beaconButtons == 2 && remainingBeaconButtons == 1)
                     {
@@ -353,8 +334,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case BACKOUT:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     driveDistance = 3.0;
                     timeout = 2.0;
@@ -364,8 +344,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case FIND_LINE:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     robot.lineTrigger.setEnabled(true);
                     robot.encoderYPidCtrl.setOutputRange(-0.1, 0.1);
@@ -378,8 +357,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case PUSH_BUTTON:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     robot.lineTrigger.setEnabled(false);
                     robot.encoderYPidCtrl.setOutputRange(-1.0, 1.0);
@@ -428,8 +406,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case RETRACT:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
                     //
                     // Release the button pusher and retract the hanging hook.
                     //
@@ -452,8 +429,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case NEXT_BEACON:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
+
                     if (remainingBeaconButtons == 2)
                     {
                         driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 55.0: 52.0;
@@ -487,8 +464,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case TURN_TO_CENTER2:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     if (beaconButtons == 2)
                     {
@@ -506,8 +482,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case GOTO_CENTER2:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     if (beaconButtons == 2)
                     {
@@ -525,8 +500,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case GOTO_CORNER2:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
+                    traceDbgInfo(elapsedTime, state);
 
                     if (beaconButtons == 2)
                     {
@@ -545,7 +519,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                 case DONE:
                 default:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
+                    traceDbgInfo(elapsedTime, state);
                     //
                     // We are done.
                     //
@@ -582,5 +556,16 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
             }
         }
     }   //selectParameter
+
+    private void traceDbgInfo(double elapsedTime, State state)
+    {
+        tracer.traceInfo(
+                state.toString(), "[%5.3f] StateElapsedTime=%5.3f",
+                elapsedTime, startTime == 0? 0.0: elapsedTime - startTime);
+        startTime = elapsedTime;
+        robot.encoderXPidCtrl.printPidInfo(tracer);
+        robot.encoderYPidCtrl.printPidInfo(tracer);
+        robot.gyroPidCtrl.printPidInfo(tracer);
+    }   //traceDbgInfo
 
 }   //class AutoBeacon

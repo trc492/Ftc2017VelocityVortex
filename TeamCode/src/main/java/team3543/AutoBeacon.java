@@ -152,8 +152,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     // This state is called only for FAR StartPosition.
                     //
-                    heading = selectParameter(startPos, alliance, 0.0, 0.0, -45.0, 40.0);
-                    timeout = 2.0;
+                    heading = selectParameter(startPos, alliance, 0.0, 0.0, -45.0, 43.0);
+                    timeout = 3.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
                     sm.waitForSingleEvent(event, State.GOTO_CENTER_VORTEX);
@@ -216,8 +216,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case TURN_TO_CAPBALL:
-                    heading = selectParameter(startPos, alliance, -13.0, 18.0, -58.0, 55.0);
-                    timeout = selectParameter(startPos, alliance, 2.0, 2.0, 2.0, 2.0);
+                    heading = selectParameter(startPos, alliance, -13.0, 18.0, -58.0, 59.0);
+                    timeout = selectParameter(startPos, alliance, 2.0, 2.0, 3.0, 3.0);
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
                     sm.waitForSingleEvent(event, State.KNOCK_OUT_CAPBALL);
@@ -226,7 +226,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case KNOCK_OUT_CAPBALL:
                     nextState = beaconButtons == 0? State.BACKUP: State.ALIGN_WALL;
 
-                    driveDistance = selectParameter(startPos, alliance, 60.0, 72.0, 80.0, 80.0);
+                    driveDistance = selectParameter(
+                            startPos, alliance, 60.0, beaconButtons != 0? 72.0: 60.0, 80.0, 80.0);
                     timeout = selectParameter(startPos, alliance, 6.0, 6.0, 8.0, 8.0);
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
@@ -241,8 +242,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     }
                     else
                     {
-                        driveDistance = selectParameter(startPos, alliance, -64.0, -66.0, -46.0, -32.0);
-                        timeout = selectParameter(startPos, alliance, 6.0, 4.0, 0.0, 0.0);
+                        driveDistance = selectParameter(startPos, alliance, -64.0, -66.0, -46.0, -50.0);
+                        timeout = selectParameter(startPos, alliance, 6.0, 6.0, 5.0, 5.0);
                     }
                     nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER? State.TURN_TO_CENTER1:
                                 parkOption == FtcAuto.ParkOption.PARK_CORNER? State.TURN_TO_CORNER1: State.DONE;
@@ -260,7 +261,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case PARK_CENTER1:
-                    driveDistance = selectParameter(startPos, alliance, 50.0, 50.0, 22.0, 24.0);
+                    driveDistance = selectParameter(startPos, alliance, 50.0, 50.0, 22.0, 35.0);
                     timeout = selectParameter(startPos, alliance, 5.0, 5.0, 5.0, 5.0);
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
@@ -284,7 +285,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case ALIGN_WALL:
-                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 178.0;
                     timeout = alliance == FtcAuto.Alliance.RED_ALLIANCE? 2.0: 4.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
@@ -294,13 +295,13 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case GOTO_WALL:
                     if (beaconButtons == 2 && remainingBeaconButtons == 1)
                     {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -5.0: -7.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -5.0: -10.0;
                         timeout = 2.0;
                     }
                     else
                     {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -25.0;
-                        timeout = alliance == FtcAuto.Alliance.RED_ALLIANCE? 3.0: 2.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -27.0;
+                        timeout = alliance == FtcAuto.Alliance.RED_ALLIANCE? 4.0: 3.0;
                     }
 
                     robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);
@@ -308,7 +309,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case BACKOUT:
-                    driveDistance = 3.0;
+                    driveDistance = 4.0;
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);
@@ -398,7 +399,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case NEXT_BEACON:
                     if (remainingBeaconButtons == 2)
                     {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 55.0: 52.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 55.0: 55.0;
                         timeout = 5.0;
 
                         robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
@@ -417,8 +418,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         //
                         // We are going somewhere. let's get off the wall so we can turn.
                         //
-                        nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER?
-                                State.TURN_TO_CENTER2: State.GOTO_CORNER2;
+                        nextState = State.GOTO_CORNER2;
+//                        nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER?
+//                                State.TURN_TO_CENTER2: State.GOTO_CORNER2;
 
                         driveDistance = 12.0;
                         timeout = 2.0;

@@ -55,8 +55,6 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
         TURN_TO_CENTER2,
         GOTO_CENTER2,
         GOTO_CORNER2,
-        TURN_TO_CORNER2,
-        PARK_CORNER2,
         DONE
     }   //enum State
 
@@ -239,7 +237,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
 
-                    heading = selectParameter(startPos, alliance, -13.0, 20.0, -58.0, 55.0);
+                    heading = selectParameter(startPos, alliance, -13.0, 18.0, -58.0, 55.0);
                     timeout = selectParameter(startPos, alliance, 2.0, 2.0, 2.0, 2.0);
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
@@ -252,7 +250,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                     nextState = beaconButtons == 0? State.BACKUP: State.ALIGN_WALL;
 
-                    driveDistance = selectParameter(startPos, alliance, 60.0, 60.0, 80.0, 80.0);
+                    driveDistance = selectParameter(startPos, alliance, 60.0, 72.0, 80.0, 80.0);
                     timeout = selectParameter(startPos, alliance, 6.0, 6.0, 8.0, 8.0);
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
@@ -328,8 +326,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
                     startTime = elapsedTime;
 
-                    heading = 0.0;
-                    timeout = 2.0;
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
+                    timeout = alliance == FtcAuto.Alliance.RED_ALLIANCE? 2.0: 4.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
                     sm.waitForSingleEvent(event, State.GOTO_WALL);
@@ -341,13 +339,13 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                     if (beaconButtons == 2 && remainingBeaconButtons == 1)
                     {
-                        driveDistance = -5.0;
-                        timeout = 1.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -5.0: -7.0;
+                        timeout = 2.0;
                     }
                     else
                     {
-                        driveDistance = -37.0;
-                        timeout = 3.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -25.0;
+                        timeout = alliance == FtcAuto.Alliance.RED_ALLIANCE? 3.0: 2.0;
                     }
 
                     robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);
@@ -359,7 +357,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     startTime = elapsedTime;
 
                     driveDistance = 3.0;
-                    timeout = 1.0;
+                    timeout = 2.0;
 
                     robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);
                     sm.waitForSingleEvent(event, State.FIND_LINE);
@@ -373,7 +371,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     robot.encoderYPidCtrl.setOutputRange(-0.1, 0.1);
 
                     driveDistance = -30.0;
-                    timeout = 3.0;
+                    timeout = 6.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
                     sm.waitForSingleEvent(event, State.PUSH_BUTTON);
@@ -458,8 +456,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     startTime = elapsedTime;
                     if (remainingBeaconButtons == 2)
                     {
-                        driveDistance = 55.0;
-                        timeout = 4.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 55.0: 52.0;
+                        timeout = 5.0;
 
                         robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
                         remainingBeaconButtons--;
@@ -480,7 +478,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER?
                                 State.TURN_TO_CENTER2: State.GOTO_CORNER2;
 
-                        driveDistance = 15.0;
+                        driveDistance = 12.0;
                         timeout = 2.0;
 
                         robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);
@@ -532,36 +530,14 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                     if (beaconButtons == 2)
                     {
-                        driveDistance = -84.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -84.0: 48.0;
                         timeout = 8.0;
                     }
                     else
                     {
-                        driveDistance = -48.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -48.0: 84.0;
                         timeout = 4.0;
                     }
-
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
-                    sm.waitForSingleEvent(event, State.DONE);
-                    break;
-
-                case TURN_TO_CORNER2:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
-
-                    heading = 45.0;
-                    timeout = 2.0;
-
-                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
-                    sm.waitForSingleEvent(event, State.PARK_CORNER2);
-                    break;
-
-                case PARK_CORNER2:
-                    tracer.traceInfo(state.toString(), "[%5.3f]", elapsedTime - startTime);
-                    startTime = elapsedTime;
-
-                    driveDistance = -24.0;
-                    timeout = 2.0;
 
                     robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
                     sm.waitForSingleEvent(event, State.DONE);

@@ -295,7 +295,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case GOTO_WALL:
                     if (beaconButtons == 2 && remainingBeaconButtons == 1)
                     {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -5.0: -10.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -7.0: -10.0;
                         timeout = 2.0;
                     }
                     else
@@ -313,7 +313,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     // The GOTO_WALL state will correct the robot alignment, remember this new heading.
                     //
                     heading = robot.driveBase.getHeading();
-                    driveDistance = 4.0;
+                    driveDistance = 3.0;
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);
@@ -369,7 +369,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     if (leftPusherExtended || rightPusherExtended)
                     {
-                        timer.set(2.0, event);
+                        timer.set(1.5, event);
                         sm.waitForSingleEvent(event, State.RETRACT);
                     }
                     else
@@ -403,7 +403,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case NEXT_BEACON:
                     if (remainingBeaconButtons == 2)
                     {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 55.0: 55.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 57.0: 57.0;
                         timeout = 5.0;
 
                         robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event, timeout);
@@ -474,7 +474,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     }
                     else
                     {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -48.0: 84.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -40.0: 84.0;
                         timeout = 4.0;
                     }
 

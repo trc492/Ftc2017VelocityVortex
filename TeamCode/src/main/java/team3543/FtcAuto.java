@@ -177,8 +177,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                                                            0.0, 2.0, 1.0, 2.0, "%.0f");
         FtcValueMenu beaconButtonsMenu = new FtcValueMenu("Push beacon buttons: ", shootParticlesMenu, this,
                                                           0.0, 2.0, 1.0, 2.0, "%.0f");
-        FtcChoiceMenu parkOptionMenu =
-                new FtcChoiceMenu("Park options", beaconButtonsMenu, this);
+        FtcChoiceMenu parkOptionMenu = new FtcChoiceMenu("Park options", beaconButtonsMenu, this);
 
         allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, startPosMenu);
         allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, startPosMenu);

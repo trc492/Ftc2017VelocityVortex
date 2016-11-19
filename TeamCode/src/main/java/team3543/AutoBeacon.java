@@ -285,7 +285,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case ALIGN_WALL:
-                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 178.0;
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
                     timeout = alliance == FtcAuto.Alliance.RED_ALLIANCE? 2.0: 4.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event, timeout);
@@ -309,6 +309,10 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case BACKOUT:
+                    //
+                    // The GOTO_WALL state will correct the robot alignment, remember this new heading.
+                    //
+                    heading = robot.driveBase.getHeading();
                     driveDistance = 4.0;
                     timeout = 2.0;
 

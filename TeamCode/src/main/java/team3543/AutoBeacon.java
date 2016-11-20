@@ -295,12 +295,12 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case GOTO_WALL:
                     if (beaconButtons == 2 && remainingBeaconButtons == 1)
                     {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -7.0: -10.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -7.0: -7.0;
                         timeout = 2.0;
                     }
                     else
                     {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -27.0;
+                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -25.0;
                         timeout = alliance == FtcAuto.Alliance.RED_ALLIANCE? 4.0: 3.0;
                     }
 
@@ -313,7 +313,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     // The GOTO_WALL state will correct the robot alignment, remember this new heading.
                     //
                     heading = robot.driveBase.getHeading();
-                    driveDistance = 3.0;
+                    driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 3.0: 3.0;
                     timeout = 2.0;
 
                     robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event, timeout);

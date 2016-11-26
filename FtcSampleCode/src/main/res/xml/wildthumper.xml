@@ -21,28 +21,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
 <Robot type="FirstInspires-FTC" name="WildThumper">
-    <MotorController name="Motor Controller 2" serialNumber="AH03ETUV">
-        <Motor name="lmWheel" port="1" />
-        <Motor name="rmWheel" port="2" />
-    </MotorController>
-    <DeviceInterfaceModule name="Device Interface Module 1" serialNumber="AI02RLBT">
-        <Gyro name="gyroSensor" port="0" />
-        <I2cDevice name="zxSensor" port="1" />
-        <I2cDevice name="mrGyro" port="2" />
-        <AnalogOutput name="AnalogTone" port="0" />
-    </DeviceInterfaceModule>
     <MotorController name="Motor Controller 1" serialNumber="AH03ETQH">
         <Motor name="lfWheel" port="1" />
         <Motor name="rfWheel" port="2" />
     </MotorController>
+    <MotorController name="Motor Controller 2" serialNumber="AH03ETUV">
+        <Motor name="lrWheel" port="1" />
+        <Motor name="rrWheel" port="2" />
+    </MotorController>
     <MotorController name="Motor Controller 3" serialNumber="AH03ETU9">
+    </MotorController>
+    <MotorController name="Motor Controller 4" serialNumber="AH03ETUA">
+        <Motor name="lmWheel" port="1" />
+        <Motor name="rmWheel" port="2" />
     </MotorController>
     <ServoController name="Servo Controller 1" serialNumber="AI049L9E">
     </ServoController>
     <ServoController name="Servo Controller 2" serialNumber="AI049LVZ">
     </ServoController>
-    <MotorController name="Motor Controller 4" serialNumber="AH03ETUA">
-        <Motor name="lrWheel" port="1" />
-        <Motor name="rrWheel" port="2" />
-    </MotorController>
+    <DeviceInterfaceModule name="Device Interface Module 1" serialNumber="AI02RLBT">
+        <Gyro name="gyroSensor" port="0" />
+        <I2cDevice name="mrGyro" port="1" />
+        <ModernRoboticsI2cRangeSensor name="rangeSensor" port="2" />
+        <I2cDevice name="zxSensor" port="3" />
+        <AnalogOutput name="AnalogTone" port="0" />
+    </DeviceInterfaceModule>
 </Robot>

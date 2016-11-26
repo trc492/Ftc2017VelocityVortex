@@ -24,6 +24,8 @@ package team3543;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 import ftclib.FtcChoiceMenu;
 import ftclib.FtcGamepad;
 import ftclib.FtcMenu;
@@ -43,6 +45,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         X_TIMED_DRIVE,
         Y_DISTANCE_DRIVE,
         X_DISTANCE_DRIVE,
+        RANGE_DRIVE,
         GYRO_TURN
     }   //enum Test
 
@@ -64,6 +67,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     private Test test = Test.SENSORS_TEST;
     private double driveTime = 0.0;
     private double driveDistance = 0.0;
+    private double rangeDistance = 0.0;
     private double turnDegrees = 0.0;
 
     private int motorIndex = 0;
@@ -142,6 +146,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 doPidDrive(driveDistance, 0.0, 0.0);
                 break;
 
+            case RANGE_DRIVE:
+                doRangeDrive(rangeDistance);
+                break;
+
             case GYRO_TURN:
                 doPidDrive(0.0, 0.0, turnDegrees);
                 break;
@@ -179,13 +187,13 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     private void doMenus()
     {
         FtcChoiceMenu testMenu = new FtcChoiceMenu("Tests:", null, this);
-        FtcValueMenu driveTimeMenu = new FtcValueMenu("Drive time:", testMenu, this,
-                                                      1.0, 10.0, 1.0, 8.0, " %.0f sec");
-        FtcValueMenu driveDistanceMenu = new FtcValueMenu("Drive distance:", testMenu, this,
-                                                          1.0, 10.0, 1.0, 8.0, " %.0f ft");
-        FtcValueMenu turnDegreesMenu =
-                new FtcValueMenu("Turn degrees:", testMenu, this,
-                                 -360.0, 360.0, 90.0, 360.0, " %.0f deg");
+        FtcValueMenu driveTimeMenu = new FtcValueMenu("Drive time:", testMenu, this, 1.0, 10.0, 1.0, 8.0, " %.0f sec");
+        FtcValueMenu driveDistanceMenu = new FtcValueMenu(
+                "Drive distance:", testMenu, this, 1.0, 10.0, 1.0, 8.0, " %.0f ft");
+        FtcValueMenu rangeDistanceMenu = new FtcValueMenu(
+                "Range distance:", testMenu, this, 1.0, 12.0, 1.0, 3.0, " %.0f in");
+        FtcValueMenu turnDegreesMenu = new FtcValueMenu(
+                "Turn degrees:", testMenu, this, -360.0, 360.0, 90.0, 360.0, " %.0f deg");
 
         testMenu.addChoice("Sensors test", Test.SENSORS_TEST);
         testMenu.addChoice("Motors test", Test.MOTORS_TEST);
@@ -193,6 +201,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         testMenu.addChoice("X Timed drive", Test.X_TIMED_DRIVE, driveTimeMenu);
         testMenu.addChoice("Y Distance drive", Test.Y_DISTANCE_DRIVE, driveDistanceMenu);
         testMenu.addChoice("X Distance drive", Test.X_DISTANCE_DRIVE, driveDistanceMenu);
+        testMenu.addChoice("Range drive", Test.RANGE_DRIVE, rangeDistanceMenu);
         testMenu.addChoice("Degrees turn", Test.GYRO_TURN, turnDegreesMenu);
 
         FtcMenu.walkMenuTree(testMenu);
@@ -200,6 +209,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         test = (Test)testMenu.getCurrentChoiceObject();
         driveTime = driveTimeMenu.getCurrentValue();
         driveDistance = driveDistanceMenu.getCurrentValue();
+        rangeDistance = rangeDistanceMenu.getCurrentValue();
         turnDegrees = turnDegreesMenu.getCurrentValue();
 
         dashboard.displayPrintf(0, "Test: %s", testMenu.getCurrentChoiceText());
@@ -212,39 +222,33 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         // Read all sensors and display on the dashboard.
         // Drive the robot around to sample different locations of the field.
         //
-        dashboard.displayPrintf(9, LABEL_WIDTH, "FrontEnc: ", "l=%.0f,r=%.0f",
-                                robot.leftFrontWheel.getPosition(),
-                                robot.rightFrontWheel.getPosition());
-        dashboard.displayPrintf(10, LABEL_WIDTH, "RearEnc: ", "l=%.0f,r=%.0f",
-                                robot.leftRearWheel.getPosition(),
-                                robot.rightRearWheel.getPosition());
-        dashboard.displayPrintf(11, LABEL_WIDTH, "Gyro: ", "Rate=%.1f,Heading=%.1f",
-                                robot.gyro.getZRotationRate().value,
-                                robot.gyro.getZHeading().value);
-        dashboard.displayPrintf(12, LABEL_WIDTH, "Shooter: ", "Pos=%.3f,touch=%s",
-                                robot.shooter.getPosition(), Boolean.toString(robot.shooter.isTouchActive()));
-        dashboard.displayPrintf(13, LABEL_WIDTH, "Beacon: ", "RGBAH=[%d,%d,%d,%d,%x]",
-                                robot.beaconColorSensor.red(),
-                                robot.beaconColorSensor.green(),
-                                robot.beaconColorSensor.blue(),
-                                robot.beaconColorSensor.alpha(),
-                                robot.beaconColorSensor.argb());
-        dashboard.displayPrintf(14, LABEL_WIDTH, "Line: ", "color=%d,white=%d",
-                                (Integer)robot.lineDetectionSensor.getColorNumber().value,
-                                (Integer)robot.lineDetectionSensor.getWhiteValue().value);
-        dashboard.displayPrintf(15, LABEL_WIDTH, "ServoPos: ", "BallGate=%.2f,Pusher=%.2f",
-                                ballGatePos, buttonPusherPos);
+        dashboard.displayPrintf(3, LABEL_WIDTH, "FrontEnc: ", "l=%.0f,r=%.0f",
+                robot.leftFrontWheel.getPosition(), robot.rightFrontWheel.getPosition());
+        dashboard.displayPrintf(4, LABEL_WIDTH, "RearEnc: ", "l=%.0f,r=%.0f",
+                robot.leftRearWheel.getPosition(), robot.rightRearWheel.getPosition());
+        dashboard.displayPrintf(5, LABEL_WIDTH, "Shooter: ", "Pos=%.3f,touch=%s",
+                robot.shooter.getPosition(), Boolean.toString(robot.shooter.isTouchActive()));
+        dashboard.displayPrintf(6, LABEL_WIDTH, "ServoPos: ", "BallGate=%.2f,Pusher=%.2f",
+                ballGatePos, buttonPusherPos);
+        dashboard.displayPrintf(9, LABEL_WIDTH, "Gyro: ", "Rate=%.1f,Heading=%.1f",
+                robot.gyro.getZRotationRate().value, robot.gyro.getZHeading().value);
+        dashboard.displayPrintf(10, LABEL_WIDTH, "Beacon: ", "RGBAH=[%d,%d,%d,%d,%x]",
+                robot.beaconColorSensor.red(), robot.beaconColorSensor.green(), robot.beaconColorSensor.blue(),
+                robot.beaconColorSensor.alpha(), robot.beaconColorSensor.argb());
+        dashboard.displayPrintf(11, LABEL_WIDTH, "Line: ", "color=%d,white=%d",
+                (Integer)robot.lineDetectionSensor.getColorNumber().value,
+                (Integer)robot.lineDetectionSensor.getWhiteValue().value);
+        dashboard.displayPrintf(12, LABEL_WIDTH, "Range: ", "%.3f in",
+                robot.rangeSensor.getDistance(DistanceUnit.INCH.INCH));
     }   //doSensorsTest
 
     private void doMotorsTest()
     {
         dashboard.displayPrintf(9, "Motors Test: index=%d", motorIndex);
         dashboard.displayPrintf(10, "Enc: lf=%.0f, rf=%.0f",
-                                robot.leftFrontWheel.getPosition(),
-                                robot.rightFrontWheel.getPosition());
+                robot.leftFrontWheel.getPosition(), robot.rightFrontWheel.getPosition());
         dashboard.displayPrintf(11, "Enc: lr=%.0f, rr=%.0f",
-                                robot.leftRearWheel.getPosition(),
-                                robot.rightRearWheel.getPosition());
+                robot.leftRearWheel.getPosition(), robot.rightRearWheel.getPosition());
 
         if (sm.isReady())
         {
@@ -287,8 +291,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     }
                     motorIndex = motorIndex + 1;
                     timer.set(5.0, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(motorIndex < 4? State.START: State.DONE);
+                    sm.waitForSingleEvent(event, motorIndex < 4? State.START: State.DONE);
                     break;
 
                 case DONE:
@@ -317,9 +320,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         dashboard.displayPrintf(11, "Enc:lr=%.0f,rr=%.0f", lrEnc, rrEnc);
         dashboard.displayPrintf(12, "average=%f", (lfEnc + rfEnc + lrEnc + rrEnc)/4.0);
         dashboard.displayPrintf(13, "xPos=%.1f,yPos=%.1f,heading=%.1f",
-                                robot.driveBase.getXPosition(),
-                                robot.driveBase.getYPosition(),
-                                robot.driveBase.getHeading());
+                robot.driveBase.getXPosition(),
+                robot.driveBase.getYPosition(),
+                robot.driveBase.getHeading());
 
         if (sm.isReady())
         {
@@ -332,8 +335,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     //
                     robot.driveBase.mecanumDrive_Cartesian(xPower, yPower, turnPower);
                     timer.set(time, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
+                    sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case DONE:
@@ -350,10 +352,12 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
     private void doPidDrive(double xDistance, double yDistance, double rotation)
     {
+        final String funcName = "doPidDrive";
+
         dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
-                                robot.driveBase.getXPosition(),
-                                robot.driveBase.getYPosition(),
-                                robot.driveBase.getHeading());
+                robot.getInput(robot.encoderXPidCtrl),
+                robot.getInput(robot.encoderYPidCtrl),
+                robot.getInput(robot.gyroPidCtrl));
         robot.encoderXPidCtrl.displayPidInfo(10);
         robot.encoderYPidCtrl.displayPidInfo(12);
         robot.gyroPidCtrl.displayPidInfo(14);
@@ -368,8 +372,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     // Drive the given Y distance.
                     //
                     robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
+                    sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case DONE:
@@ -382,6 +385,42 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
             }
         }
     }   //doPidDrive
+
+    private void doRangeDrive(double rangeDistance)
+    {
+        final String funcName = "doRangeDrive";
+
+        dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
+                robot.getInput(robot.rangePidCtrl),
+                robot.getInput(robot.encoderYPidCtrl),
+                robot.getInput(robot.gyroPidCtrl));
+        robot.rangePidCtrl.displayPidInfo(10);
+        robot.encoderYPidCtrl.displayPidInfo(12);
+        robot.gyroPidCtrl.displayPidInfo(14);
+
+        if (sm.isReady())
+        {
+            State state = (State)sm.getState();
+            switch (state)
+            {
+                case START:
+                    //
+                    // Drive the given Y distance.
+                    //
+                    robot.rangePidDrive.setTarget(rangeDistance, 0.0, 0.0, false, event);
+                    sm.waitForSingleEvent(event, State.DONE);
+                    break;
+
+                case DONE:
+                default:
+                    //
+                    // We are done.
+                    //
+                    sm.stop();
+                    break;
+            }
+        }
+    }   //doRangeDrive
 
     //
     // Implements FtcGamepad.ButtonHandler interface.

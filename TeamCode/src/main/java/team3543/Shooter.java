@@ -209,8 +209,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                 case LOAD_PARTICLE:
                     ballGate.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
                     timer.set(RobotInfo.SHOOTER_BALLGATE_OPEN_TIME, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(ShooterState.ARM_AND_FIRE);
+                    sm.waitForSingleEvent(event, ShooterState.ARM_AND_FIRE);
                     break;
 
                 case ARM_AND_FIRE:
@@ -221,15 +220,13 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                         shooterMotor.setPower(0.0);
                         shooterMotor.resetPosition();
                         timer.set(RobotInfo.SHOOTER_PAUSE_TIME, event);
-                        sm.addEvent(event);
-                        sm.waitForEvents(ShooterState.PULL_BACK);
+                        sm.waitForSingleEvent(event, ShooterState.PULL_BACK);
                     }
                     break;
 
                 case PULL_BACK:
                     pidMotor.setTarget(RobotInfo.SHOOTER_PULLBACK_TARGET, event, 0.5);
-                    sm.addEvent(event);
-                    sm.waitForEvents(continuousModeOn? ShooterState.LOAD_PARTICLE: ShooterState.DONE);
+                    sm.waitForSingleEvent(event, continuousModeOn? ShooterState.LOAD_PARTICLE: ShooterState.DONE);
                     break;
 
                 default:

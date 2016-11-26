@@ -24,11 +24,14 @@ package team3543;
 
 import android.widget.TextView;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
+import ftclib.FtcAndroidTone;
 import ftclib.FtcDcMotor;
 import ftclib.FtcMRGyro;
 import ftclib.FtcMRI2cColorSensor;
@@ -56,6 +59,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public FtcMRGyro gyro;
     public ColorSensor beaconColorSensor;
     public FtcMRI2cColorSensor lineDetectionSensor;
+    public ModernRoboticsI2cRangeSensor rangeSensor;
     //
     // DriveBase subsystem.
     //
@@ -64,11 +68,14 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public FtcDcMotor leftRearWheel;
     public FtcDcMotor rightRearWheel;
     public TrcDriveBase driveBase;
+    private FtcAndroidTone androidTone;
 
     public TrcPidController encoderXPidCtrl;
     public TrcPidController encoderYPidCtrl;
     public TrcPidController gyroPidCtrl;
+    public TrcPidController rangePidCtrl;
     public TrcPidDrive pidDrive;
+    public TrcPidDrive rangePidDrive;
 
     public double[] lightZones = {RobotInfo.LINE_DARK_LEVEL, RobotInfo.LINE_WHITE_LEVEL};
     public TrcAnalogTrigger lineTrigger;
@@ -101,6 +108,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         beaconColorSensor.enableLed(false);
         lineDetectionSensor = new FtcMRI2cColorSensor("lineDetectionSensor", 0x40, false);
         lineDetectionSensor.setLEDEnabled(true);
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "rangeSensor");
         //
         // Initialize DriveBase.
         //
@@ -108,37 +116,62 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         rightFrontWheel = new FtcDcMotor("rightFrontWheel");
         leftRearWheel = new FtcDcMotor("leftRearWheel");
         rightRearWheel = new FtcDcMotor("rightRearWheel");
+
         leftFrontWheel.setInverted(true);
         leftRearWheel.setInverted(true);
+        /*
+        leftFrontWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftRearWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightRearWheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        */
+
         driveBase = new TrcDriveBase(
                 leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel, gyro);
         driveBase.setXPositionScale(RobotInfo.ENCODER_X_INCHES_PER_COUNT);
         driveBase.setYPositionScale(RobotInfo.ENOCDER_Y_INCHES_PER_COUNT);
         //
+        // Initialize tone device.
+        //
+        androidTone = new FtcAndroidTone("AndroidTone");
+        androidTone.setSoundEnvelope(
+                RobotInfo.TONE_ATTACK, RobotInfo.TONE_DECAY, RobotInfo.TONE_SUSTAIN, RobotInfo.TONE_RELEASE);
+        androidTone.setSoundEnvelopeEnabled(true);
+        //
         // Initialize PID drive.
         //
         encoderXPidCtrl = new TrcPidController(
                 "encoderXPidCtrl",
-                RobotInfo.ENCODER_X_KP, RobotInfo.ENCODER_X_KI,
-                RobotInfo.ENCODER_X_KD, RobotInfo.ENCODER_X_KF,
+                RobotInfo.ENCODER_X_KP, RobotInfo.ENCODER_X_KI, RobotInfo.ENCODER_X_KD, RobotInfo.ENCODER_X_KF,
                 RobotInfo.ENCODER_X_TOLERANCE, RobotInfo.ENCODER_X_SETTLING,
                 this);
         encoderYPidCtrl = new TrcPidController(
                 "encoderYPidCtrl",
-                RobotInfo.ENCODER_Y_KP, RobotInfo.ENCODER_Y_KI,
-                RobotInfo.ENCODER_Y_KD, RobotInfo.ENCODER_Y_KF,
+                RobotInfo.ENCODER_Y_KP, RobotInfo.ENCODER_Y_KI, RobotInfo.ENCODER_Y_KD, RobotInfo.ENCODER_Y_KF,
                 RobotInfo.ENCODER_Y_TOLERANCE, RobotInfo.ENCODER_Y_SETTLING,
                 this);
         gyroPidCtrl = new TrcPidController(
                 "gyroPidCtrl",
-                RobotInfo.GYRO_KP, RobotInfo.GYRO_KI,
-                RobotInfo.GYRO_KD, RobotInfo.GYRO_KF,
+                RobotInfo.GYRO_KP, RobotInfo.GYRO_KI, RobotInfo.GYRO_KD, RobotInfo.GYRO_KF,
                 RobotInfo.GYRO_TOLERANCE, RobotInfo.GYRO_SETTLING,
                 this);
         gyroPidCtrl.setAbsoluteSetPoint(true);
+        rangePidCtrl = new TrcPidController(
+                "rangePidCtrl",
+                RobotInfo.RANGE_KP, RobotInfo.RANGE_KI, RobotInfo.RANGE_KD, RobotInfo.RANGE_KF,
+                RobotInfo.RANGE_TOLERANCE, RobotInfo.RANGE_SETTLING,
+                this);
+        rangePidCtrl.setAbsoluteSetPoint(true);
+
         pidDrive = new TrcPidDrive("pidDrive", driveBase, encoderXPidCtrl, encoderYPidCtrl, gyroPidCtrl);
+        pidDrive.setStallTimeout(RobotInfo.PIDDRIVE_STALL_TIMEOUT);
+        pidDrive.setBeep(androidTone);
+
         lineTrigger = new TrcAnalogTrigger(
                 "lineTrigger", lineDetectionSensor, 0, lightZones, this);
+        rangePidDrive = new TrcPidDrive("rangePidDrive", driveBase, rangePidCtrl, encoderYPidCtrl, gyroPidCtrl);
+        rangePidDrive.setStallTimeout(RobotInfo.PIDDRIVE_STALL_TIMEOUT);
+        rangePidDrive.setBeep(androidTone);
 
         //
         // Initialize other subsystems.
@@ -192,6 +225,10 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         else if (pidCtrl == gyroPidCtrl)
         {
             input = driveBase.getHeading();
+        }
+        else if (pidCtrl == rangePidCtrl)
+        {
+            input = rangeSensor.getDistance(DistanceUnit.INCH);
         }
 
         return input;

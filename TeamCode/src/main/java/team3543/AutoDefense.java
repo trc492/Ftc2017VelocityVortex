@@ -87,8 +87,7 @@ public class AutoDefense implements TrcRobot.AutoStrategy
                         delay = 10.0;
                     }
                     timer.set(delay, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DRIVE_DISTANCE);
+                    sm.waitForSingleEvent(event, State.DRIVE_DISTANCE);
                     break;
 
                 case DRIVE_DISTANCE:
@@ -96,8 +95,7 @@ public class AutoDefense implements TrcRobot.AutoStrategy
                     // Drive the set distance.
                     //
                     robot.pidDrive.setTarget(distance*12.0, 0.0, false, event);
-                    sm.addEvent(event);
-                    sm.waitForEvents(State.DONE);
+                    sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case DONE:

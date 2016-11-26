@@ -25,6 +25,13 @@ package team3543;
 public class RobotInfo
 {
     //
+    // Tone device.
+    //
+    public static final double TONE_ATTACK                      = 0.0;      // in seconds
+    public static final double TONE_DECAY                       = 0.0;      // in seconds
+    public static final double TONE_SUSTAIN                     = 1.0;      // in proportion
+    public static final double TONE_RELEASE                     = 0.02;     // in seconds
+    //
     // DriveBase subsystem.
     //
     public static final double ENCODER_X_KP                     = 0.12;
@@ -49,6 +56,15 @@ public class RobotInfo
     public static final double GYRO_KF                          = 0.0;
     public static final double GYRO_TOLERANCE                   = 2.0;
     public static final double GYRO_SETTLING                    = 0.2;
+
+    public static final double RANGE_KP                         = 0.1;
+    public static final double RANGE_KI                         = 0.0;
+    public static final double RANGE_KD                         = 0.0;
+    public static final double RANGE_KF                         = 0.0;
+    public static final double RANGE_TOLERANCE                  = 0.5;
+    public static final double RANGE_SETTLING                   = 0.2;
+
+    public static final double PIDDRIVE_STALL_TIMEOUT           = 0.5;
 
     //
     // Line detection.

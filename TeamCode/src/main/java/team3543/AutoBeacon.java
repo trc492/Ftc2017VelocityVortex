@@ -150,7 +150,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     // This state is called only for FAR StartPosition.
                     //
-                    heading = selectParameter(startPos, alliance, 0.0, 0.0, -45.0, 43.0);
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -45.0: 43.0;
 
                     robot.pidDrive.setTarget(0.0, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.GOTO_CENTER_VORTEX);
@@ -286,19 +286,6 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                     robot.rangePidDrive.setTarget(driveDistance, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.BACKOUT);
-                    /*
-                    if (beaconButtons == 2 && remainingBeaconButtons == 1)
-                    {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -7.0: -7.0;
-                    }
-                    else
-                    {
-                        driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -30.0;
-                    }
-
-                    robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event);
-                    sm.waitForSingleEvent(event, State.BACKOUT);
-                    */
                     break;
 
                 case BACKOUT:
@@ -411,6 +398,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     {
                         //
                         // We are going somewhere. let's get off the wall so we can turn.
+                        // We don't have enough time to go to the center vortex, so always head for the corner vortex.
                         //
                         nextState = State.GOTO_CORNER2;
 //                        nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER?

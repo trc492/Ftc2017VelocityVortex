@@ -215,6 +215,11 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         dashboard.displayPrintf(0, "Test: %s", testMenu.getCurrentChoiceText());
     }   //doMenus
 
+    /**
+     * This method reads all sensors and prints out their values. This is a very useful diagnostic tool to check
+     * if all sensors are working properly. For encoders, since test sensor mode is also teleop mode, you can
+     * operate the gamepads to turn the motors and check the corresponding encoder counts.
+     */
     private void doSensorsTest()
     {
         final int LABEL_WIDTH = 100;
@@ -242,6 +247,13 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 robot.rangeSensor.getDistance(DistanceUnit.INCH.INCH));
     }   //doSensorsTest
 
+    /**
+     * This method runs each of the four wheels in sequence for a fixed number of seconds. It is for diagnosing
+     * problems with the drive train. At the end of the run, you should check the amount of encoder counts each
+     * wheel has accumulated. They should be about the same. If not, you need to check the problem wheel for
+     * friction or chain tension etc. You can also use this test to check if a motor needs to be "inverted"
+     * (i.e. turning in the wrong direction).
+     */
     private void doMotorsTest()
     {
         dashboard.displayPrintf(9, "Motors Test: index=%d", motorIndex);
@@ -309,6 +321,19 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         }
     }   //doMotorsTest
 
+    /**
+     * This method runs the Drive Base with the given power for the given amount of time. This test is designed
+     * to calibrate the encoder scaling factors. For example, if you drive the robot forward for 4 seconds, this
+     * test will print out the average encoder count of all four wheels. Measure how far the robot has gone and
+     * the encoder scaling factor can be calculated: INCHES_PER_COUNT = MeasuredDistanceInInches/AverageEncoderCount.
+     * Note that to prevent any wheel slipping, use lower power values and runs longer time so the calculation will
+     * be more accurate.
+     *
+     * @param xPower specifies motor power to move in the X direction.
+     * @param yPower specifies motor power to move in the Y direction.
+     * @param turnPower specifies motor power to turn.
+     * @param time specifies how long in seconds should the robot run.
+     */
     private void doTimedDrive(double xPower, double yPower, double turnPower, double time)
     {
         double lfEnc = robot.leftFrontWheel.getPosition();
@@ -350,6 +375,17 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         }
     }   //doTimedDrive
 
+    /**
+     * This method drives the robot to the specified target distance. This test is designed for tuning PID constants.
+     * This test can only be run after the proper encoder scaling factors have been determined. Run this test with
+     * a specific distance (e.g. 96 inches). At the end of the run, check the dashboard display to see how far the
+     * robot has actually gone and the corresponding error. Tuned the PID constants to make the error to go near zero
+     * (error should be less than tolerance).
+     *
+     * @param xDistance specifies the target distance in inches in the X direction.
+     * @param yDistance specifies the target distance in inches in the Y direction.
+     * @param rotation specifies the rotation target in degrees.
+     */
     private void doPidDrive(double xDistance, double yDistance, double rotation)
     {
         final String funcName = "doPidDrive";
@@ -369,7 +405,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
             {
                 case START:
                     //
-                    // Drive the given Y distance.
+                    // Drive the given distance or degrees.
                     //
                     robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
@@ -386,6 +422,15 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         }
     }   //doPidDrive
 
+    /**
+     * This method drives the robot to the specified distance to the wall using the Range Sensor. This test is
+     * designed for tuning PID constants for the Range Sensor. Run this test with a specific distance to the wall
+     * (e.g. 5 inches). At the end of the run, check the dashboard display to see how far the robot is from the wall
+     * and the corresponding error. Tuned the PID constants to make the error to go near zero (error should be less
+     * than tolerance).
+     *
+     * @param rangeDistance specifies the target distance in inches to the wall.
+     */
     private void doRangeDrive(double rangeDistance)
     {
         final String funcName = "doRangeDrive";
@@ -405,7 +450,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
             {
                 case START:
                     //
-                    // Drive the given Y distance.
+                    // Drive the to the given wall distance.
                     //
                     robot.rangePidDrive.setTarget(rangeDistance, 0.0, 0.0, false, event);
                     sm.waitForSingleEvent(event, State.DONE);

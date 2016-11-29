@@ -466,7 +466,7 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
             taskMgr.registerTask(
                     instanceName,
                     this,
-                    TrcTaskMgr.TaskType.PRECONTINUOUS_TASK);
+                    TrcTaskMgr.TaskType.PREPERIODIC_TASK);
         }
         else
         {
@@ -475,7 +475,7 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
                     TrcTaskMgr.TaskType.STOP_TASK);
             taskMgr.unregisterTask(
                     this,
-                    TrcTaskMgr.TaskType.POSTCONTINUOUS_TASK);
+                    TrcTaskMgr.TaskType.PREPERIODIC_TASK);
         }
     }   //setSpeedEnabled
 
@@ -508,25 +508,15 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
         }
     }   //stopTask
 
-    @Override
-    public void prePeriodicTask(TrcRobot.RunMode runMode)
-    {
-    }   //prePeriodicTask
-
-    @Override
-    public void postPeriodicTask(TrcRobot.RunMode runMode)
-    {
-    }   //postPeriodicTask
-
     /**
-     * This task is run periodically o calculate he speed of the motor.
+     * This task is run periodically to calculate he speed of the motor.
      *
      * @param runMode specifies the competition mode that is running.
      */
     @Override
-    public void preContinuousTask(TrcRobot.RunMode runMode)
+    public void prePeriodicTask(TrcRobot.RunMode runMode)
     {
-        final String funcName = "preContinuousTask";
+        final String funcName = "prePeriodicTask";
 
         if (debugEnabled)
         {
@@ -537,21 +527,27 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
 
         double currTime = HalUtil.getCurrentTime();
         double currPos = getPosition();
-
-        if (currTime - prevTime >= 0.05)
+        if (prevTime != 0.0)
         {
-            if (prevTime != 0.0)
-            {
-                speed = (currPos - prevPos) / (currTime - prevTime);
-            }
-            prevTime = currTime;
-            prevPos = currPos;
+            speed = (currPos - prevPos)/(currTime - prevTime);
         }
+        prevTime = currTime;
+        prevPos = currPos;
 
         if (debugEnabled)
         {
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.TASK);
         }
+    }   //prePeriodicTask
+
+    @Override
+    public void postPeriodicTask(TrcRobot.RunMode runMode)
+    {
+    }   //postPeriodicTask
+
+    @Override
+    public void preContinuousTask(TrcRobot.RunMode runMode)
+    {
     }   //preContinuousTask
 
     @Override

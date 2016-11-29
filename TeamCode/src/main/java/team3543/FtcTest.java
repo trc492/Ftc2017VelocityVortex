@@ -29,7 +29,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import ftclib.FtcChoiceMenu;
 import ftclib.FtcGamepad;
 import ftclib.FtcMenu;
+import ftclib.FtcOpMode;
 import ftclib.FtcValueMenu;
+import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
@@ -37,6 +39,10 @@ import trclib.TrcTimer;
 @TeleOp(name="Test", group="3543Test")
 public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepad.ButtonHandler
 {
+    private static final boolean debugXPid = false;
+    private static final boolean debugYPid = false;
+    private static final boolean debugGyroPid = false;
+
     private enum Test
     {
         SENSORS_TEST,
@@ -54,6 +60,8 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         START,
         DONE
     }   //enum State
+
+    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     //
     // State machine.
@@ -135,7 +143,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 break;
 
             case X_TIMED_DRIVE:
-                doTimedDrive(0.5, 0.0, 0.0, driveTime);
+                doTimedDrive(1.0, 0.0, 0.0, driveTime);
                 break;
 
             case Y_DISTANCE_DRIVE:
@@ -397,6 +405,18 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         robot.encoderXPidCtrl.displayPidInfo(10);
         robot.encoderYPidCtrl.displayPidInfo(12);
         robot.gyroPidCtrl.displayPidInfo(14);
+        if (debugXPid)
+        {
+            robot.encoderXPidCtrl.printPidInfo(tracer);
+        }
+        if (debugYPid)
+        {
+            robot.encoderYPidCtrl.printPidInfo(tracer);
+        }
+        if (debugGyroPid)
+        {
+            robot.gyroPidCtrl.printPidInfo(tracer);
+        }
 
         if (sm.isReady())
         {
@@ -407,6 +427,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     //
                     // Drive the given distance or degrees.
                     //
+                    robot.pidDrive.setStallTimeout(0.0);
                     robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;

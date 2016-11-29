@@ -34,30 +34,30 @@ public class RobotInfo
     //
     // DriveBase subsystem.
     //
-    public static final double ENCODER_X_KP                     = 0.12;
+    public static final double ENCODER_X_KP                     = 0.15;
     public static final double ENCODER_X_KI                     = 0.0;
     public static final double ENCODER_X_KD                     = 0.0;
     public static final double ENCODER_X_KF                     = 0.0;
     public static final double ENCODER_X_TOLERANCE              = 2.0;
     public static final double ENCODER_X_SETTLING               = 0.2;
-    public static final double ENCODER_X_INCHES_PER_COUNT       = 0.0091;
+    public static final double ENCODER_X_INCHES_PER_COUNT       = 0.0126615810903615;
 
-    public static final double ENCODER_Y_KP                     = 0.03;
+    public static final double ENCODER_Y_KP                     = 0.01;
     public static final double ENCODER_Y_KI                     = 0.0;
     public static final double ENCODER_Y_KD                     = 0.0;
     public static final double ENCODER_Y_KF                     = 0.0;
     public static final double ENCODER_Y_TOLERANCE              = 2.0;
     public static final double ENCODER_Y_SETTLING               = 0.2;
-    public static final double ENOCDER_Y_INCHES_PER_COUNT       = (103.0/9212.25);
+    public static final double ENOCDER_Y_INCHES_PER_COUNT       = 0.01667;
 
-    public static final double GYRO_KP                          = 0.015;
+    public static final double GYRO_KP                          = 0.0048;
     public static final double GYRO_KI                          = 0.0;
-    public static final double GYRO_KD                          = 0.05;
+    public static final double GYRO_KD                          = 0.0;
     public static final double GYRO_KF                          = 0.0;
     public static final double GYRO_TOLERANCE                   = 2.0;
     public static final double GYRO_SETTLING                    = 0.2;
 
-    public static final double RANGE_KP                         = 0.1;
+    public static final double RANGE_KP                         = 0.15;
     public static final double RANGE_KI                         = 0.0;
     public static final double RANGE_KD                         = 0.0;
     public static final double RANGE_KF                         = 0.0;

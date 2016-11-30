@@ -76,8 +76,7 @@ public class TimingTest extends LinearOpMode
                 {
                     maxLoopInterval = loopInterval;
                 }
-
-                startRobot(String.format("[%4d:%7.3f] LoopInterval=%7.3f, ",
+                runRobot(String.format("[%4d:%7.3f] LoopInterval=%7.3f, ",
                         loopCount, (currTime - startTime)/1000000.0, loopInterval/1000000.0));
             }
 
@@ -140,7 +139,7 @@ public class TimingTest extends LinearOpMode
         return value;
     }
 
-    private void startRobot(String prefix)
+    private void runRobot(String prefix)
     {
         switch (sensorType)
         {

@@ -68,7 +68,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public FtcDcMotor leftRearWheel;
     public FtcDcMotor rightRearWheel;
     public TrcDriveBase driveBase;
-    private FtcAndroidTone androidTone;
+    public FtcAndroidTone androidTone;
 
     public TrcPidController encoderXPidCtrl;
     public TrcPidController encoderYPidCtrl;
@@ -77,7 +77,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public TrcPidDrive pidDrive;
     public TrcPidDrive rangePidDrive;
 
-    public double[] lightZones = {RobotInfo.LINE_DARK_LEVEL, RobotInfo.LINE_WHITE_LEVEL};
     public TrcAnalogTrigger lineTrigger;
     //
     // Other subsystems.
@@ -167,6 +166,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         pidDrive.setStallTimeout(RobotInfo.PIDDRIVE_STALL_TIMEOUT);
         pidDrive.setBeep(androidTone);
 
+        double[] lightZones = {RobotInfo.LINE_DARK_LEVEL, RobotInfo.LINE_WHITE_LEVEL};
         lineTrigger = new TrcAnalogTrigger(
                 "lineTrigger", lineDetectionSensor, 0, lightZones, this);
         rangePidDrive = new TrcPidDrive("rangePidDrive", driveBase, rangePidCtrl, encoderYPidCtrl, gyroPidCtrl);

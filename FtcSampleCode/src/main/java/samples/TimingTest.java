@@ -10,48 +10,154 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name="Test: Loop Timing", group="3543TestSamples")
 public class TimingTest extends LinearOpMode
 {
+    private enum SensorType
+    {
+        DRIVEBASE_ENCODERS,
+        GYRO
+    }
+
     private static final String TAG = "TrcDbg";
     private static final double DRIVE_POWER = 0.2;
     private static final double TURN_POWER = 0.5;
+    private static SensorType sensorType = SensorType.GYRO;
     private static final DcMotor.Direction LEFTWHEEL_DIRECTION = DcMotor.Direction.FORWARD;
     private static final DcMotor.Direction RIGHTWHEEL_DIRECTION = DcMotor.Direction.REVERSE;
 
+    private DcMotor lfWheel;
+    private DcMotor rfWheel;
+    private DcMotor lrWheel;
+    private DcMotor rrWheel;
+    private ModernRoboticsI2cGyro gyro;
+
     public void runOpMode()
     {
-        DcMotor lfWheel = hardwareMap.dcMotor.get("lfWheel");
-        DcMotor rfWheel = hardwareMap.dcMotor.get("rfWheel");
-        DcMotor lrWheel = hardwareMap.dcMotor.get("lrWheel");
-        DcMotor rrWheel = hardwareMap.dcMotor.get("rrWheel");
+        initRobot();
+
+        waitForStart();
+
+        long minLoopInterval = Long.MAX_VALUE;
+        long maxLoopInterval = Long.MIN_VALUE;
+        long loopCount = 0;
+        long prevLoopTime = 0;
+
+        long minSampleInterval = Long.MAX_VALUE;
+        long maxSampleInterval = Long.MIN_VALUE;
+        long sampleCount = 0;
+        long prevSampleTime;
+
+        long startTime = System.nanoTime();
+        prevSampleTime = startTime;
+        int prevSample = getSensorValue();
+
+        while (opModeIsActive())
+        {
+            long currTime = System.nanoTime();
+            int currSample = getSensorValue();
+            if (prevLoopTime != 0)
+            {
+                long loopInterval = currTime - prevLoopTime;
+
+                if (currSample != prevSample)
+                {
+                    long sampleTime = currTime - prevSampleTime;
+                    sampleCount++;
+                    prevSample = currSample;
+                    prevSampleTime = currTime;
+                    if (sampleTime < minSampleInterval)
+                        minSampleInterval = sampleTime;
+                    else if (sampleTime > maxSampleInterval)
+                        maxSampleInterval = sampleTime;
+                }
+
+                if (loopInterval < minLoopInterval)
+                {
+                    minLoopInterval = loopInterval;
+                } else if (loopInterval > maxLoopInterval)
+                {
+                    maxLoopInterval = loopInterval;
+                }
+
+                startRobot(String.format("[%4d:%7.3f] LoopInterval=%7.3f, ",
+                        loopCount, (currTime - startTime)/1000000.0, loopInterval/1000000.0));
+            }
+
+            prevLoopTime = currTime;
+            loopCount++;
+        }
+        stopRobot();
+
+        long endTime = System.nanoTime();
+        Log.i(TAG, String.format(
+                "Loop: MinInterval=%7.3f, MaxInterval=%7.3f, AvgInterval=%7.3f",
+                minLoopInterval/1000000.0, maxLoopInterval/1000000.0,
+                (endTime - startTime)/1000000.0/loopCount));
+        Log.i(TAG, String.format(
+                "Sensor: MinSampleInterval=%7.3f, MaxSampleInterval=%7.3f, AvgSampleInterval=%7.3f",
+                minSampleInterval/1000000.0, maxSampleInterval/1000000.0,
+                (endTime - startTime)/1000000.0/sampleCount));
+    }
+
+    private void initRobot()
+    {
+        lfWheel = hardwareMap.dcMotor.get("lfWheel");
+        rfWheel = hardwareMap.dcMotor.get("rfWheel");
+        lrWheel = hardwareMap.dcMotor.get("lrWheel");
+        rrWheel = hardwareMap.dcMotor.get("rrWheel");
         lfWheel.setDirection(LEFTWHEEL_DIRECTION);
         lrWheel.setDirection(LEFTWHEEL_DIRECTION);
         rfWheel.setDirection(RIGHTWHEEL_DIRECTION);
         rrWheel.setDirection(RIGHTWHEEL_DIRECTION);
 
-        ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyroSensor");
+        lfWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rfWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lrWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rrWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lfWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rfWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        lrWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rrWheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        waitForStart();
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyroSensor");
+        gyro.resetZAxisIntegrator();
+    }
 
-        long prevTime = 0;
-        long minInterval = Long.MAX_VALUE;
-        long maxInterval = Long.MIN_VALUE;
-        long loopCount = 0;
-        long totalTime = 0;
-        long startTime = System.currentTimeMillis();
-        while (opModeIsActive())
+    private int getSensorValue()
+    {
+        int value = 0;
+
+        switch (sensorType)
         {
-            long currTime = System.currentTimeMillis();
-            if (prevTime != 0)
-            {
-                long interval = currTime - prevTime;
-                totalTime += interval;
-                if (interval < minInterval)
-                {
-                    minInterval = interval;
-                }
-                else if (interval > maxInterval)
-                {
-                    maxInterval = interval;
-                }
+            case DRIVEBASE_ENCODERS:
+                value = (lfWheel.getCurrentPosition() + rfWheel.getCurrentPosition() +
+                         lrWheel.getCurrentPosition() + rrWheel.getCurrentPosition())/4;
+                break;
+
+            case GYRO:
+                value = -gyro.getIntegratedZValue();
+                break;
+        }
+
+        return value;
+    }
+
+    private void startRobot(String prefix)
+    {
+        switch (sensorType)
+        {
+            case DRIVEBASE_ENCODERS:
+                //
+                // Driving forward and checking encoders.
+                //
+                lfWheel.setPower(DRIVE_POWER);
+                rfWheel.setPower(DRIVE_POWER);
+                lrWheel.setPower(DRIVE_POWER);
+                rrWheel.setPower(DRIVE_POWER);
+                Log.i(TAG, prefix + String.format("lf=%d, rf=%d, lr=%d, rr=%d",
+                        lfWheel.getCurrentPosition(), rfWheel.getCurrentPosition(),
+                        lrWheel.getCurrentPosition(), rrWheel.getCurrentPosition()));
+                break;
+
+            case GYRO:
                 //
                 // Turning right and checking gyro.
                 //
@@ -59,27 +165,17 @@ public class TimingTest extends LinearOpMode
                 lrWheel.setPower(TURN_POWER);
                 rfWheel.setPower(-TURN_POWER);
                 rrWheel.setPower(-TURN_POWER);
-                Log.i(TAG, String.format(
-                        "%6d:[%7.3f: %6d] heading=%d",
-                        loopCount, (currTime - startTime)/1000.0, interval, gyro.getIntegratedZValue()));
-                //
-                // Driving forward and checking encoders.
-                //
-//                lfWheel.setPower(DRIVE_POWER);
-//                rfWheel.setPower(DRIVE_POWER);
-//                lrWheel.setPower(DRIVE_POWER);
-//                rrWheel.setPower(DRIVE_POWER);
-//                Log.i(TAG, String.format(
-//                        "%6d:[%7.3f: %6d] lf=%d, rf=%d, lr=%d, rr=%d",
-//                        loopCount, (currTime - startTime)/1000.0, interval,
-//                        lfWheel.getCurrentPosition(), rfWheel.getCurrentPosition(),
-//                        lrWheel.getCurrentPosition(), rrWheel.getCurrentPosition()));
-            }
-            prevTime = currTime;
-            loopCount++;
+                Log.i(TAG, prefix + String.format("heading=%d", -gyro.getIntegratedZValue()));
+                break;
         }
-        Log.i(TAG, String.format(
-                "Summary: MinInterval=%d, MaxInterval=%s, AvgInterval=%d",
-                minInterval, maxInterval, Math.round((double)totalTime/loopCount)));
     }
+
+    private void stopRobot()
+    {
+        lfWheel.setPower(0.0);
+        lrWheel.setPower(0.0);
+        rfWheel.setPower(0.0);
+        rrWheel.setPower(0.0);
+    }
+
 }

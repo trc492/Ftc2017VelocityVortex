@@ -41,7 +41,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 {
     private static final boolean debugXPid = false;
     private static final boolean debugYPid = false;
-    private static final boolean debugGyroPid = false;
+    private static final boolean debugGyroPid = true;
 
     private enum Test
     {
@@ -201,7 +201,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         FtcValueMenu rangeDistanceMenu = new FtcValueMenu(
                 "Range distance:", testMenu, this, 1.0, 12.0, 1.0, 3.0, " %.0f in");
         FtcValueMenu turnDegreesMenu = new FtcValueMenu(
-                "Turn degrees:", testMenu, this, -360.0, 360.0, 90.0, 360.0, " %.0f deg");
+                "Turn degrees:", testMenu, this, -360.0, 360.0, 5.0, 45.0, " %.0f deg");
 
         testMenu.addChoice("Sensors test", Test.SENSORS_TEST);
         testMenu.addChoice("Motors test", Test.MOTORS_TEST);
@@ -428,7 +428,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     // Drive the given distance or degrees.
                     //
                     robot.pidDrive.setStallTimeout(0.0);
-                    robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
+                    robot.setPidDriveTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 

@@ -48,6 +48,7 @@ SOFTWARE.
         <ColorSensor name="colorSensor" port="1" />
         <I2cDevice name="lineDetectionSensor" port="2" />
         <ModernRoboticsI2cRangeSensor name="rangeSensor" port="3" />
+        <I2cDevice name="i2cGyro" port="4" />
         <TouchSensor name="shooterTouchSensor" port="0" />
     </DeviceInterfaceModule>
 </Robot>

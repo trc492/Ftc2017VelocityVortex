@@ -35,11 +35,13 @@ import ftclib.FtcAndroidTone;
 import ftclib.FtcDcMotor;
 import ftclib.FtcMRGyro;
 import ftclib.FtcMRI2cColorSensor;
+import ftclib.FtcMRI2cGyro;
 import ftclib.FtcOpMode;
 import ftclib.FtcServo;
 import hallib.HalDashboard;
 import trclib.TrcAnalogTrigger;
 import trclib.TrcDriveBase;
+import trclib.TrcEvent;
 import trclib.TrcPidController;
 import trclib.TrcPidDrive;
 import trclib.TrcRobot;
@@ -57,6 +59,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     // Sensors.
     //
     public FtcMRGyro gyro;
+//    public FtcMRI2cGyro gyro;
     public ColorSensor beaconColorSensor;
     public FtcMRI2cColorSensor lineDetectionSensor;
     public ModernRoboticsI2cRangeSensor rangeSensor;
@@ -102,6 +105,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         // Initialize sensors.
         //
         gyro = new FtcMRGyro("gyroSensor");
+//        gyro = new FtcMRI2cGyro("i2cGyro");
         gyro.calibrate();
         beaconColorSensor = hardwareMap.colorSensor.get("colorSensor");
         beaconColorSensor.enableLed(false);
@@ -193,7 +197,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public void startMode(TrcRobot.RunMode runMode)
     {
         gyro.resetZIntegrator();
-        gyro.setEnabled(true);
+//        gyro.setEnabled(true);
         lineDetectionSensor.setLEDEnabled(true);
         driveBase.resetPosition();
     }   //startMode
@@ -201,7 +205,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public void stopMode(TrcRobot.RunMode runMode)
     {
         lineDetectionSensor.setLEDEnabled(false);
-        gyro.setEnabled(false);
+//        gyro.setEnabled(false);
         shooter.stop();
     }   //stopMode
 
@@ -254,5 +258,48 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             }
         }
     }   //AnalogTriggerEvent
+
+    public void setTurnPID(double xDistance, double yDistance, double heading)
+    {
+        double degrees = Math.abs(heading - driveBase.getHeading());
+
+        if (xDistance != 0.0 || yDistance != 0.0)
+        {
+            //
+            // We are not turning, use normal PID.
+            //
+            gyroPidCtrl.setPID(RobotInfo.GYRO_KP, RobotInfo.GYRO_KI, RobotInfo.GYRO_KD, 0.0);
+        }
+        else if (degrees < RobotInfo.SMALL_TURN_THRESHOLD)
+        {
+            //
+            // We are turning a small angle, use stronger PID.
+            //
+            gyroPidCtrl.setPID(RobotInfo.GYRO_SMALL_TURN_KP, RobotInfo.GYRO_SMALL_TURN_KI,
+                               RobotInfo.GYRO_SMALL_TURN_KD, 0.0);
+        }
+        else if (degrees < RobotInfo.LARGE_TURN_THRESHOLD)
+        {
+            //
+            // We are turning a medium angle, use normal PID.
+            //
+            gyroPidCtrl.setPID(RobotInfo.GYRO_KP, RobotInfo.GYRO_KI, RobotInfo.GYRO_KD, 0.0);
+        }
+        else
+        {
+            //
+            // We are turning a large angle, use weaker PID.
+            //
+            gyroPidCtrl.setPID(RobotInfo.GYRO_LARGE_TURN_KP, RobotInfo.GYRO_LARGE_TURN_KI,
+                               RobotInfo.GYRO_LARGE_TURN_KD, 0.0);
+        }
+    }
+
+    public void setPidDriveTarget(double xDistance, double yDistance, double heading, boolean holdTarget, TrcEvent event)
+    {
+        setTurnPID(xDistance, yDistance, heading);
+        gyroPidCtrl.setOutputRange(-0.4, 0.4);
+        pidDrive.setTarget(xDistance, yDistance, heading, holdTarget, event);
+    }
 
 }   //class Robot

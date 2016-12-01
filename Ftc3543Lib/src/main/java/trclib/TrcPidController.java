@@ -55,6 +55,7 @@ public class TrcPidController
     private double minOutput = -1.0;
     private double maxOutput = 1.0;
 
+    private double prevTime = 0.0;
     private double prevError = 0.0;
     private double totalError = 0.0;
     private double settlingStartTime = 0.0;
@@ -401,6 +402,7 @@ public class TrcPidController
         }
 
         prevError = setPoint - input;
+        prevTime = HalUtil.getCurrentTime();
         if (inverted)
         {
             prevError = -prevError;
@@ -440,6 +442,7 @@ public class TrcPidController
         }
 
         prevError = 0.0;
+        prevTime = 0.0;
         totalError = 0.0;
         setPoint = 0.0;
         output = 0.0;
@@ -491,6 +494,9 @@ public class TrcPidController
             dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
         }
 
+        double currTime = HalUtil.getCurrentTime();
+        double deltaTime = currTime - prevTime;
+        prevTime = currTime;
         double error = setPoint - pidInput.getInput(this);
         if (inverted)
         {
@@ -499,26 +505,26 @@ public class TrcPidController
 
         if (kI != 0.0)
         {
-            double potentialGain = (totalError + error)*kI;
+            double potentialGain = (totalError + error * deltaTime) * kI;
             if (potentialGain >= maxOutput)
             {
-                totalError = maxOutput/kI;
+                totalError = maxOutput / kI;
             }
             else if (potentialGain > minOutput)
             {
-                totalError += error;
+                totalError += error * deltaTime;
             }
             else
             {
-                totalError = minOutput/kI;
+                totalError = minOutput / kI;
             }
         }
 
-        output =
-                kP*error +
-                kI*totalError +
-                kD*(error - prevError) +
-                kF*setPoint;
+        output = kF*setPoint + kP*error + kI*totalError;
+        if (deltaTime != 0)
+        {
+            output += kD*(error - prevError)/deltaTime;
+        }
 
         prevError = error;
         if (output > maxOutput)
@@ -532,9 +538,7 @@ public class TrcPidController
 
         if (debugEnabled)
         {
-            dbgTrace.traceExit(
-                    funcName, TrcDbgTrace.TraceLevel.API,
-                    "=%f", output);
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API, "=%f", output);
         }
 
         return output;

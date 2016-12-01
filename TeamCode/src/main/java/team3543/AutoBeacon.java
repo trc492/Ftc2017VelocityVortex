@@ -142,7 +142,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 6.0: 8.0;
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.AIM_CENTER_VORTEX);
                     break;
 
@@ -152,7 +152,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -45.0: 43.0;
 
-                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event);
+                    robot.setPidDriveTarget(0.0, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.GOTO_CENTER_VORTEX);
                     break;
 
@@ -162,7 +162,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     driveDistance = 6.0;
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.SHOOT_PARTICLES);
                     break;
 
@@ -206,14 +206,14 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 case MOVE_OUT:
                     driveDistance = 12.0;
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.TURN_TO_CAPBALL);
                     break;
 
                 case TURN_TO_CAPBALL:
                     heading = selectParameter(startPos, alliance, -13.0, 18.0, -58.0, 59.0);
 
-                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event);
+                    robot.setPidDriveTarget(0.0, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.KNOCK_OUT_CAPBALL);
                     break;
 
@@ -223,7 +223,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     driveDistance = selectParameter(
                             startPos, alliance, 60.0, beaconButtons != 0? 72.0: 60.0, 80.0, 80.0);
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, nextState);
                     break;
 
@@ -239,42 +239,42 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER? State.TURN_TO_CENTER1:
                                 parkOption == FtcAuto.ParkOption.PARK_CORNER? State.TURN_TO_CORNER1: State.DONE;
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, nextState);
                     break;
 
                 case TURN_TO_CENTER1:
                     heading = selectParameter(startPos, alliance, 13.0, -11.0, 0.0, -6.0);
 
-                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event);
+                    robot.setPidDriveTarget(0.0, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.PARK_CENTER1);
                     break;
 
                 case PARK_CENTER1:
                     driveDistance = selectParameter(startPos, alliance, 50.0, 50.0, 22.0, 35.0);
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case TURN_TO_CORNER1:
                     heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -135.0: 135.0;
 
-                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event);
+                    robot.setPidDriveTarget(0.0, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.PARK_CORNER1);
                     break;
 
                 case PARK_CORNER1:
                     driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 60.0: 56.0;
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 
                 case ALIGN_WALL:
                     heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
 
-                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event);
+                    robot.setPidDriveTarget(0.0, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.GOTO_WALL);
                     break;
 
@@ -284,6 +284,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     driveDistance = 1.5;
 
+                    robot.setTurnPID(driveDistance, 0.0, heading);
                     robot.rangePidDrive.setTarget(driveDistance, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.BACKOUT);
                     break;
@@ -293,8 +294,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     // The GOTO_WALL state will correct the robot alignment, remember this new heading.
                     //
                     heading = robot.driveBase.getHeading();
-                    driveDistance = 3.0;
+                    driveDistance = 3.5;
 
+                    robot.setTurnPID(driveDistance, 0.0, heading);
                     robot.rangePidDrive.setTarget(driveDistance, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.FIND_LINE);
                     break;
@@ -305,7 +307,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                     driveDistance = -30.0;
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.PUSH_BUTTON);
                     break;
 
@@ -347,7 +349,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     if (leftPusherExtended || rightPusherExtended)
                     {
-                        timer.set(1.0, event);
+                        timer.set(1.5, event);
                         sm.waitForSingleEvent(event, State.RETRACT);
                     }
                     else
@@ -383,7 +385,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     {
                         driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 57.0: 57.0;
 
-                        robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                        robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                         remainingBeaconButtons--;
                         sm.waitForSingleEvent(event, State.GOTO_WALL);
                     }
@@ -406,7 +408,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                         driveDistance = 12.0;
 
-                        robot.pidDrive.setTarget(driveDistance, 0.0, heading, false, event);
+                        robot.setPidDriveTarget(driveDistance, 0.0, heading, false, event);
                         sm.waitForSingleEvent(event, nextState);
                     }
                     break;
@@ -421,14 +423,14 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         heading = 45.0;
                     }
 
-                    robot.pidDrive.setTarget(0.0, 0.0, heading, false, event);
+                    robot.setPidDriveTarget(0.0, 0.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.GOTO_CENTER2);
                     break;
 
                 case GOTO_CENTER2:
                     driveDistance = beaconButtons == 2? 60.0: 48.0;
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 
@@ -442,7 +444,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         driveDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -40.0: 84.0;
                     }
 
-                    robot.pidDrive.setTarget(0.0, driveDistance, heading, false, event);
+                    robot.setPidDriveTarget(0.0, driveDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 

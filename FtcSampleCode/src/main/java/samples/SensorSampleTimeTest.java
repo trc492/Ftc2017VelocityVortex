@@ -3,12 +3,14 @@ package samples;
 import android.util.Log;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@TeleOp(name="Test: Loop Timing", group="3543TestSamples")
-public class TimingTest extends LinearOpMode
+@TeleOp(name="Test: Simple Sensor Sample Time", group="3543TestSamples")
+@Disabled
+public class SensorSampleTimeTest extends LinearOpMode
 {
     private enum SensorType
     {
@@ -72,7 +74,8 @@ public class TimingTest extends LinearOpMode
                 if (loopInterval < minLoopInterval)
                 {
                     minLoopInterval = loopInterval;
-                } else if (loopInterval > maxLoopInterval)
+                }
+                else if (loopInterval > maxLoopInterval)
                 {
                     maxLoopInterval = loopInterval;
                 }
@@ -94,7 +97,7 @@ public class TimingTest extends LinearOpMode
                 "Sensor: MinSampleInterval=%7.3f, MaxSampleInterval=%7.3f, AvgSampleInterval=%7.3f",
                 minSampleInterval/1000000.0, maxSampleInterval/1000000.0,
                 (endTime - startTime)/1000000.0/sampleCount));
-    }
+    }   //runOpMode
 
     private void initRobot()
     {
@@ -118,7 +121,7 @@ public class TimingTest extends LinearOpMode
 
         gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyroSensor");
         gyro.resetZAxisIntegrator();
-    }
+    }   //initRobot
 
     private int getSensorValue()
     {
@@ -137,7 +140,7 @@ public class TimingTest extends LinearOpMode
         }
 
         return value;
-    }
+    }   //getSensorValue
 
     private void runRobot(String prefix)
     {
@@ -167,7 +170,7 @@ public class TimingTest extends LinearOpMode
                 Log.i(TAG, prefix + String.format("heading=%d", -gyro.getIntegratedZValue()));
                 break;
         }
-    }
+    }   //runRobot
 
     private void stopRobot()
     {
@@ -175,6 +178,6 @@ public class TimingTest extends LinearOpMode
         lrWheel.setPower(0.0);
         rfWheel.setPower(0.0);
         rrWheel.setPower(0.0);
-    }
+    }   //stopRobot
 
-}
+}   //class SensorSampleTimeTest

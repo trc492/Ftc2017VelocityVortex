@@ -50,7 +50,7 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
     private String instanceName;
     private TrcDigitalInput lowerLimitSwitch = null;
     private TrcDigitalInput upperLimitSwitch = null;
-    private DcMotor motor;
+    public DcMotor motor;
     private int zeroEncoderValue;
     private int positionSensorSign = 1;
     private boolean speedTaskEnabled = false;
@@ -164,25 +164,6 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
 
         return inverted;
     }   //getInverted
-
-    /**
-     * This method returns the current motor run mode.
-     *
-     * @return motor run mode.
-     */
-    public DcMotor.RunMode getMode()
-    {
-        final String funcName = "getMode";
-        DcMotor.RunMode runMode = motor.getMode();
-
-        if (debugEnabled)
-        {
-            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
-            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API, "=%s", runMode.toString());
-        }
-
-        return runMode;
-    }   //getMode
 
     /**
      * This method returns the motor position by reading the position sensor. The position
@@ -362,24 +343,6 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
 
         motor.setDirection(inverted? DcMotor.Direction.REVERSE: DcMotor.Direction.FORWARD);
     }   //setInverted
-
-    /**
-     * This method sets the motor run mode.
-     *
-     * @param runMode specifies the run mode to be set to the motor.
-     */
-    public void setMode(DcMotor.RunMode runMode)
-    {
-        final String funcName = "setMode";
-
-        if (debugEnabled)
-        {
-            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API, "runMode=%s", runMode.toString());
-            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API);
-        }
-
-        motor.setMode(runMode);
-    }   //setMode
 
     /**
      * This method sets the output power of the motor controller.

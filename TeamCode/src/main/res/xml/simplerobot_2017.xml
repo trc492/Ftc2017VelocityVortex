@@ -20,34 +20,24 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -->
-<Robot type="FirstInspires-FTC" name="RobotConfig2017">
+<Robot type="FirstInspires-FTC" name="SimpleRobot2017">
     <MotorController name="Motor Controller 1" serialNumber="AL00YC5V">
-        <Motor name="leftFrontWheel" port="1" />
-        <Motor name="leftRearWheel" port="2" />
+        <Motor name="lfWheel" port="1" />
+        <Motor name="lrWheel" port="2" />
     </MotorController>
     <MotorController name="Motor Controller 2" serialNumber="AL00VUPG">
-        <Motor name="rightFrontWheel" port="1" />
-        <Motor name="rightRearWheel" port="2" />
+        <Motor name="rfWheel" port="1" />
+        <Motor name="rrWheel" port="2" />
     </MotorController>
     <MotorController name="Motor Controller 3" serialNumber="AL00YBE9">
-        <Motor name="conveyorMotor" port="1" />
-        <Motor name="pickUpMotor" port="2" />
     </MotorController>
     <MotorController name="Motor Controller 4" serialNumber="AH03EUMZ">
-        <Motor name="shooterMotor" port="1" />
     </MotorController>
     <ServoController name="Servo Controller 1" serialNumber="AL00VCBJ">
-        <Servo name="leftButtonPusherServo" port="1" />
-        <Servo name="rightButtonPusherServo" port="2" />
     </ServoController>
     <ServoController name="Servo Controller 2" serialNumber="AL00XLFG">
-        <Servo name="ballGateServo" port="1" />
     </ServoController>
     <DeviceInterfaceModule name="Device Interface Module 1" serialNumber="AL00VCE7">
-        <ColorSensor name="colorSensor" port="0" />
-        <ModernRoboticsI2cRangeSensor name="rangeSensor" port="1" />
-        <OpticalDistanceSensor name="odsLineDetector" port="0" />
-        <AnalogInput name="analogGyro" port="1" />
-        <TouchSensor name="shooterTouchSensor" port="0" />
+        <Gyro name="gyroSensor" port="0" />
     </DeviceInterfaceModule>
 </Robot>

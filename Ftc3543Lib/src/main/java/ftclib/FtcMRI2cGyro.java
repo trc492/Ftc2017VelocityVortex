@@ -194,18 +194,31 @@ public class FtcMRI2cGyro extends FtcMRI2cDevice implements HalGyro, TrcSensorDa
     public TrcSensor.SensorData getIntegratedZ()
     {
         final String funcName = "getIntegratedZ";
+
+        if (debugEnabled)
+        {
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
+        }
+
+        TrcSensor.SensorData data;
         byte[] regData = getData(readerId);
         //
         // MR gyro IntegratedZ is decreasing when turning clockwise. This is opposite to convention.
         // So we are reversing it.
         //
-        int value = zSign*TrcUtil.bytesToInt(
-                regData[REG_INTEGRATED_Z_LSB - READ_START], regData[REG_INTEGRATED_Z_MSB - READ_START]);
-        TrcSensor.SensorData data = new TrcSensor.SensorData(getDataTimestamp(readerId), -value);
+        if (regData != null)
+        {
+            int value = zSign * TrcUtil.bytesToInt(
+                    regData[REG_INTEGRATED_Z_LSB - READ_START], regData[REG_INTEGRATED_Z_MSB - READ_START]);
+            data = new TrcSensor.SensorData(getDataTimestamp(readerId), -value);
+        }
+        else
+        {
+            data = new TrcSensor.SensorData(0, 0);
+        }
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API,
                                "=(timestamp=%.3f,value=%d)", data.timestamp, (Integer)data.value);
         }

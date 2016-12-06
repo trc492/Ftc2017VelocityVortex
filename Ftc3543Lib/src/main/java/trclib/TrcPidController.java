@@ -60,7 +60,13 @@ public class TrcPidController
     private double totalError = 0.0;
     private double settlingStartTime = 0.0;
     private double setPoint = 0.0;
+    private double input = 0.0;
     private double output = 0.0;
+
+    private double pTerm;
+    private double iTerm;
+    private double dTerm;
+    private double fTerm;
 
     public TrcPidController(
             final String instanceName,
@@ -95,13 +101,9 @@ public class TrcPidController
     public void displayPidInfo(int lineNum)
     {
         dashboard.displayPrintf(
-                lineNum,
-                "%s:Target=%.1f,Input=%.1f,Error=%.1f",
-                instanceName, setPoint, pidInput.getInput(this), prevError);
+                lineNum, "%s:Target=%.1f,Input=%.1f,Error=%.1f", instanceName, setPoint, input, prevError);
         dashboard.displayPrintf(
-                lineNum + 1,
-                "minOutput=%.1f,Output=%.1f,maxOutput=%.1f",
-                minOutput, output, maxOutput);
+                lineNum + 1, "minOutput=%.1f,Output=%.1f,maxOutput=%.1f", minOutput, output, maxOutput);
     }   //displayPidInfo
 
     public void printPidInfo(TrcDbgTrace tracer)
@@ -117,9 +119,8 @@ public class TrcPidController
         {
             tracer.traceInfo(
                     funcName,
-                    "%s: Target=%6.1f, Input=%6.1f, Error=%6.1f, Output=%6.3f(%6.3f/%5.3f)",
-                    instanceName, setPoint, pidInput.getInput(this), prevError, output,
-                    minOutput, maxOutput);
+                    "%s: Target=%6.1f, Input=%6.1f, Error=%6.1f, PIDTerms=%6.3f/%6.3f/%6.3f, Output=%6.3f(%6.3f/%5.3f)",
+                    instanceName, setPoint, input, prevError, pTerm, iTerm, dTerm, output, minOutput, maxOutput);
         }
     }   //printPidInfo
 
@@ -497,7 +498,8 @@ public class TrcPidController
         double currTime = HalUtil.getCurrentTime();
         double deltaTime = currTime - prevTime;
         prevTime = currTime;
-        double error = setPoint - pidInput.getInput(this);
+        input = pidInput.getInput(this);
+        double error = setPoint - input;
         if (inverted)
         {
             error = -error;
@@ -520,11 +522,11 @@ public class TrcPidController
             }
         }
 
-        output = kF*setPoint + kP*error + kI*totalError;
-        if (deltaTime != 0)
-        {
-            output += kD*(error - prevError)/deltaTime;
-        }
+        pTerm = kP*error;
+        iTerm = kI*totalError;
+        dTerm = deltaTime > 0.0? kD*(error - prevError)/deltaTime: 0.0;
+        fTerm = kF*setPoint;
+        output = fTerm + pTerm + iTerm + dTerm;
 
         prevError = error;
         if (output > maxOutput)

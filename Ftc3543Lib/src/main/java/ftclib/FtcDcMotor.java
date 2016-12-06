@@ -429,7 +429,7 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
             taskMgr.registerTask(
                     instanceName,
                     this,
-                    TrcTaskMgr.TaskType.PREPERIODIC_TASK);
+                    TrcTaskMgr.TaskType.PRECONTINUOUS_TASK);
         }
         else
         {
@@ -438,7 +438,7 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
                     TrcTaskMgr.TaskType.STOP_TASK);
             taskMgr.unregisterTask(
                     this,
-                    TrcTaskMgr.TaskType.PREPERIODIC_TASK);
+                    TrcTaskMgr.TaskType.PRECONTINUOUS_TASK);
         }
     }   //setSpeedEnabled
 
@@ -471,15 +471,25 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
         }
     }   //stopTask
 
+    @Override
+    public void prePeriodicTask(TrcRobot.RunMode runMode)
+    {
+    }   //prePeriodicTask
+
+    @Override
+    public void postPeriodicTask(TrcRobot.RunMode runMode)
+    {
+    }   //postPeriodicTask
+
     /**
      * This task is run periodically to calculate he speed of the motor.
      *
      * @param runMode specifies the competition mode that is running.
      */
     @Override
-    public void prePeriodicTask(TrcRobot.RunMode runMode)
+    public void preContinuousTask(TrcRobot.RunMode runMode)
     {
-        final String funcName = "prePeriodicTask";
+        final String funcName = "preContinuousTask";
 
         if (debugEnabled)
         {
@@ -501,16 +511,6 @@ public class FtcDcMotor implements HalMotorController, TrcTaskMgr.Task
         {
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.TASK);
         }
-    }   //prePeriodicTask
-
-    @Override
-    public void postPeriodicTask(TrcRobot.RunMode runMode)
-    {
-    }   //postPeriodicTask
-
-    @Override
-    public void preContinuousTask(TrcRobot.RunMode runMode)
-    {
     }   //preContinuousTask
 
     @Override

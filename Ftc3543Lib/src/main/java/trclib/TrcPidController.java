@@ -323,6 +323,11 @@ public class TrcPidController
         this.kF = kF;
     }   //setPID
 
+    public void setTargetTolerance(double tolerance)
+    {
+        this.tolerance = tolerance;
+    }   //setTargetTolerance
+
     public void setInputRange(double minInput, double maxInput)
     {
         final String funcName = "setInputRange";

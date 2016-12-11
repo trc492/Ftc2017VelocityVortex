@@ -22,6 +22,8 @@
 
 package team3543;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+
 public class RobotInfo
 {
     //
@@ -31,67 +33,90 @@ public class RobotInfo
     public static final double TONE_DECAY                       = 0.0;      // in seconds
     public static final double TONE_SUSTAIN                     = 1.0;      // in proportion
     public static final double TONE_RELEASE                     = 0.02;     // in seconds
+
     //
     // DriveBase subsystem.
     //
-    // Good PID: 0.15, 0.0, 0.0
-    // INCHES_PER_COUNT: 0.0126615810903615
+
+    public static final int DRIVE_MAX_SPEED                     = 4000;     //encoder counts per second
+    public static final DcMotor.RunMode DRIVE_MOTOR_MODE        = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
+//    public static final DcMotor.RunMode DRIVE_MOTOR_MODE        = DcMotor.RunMode.RUN_USING_ENCODER;
+    public static final double TURN_POWER_LIMIT                 = 0.50;
+
     //
-    public static final double ENCODER_X_KP                     = 0.15;     //Good PID: 0.15, 0.0, 0.0
+    // INCHES_PER_COUNT: 0.0132166817227156
+    // Good PID: 0.062, 0.0, 0.0
+    // 12/06/2016: 0.2, 0.0, 0.0 (No speed control)
+    //
+    public static final double ENCODER_X_KP                     = 0.2;
     public static final double ENCODER_X_KI                     = 0.0;
     public static final double ENCODER_X_KD                     = 0.0;
     public static final double ENCODER_X_KF                     = 0.0;
     public static final double ENCODER_X_TOLERANCE              = 2.0;
     public static final double ENCODER_X_SETTLING               = 0.2;
-    public static final double ENCODER_X_INCHES_PER_COUNT       = 0.0132166817227156;//0.0126615810903615;
+    public static final double ENCODER_X_INCHES_PER_COUNT       = 0.0132166817227156;
     //
-    // Good PID: 0.022, 0.0, 0.0025
     // INCHES_PER_COUNT: 0.01667
+    // Good PID (with speed control ON): 0.05, 0.0, 0.0
+    // 12/06/2016: 0.045, 0.0, 0.0045 (No speed control)
     //
-    public static final double ENCODER_Y_KP                     = 0.022;
+    public static final double ENCODER_Y_KP                     = 0.045;
     public static final double ENCODER_Y_KI                     = 0.0;
-    public static final double ENCODER_Y_KD                     = 0.0025;
+    public static final double ENCODER_Y_KD                     = 0.0045;
     public static final double ENCODER_Y_KF                     = 0.0;
     public static final double ENCODER_Y_TOLERANCE              = 2.0;
     public static final double ENCODER_Y_SETTLING               = 0.2;
     public static final double ENOCDER_Y_INCHES_PER_COUNT       = 0.01667;
     //
-    // Small turn: 0.02, 0.0, 0.00015
-    // Large turn:
+    // Accurate PID but slow (with speed control ON): 0.02, 0.0, 0.0028
+    // Faster PID but may oscillate (with speed control ON): 0.022, 0.0, 0.0046 (limit to half power for mid-range)
+    // 12/06/2016: 0.021, 0.0, 0.0021; [< 15] 0.024, 0.0, 0.002; (No speed control, 0.75 power limit)
+    // 12/07/2016: 0.021, 0.0, 0.0021; [< 15] 0.023, 0.0, 0.0023; (No speed control, 0.75 power limit)
+    // 12/07/2016: 0.02, 0.0, 0.0022; [< 15] 0.024, 0.0, 0.0024; (No speed control, 0.75 power limit)
+    // 12/08/2016: 0.02, 0.0, 0.0022; [< 15] 0.055, 0.0, 0.011; (No speed control, 0.75 power limit)
+    // 12/10/2016: 0.022, 0.0, 0.0024; [< 15] 0.028, 0.0, 0.0; (No speed control, 0.75 power limit)
     //
-    public static final double GYRO_KP                          = 0.015;
+    public static final double ANALOG_GYRO_VOLT_PER_DEG_PER_SEC = 0.007;
+    public static final double GYRO_KP                          = 0.022;
     public static final double GYRO_KI                          = 0.0;
-    public static final double GYRO_KD                          = 0.002;
+    public static final double GYRO_KD                          = 0.0024;
     public static final double GYRO_KF                          = 0.0;
     public static final double GYRO_TOLERANCE                   = 2.0;
     public static final double GYRO_SETTLING                    = 0.2;
 
-    public static final double SMALL_TURN_THRESHOLD             = 20.0;
-    public static final double GYRO_SMALL_TURN_KP               = 0.02;
+    public static final double SMALL_TURN_THRESHOLD             = 15.0;
+    public static final double GYRO_SMALL_TURN_KP               = 0.028;
     public static final double GYRO_SMALL_TURN_KI               = 0.0;
-    public static final double GYRO_SMALL_TURN_KD               = 0.00015;
+    public static final double GYRO_SMALL_TURN_KD               = 0.0;
 
     public static final double LARGE_TURN_THRESHOLD             = 80.0;
-    public static final double GYRO_LARGE_TURN_KP               = 0.0052;
+    public static final double GYRO_LARGE_TURN_KP               = GYRO_KP;
     public static final double GYRO_LARGE_TURN_KI               = 0.0;
-    public static final double GYRO_LARGE_TURN_KD               = 0.0;
+    public static final double GYRO_LARGE_TURN_KD               = GYRO_KD;
     //
     // Good PID: 0.085, 0.0, 0.0
+    // No speed control: 0.2, 0.0, 0.0
+    // 12/07/2016: 0.4, 0.0, 0.04 (No speed control)
     //
-    public static final double RANGE_KP                         = 0.085;
+    public static final double RANGE_KP                         = 0.4;
     public static final double RANGE_KI                         = 0.0;
-    public static final double RANGE_KD                         = 0.0;
+    public static final double RANGE_KD                         = 0.04;
     public static final double RANGE_KF                         = 0.0;
     public static final double RANGE_TOLERANCE                  = 0.5;
     public static final double RANGE_SETTLING                   = 0.2;
 
-    public static final double PIDDRIVE_STALL_TIMEOUT           = 0.5;
+    public static final double WALL_NEAR                        = 3.0;      //in inches
+    public static final double WALL_FAR                         = 6.0;      //in inches
+
+    public static final double PIDDRIVE_STALL_TIMEOUT           = 0.5;      //in msec.
 
     //
     // Line detection.
     //
-    public static final double LINE_DARK_LEVEL                  = 2.0;
-    public static final double LINE_WHITE_LEVEL                 = 21.0;
+//    public static final double LINE_DARK_LEVEL                  = 2.0;      //for color sensor
+//    public static final double LINE_WHITE_LEVEL                 = 21.0;     //for color sensor
+    public static final double LINE_DARK_LEVEL                  = 0.4;      //for ODS
+    public static final double LINE_WHITE_LEVEL                 = 2.5;      //for ODS
 
     //
     // Shooter subsystem.
@@ -111,13 +136,13 @@ public class RobotInfo
     //
     // Ball gate subsystem.
     //
-    public static final double BALLGATE_CLOSE_POSITION          = 0.70;
-    public static final double BALLGATE_OPEN_POSITION           = 0.56;
+    public static final double BALLGATE_DOWN_POSITION           = 0.72;
+    public static final double BALLGATE_UP_POSITION             = 0.56;     //Dumping
 
     //
     // Button pusher subsystem.
     //
-    public static final double BUTTON_PUSHER_RETRACT_POSITION   = (45.0/255.0);//(55.0/255.0);
+    public static final double BUTTON_PUSHER_RETRACT_POSITION   = (45.0/255.0);
     public static final double BUTTON_PUSHER_EXTEND_POSITION    = (200.0/255.0);
 
     //

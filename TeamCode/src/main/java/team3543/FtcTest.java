@@ -31,6 +31,7 @@ import ftclib.FtcGamepad;
 import ftclib.FtcMenu;
 import ftclib.FtcOpMode;
 import ftclib.FtcValueMenu;
+import trclib.TrcAnalogInput;
 import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcStateMachine;
@@ -41,7 +42,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 {
     private static final boolean debugXPid = false;
     private static final boolean debugYPid = false;
-    private static final boolean debugGyroPid = true;
+    private static final boolean debugGyroPid = false;
+    private static final boolean debugRangePid = true;
+    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private enum Test
     {
@@ -61,8 +64,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         DONE
     }   //enum State
 
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
-
     //
     // State machine.
     //
@@ -79,7 +80,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     private double turnDegrees = 0.0;
 
     private int motorIndex = 0;
-    private double ballGatePos = RobotInfo.BALLGATE_CLOSE_POSITION;
+    private double ballGatePos = RobotInfo.BALLGATE_DOWN_POSITION;
     private double buttonPusherPos = 0.0;
 
     //
@@ -155,7 +156,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 break;
 
             case RANGE_DRIVE:
-                doRangeDrive(rangeDistance);
+                if (robot.USE_RANGE_SENSOR)
+                {
+                    doRangeDrive(rangeDistance);
+                }
                 break;
 
             case GYRO_TURN:
@@ -195,11 +199,11 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     private void doMenus()
     {
         FtcChoiceMenu testMenu = new FtcChoiceMenu("Tests:", null, this);
-        FtcValueMenu driveTimeMenu = new FtcValueMenu("Drive time:", testMenu, this, 1.0, 10.0, 1.0, 8.0, " %.0f sec");
+        FtcValueMenu driveTimeMenu = new FtcValueMenu("Drive time:", testMenu, this, 1.0, 10.0, 1.0, 4.0, " %.0f sec");
         FtcValueMenu driveDistanceMenu = new FtcValueMenu(
-                "Drive distance:", testMenu, this, 1.0, 10.0, 1.0, 8.0, " %.0f ft");
+                "Drive distance:", testMenu, this, -10.0, 10.0, 0.5, 4.0, " %.1f ft");
         FtcValueMenu rangeDistanceMenu = new FtcValueMenu(
-                "Range distance:", testMenu, this, 1.0, 12.0, 1.0, 3.0, " %.0f in");
+                "Range distance:", testMenu, this, 0.5, 12.0, 0.5, 6.0, " %.0f in");
         FtcValueMenu turnDegreesMenu = new FtcValueMenu(
                 "Turn degrees:", testMenu, this, -360.0, 360.0, 5.0, 45.0, " %.0f deg");
 
@@ -236,23 +240,55 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         // Drive the robot around to sample different locations of the field.
         //
         dashboard.displayPrintf(3, LABEL_WIDTH, "FrontEnc: ", "l=%.0f,r=%.0f",
-                robot.leftFrontWheel.getPosition(), robot.rightFrontWheel.getPosition());
+                                robot.leftFrontWheel.getPosition(), robot.rightFrontWheel.getPosition());
         dashboard.displayPrintf(4, LABEL_WIDTH, "RearEnc: ", "l=%.0f,r=%.0f",
-                robot.leftRearWheel.getPosition(), robot.rightRearWheel.getPosition());
+                                robot.leftRearWheel.getPosition(), robot.rightRearWheel.getPosition());
         dashboard.displayPrintf(5, LABEL_WIDTH, "Shooter: ", "Pos=%.3f,touch=%s",
-                robot.shooter.getPosition(), Boolean.toString(robot.shooter.isTouchActive()));
+                                robot.shooter.getPosition(), Boolean.toString(robot.shooter.isTouchActive()));
         dashboard.displayPrintf(6, LABEL_WIDTH, "ServoPos: ", "BallGate=%.2f,Pusher=%.2f",
-                ballGatePos, buttonPusherPos);
-        dashboard.displayPrintf(9, LABEL_WIDTH, "Gyro: ", "Rate=%.1f,Heading=%.1f",
-                robot.gyro.getZRotationRate().value, robot.gyro.getZHeading().value);
-        dashboard.displayPrintf(10, LABEL_WIDTH, "Beacon: ", "RGBAH=[%d,%d,%d,%d,%x]",
-                robot.beaconColorSensor.red(), robot.beaconColorSensor.green(), robot.beaconColorSensor.blue(),
-                robot.beaconColorSensor.alpha(), robot.beaconColorSensor.argb());
-        dashboard.displayPrintf(11, LABEL_WIDTH, "Line: ", "color=%d,white=%d",
-                (Integer)robot.lineDetectionSensor.getColorNumber().value,
-                (Integer)robot.lineDetectionSensor.getWhiteValue().value);
-        dashboard.displayPrintf(12, LABEL_WIDTH, "Range: ", "%.3f in",
-                robot.rangeSensor.getDistance(DistanceUnit.INCH.INCH));
+                                ballGatePos, buttonPusherPos);
+        if (robot.USE_ANALOG_GYRO)
+        {
+            dashboard.displayPrintf(9, LABEL_WIDTH, "Gyro: ", "Rate=%.3f,Heading=%.1f",
+                                    (Double)robot.analogGyro.getZRotationRate().value,
+                                    (Double)robot.analogGyro.getZHeading().value);
+        }
+        else
+        {
+            dashboard.displayPrintf(9, LABEL_WIDTH, "Gyro: ", "Rate=%.1f,Heading=%.1f",
+                                    (Double)robot.gyro.getZRotationRate().value,
+                                    (Double)robot.gyro.getZHeading().value);
+        }
+
+        if (robot.USE_COLOR_SENSOR)
+        {
+            dashboard.displayPrintf(10, LABEL_WIDTH, "Beacon: ", "RGBAH=[%d,%d,%d,%d,%x]",
+                                    robot.beaconColorSensor.red(), robot.beaconColorSensor.green(),
+                                    robot.beaconColorSensor.blue(),
+                                    robot.beaconColorSensor.alpha(), robot.beaconColorSensor.argb());
+        }
+
+        if (robot.USE_LINE_DETECTOR)
+        {
+            if (robot.USE_ODS_LINE_DETECTOR)
+            {
+                dashboard.displayPrintf(11, LABEL_WIDTH, "Line: ", "light=%.3f",
+                                        (Double) robot.odsLineDetector.getRawData(
+                                                0, TrcAnalogInput.DataType.INPUT_DATA).value);
+            }
+            else
+            {
+                dashboard.displayPrintf(11, LABEL_WIDTH, "Line: ", "color=%d,white=%d",
+                                        (Integer) robot.lineDetectionSensor.getColorNumber().value,
+                                        (Integer) robot.lineDetectionSensor.getWhiteValue().value);
+            }
+        }
+
+        if (robot.USE_RANGE_SENSOR)
+        {
+            dashboard.displayPrintf(12, LABEL_WIDTH, "Range: ", "%.3f in",
+                                    robot.rangeSensor.sensor.getDistance(DistanceUnit.INCH.INCH));
+        }
     }   //doSensorsTest
 
     /**
@@ -405,17 +441,26 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         robot.encoderXPidCtrl.displayPidInfo(10);
         robot.encoderYPidCtrl.displayPidInfo(12);
         robot.gyroPidCtrl.displayPidInfo(14);
-        if (debugXPid)
+        if (debugXPid || debugYPid || debugGyroPid || debugRangePid)
+        {
+            tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
+                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+        }
+        if (debugXPid || xDistance != 0.0)
         {
             robot.encoderXPidCtrl.printPidInfo(tracer);
         }
-        if (debugYPid)
+        if (debugYPid || yDistance != 0.0)
         {
             robot.encoderYPidCtrl.printPidInfo(tracer);
         }
-        if (debugGyroPid)
+        if (debugGyroPid || rotation != 0.0)
         {
             robot.gyroPidCtrl.printPidInfo(tracer);
+        }
+        if (debugRangePid)
+        {
+            robot.rangePidCtrl.printPidInfo(tracer);
         }
 
         if (sm.isReady())
@@ -427,8 +472,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     //
                     // Drive the given distance or degrees.
                     //
+                    robot.battery.setTaskEnabled(true);
                     robot.pidDrive.setStallTimeout(0.0);
-                    robot.setPidDriveTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
+                    robot.setTurnPID(xDistance*12.0, yDistance*12.0, rotation);
+                    robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 
@@ -437,6 +484,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     //
                     // We are done.
                     //
+                    robot.battery.setTaskEnabled(false);
                     sm.stop();
                     break;
             }
@@ -457,22 +505,37 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         final String funcName = "doRangeDrive";
 
         dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
-                robot.getInput(robot.rangePidCtrl),
-                robot.getInput(robot.encoderYPidCtrl),
-                robot.getInput(robot.gyroPidCtrl));
+                                robot.getInput(robot.rangePidCtrl),
+                                robot.getInput(robot.encoderYPidCtrl),
+                                robot.getInput(robot.gyroPidCtrl));
         robot.rangePidCtrl.displayPidInfo(10);
         robot.encoderYPidCtrl.displayPidInfo(12);
         robot.gyroPidCtrl.displayPidInfo(14);
+        if (debugGyroPid || debugRangePid)
+        {
+            tracer.traceInfo("Battery", "Voltage=%5.2f (%5.2f)",
+                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+        }
+        if (debugGyroPid)
+        {
+            robot.gyroPidCtrl.printPidInfo(tracer);
+        }
+        if (debugRangePid)
+        {
+            robot.rangePidCtrl.printPidInfo(tracer);
+        }
 
         if (sm.isReady())
         {
-            State state = (State)sm.getState();
+            State state = (State) sm.getState();
             switch (state)
             {
                 case START:
                     //
                     // Drive the to the given wall distance.
                     //
+                    robot.battery.setTaskEnabled(true);
+                    robot.setTurnPID(rangeDistance, 0.0, 0.0);
                     robot.rangePidDrive.setTarget(rangeDistance, 0.0, 0.0, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
@@ -482,6 +545,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     //
                     // We are done.
                     //
+                    robot.battery.setTaskEnabled(false);
                     sm.stop();
                     break;
             }

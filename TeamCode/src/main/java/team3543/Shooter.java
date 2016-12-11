@@ -72,7 +72,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         touchSensor = new FtcTouchSensor("shooterTouchSensor");
 
         ballGate = new FtcServo("ballGateServo");
-        ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
+        ballGate.setPosition(RobotInfo.BALLGATE_DOWN_POSITION);
 
         sm = new TrcStateMachine(instanceName);
         timer = new TrcTimer(instanceName);
@@ -207,13 +207,13 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
             switch (state)
             {
                 case LOAD_PARTICLE:
-                    ballGate.setPosition(RobotInfo.BALLGATE_OPEN_POSITION);
+                    ballGate.setPosition(RobotInfo.BALLGATE_UP_POSITION);
                     timer.set(RobotInfo.SHOOTER_BALLGATE_OPEN_TIME, event);
                     sm.waitForSingleEvent(event, ShooterState.ARM_AND_FIRE);
                     break;
 
                 case ARM_AND_FIRE:
-                    ballGate.setPosition(RobotInfo.BALLGATE_CLOSE_POSITION);
+                    ballGate.setPosition(RobotInfo.BALLGATE_DOWN_POSITION);
                     shooterMotor.setPower(RobotInfo.SHOOTER_POWER);
                     if (touchSensor.isActive())
                     {

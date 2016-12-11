@@ -27,7 +27,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import ftclib.FtcGamepad;
 import ftclib.FtcOpMode;
 import hallib.HalDashboard;
-import trclib.TrcBooleanState;
 import trclib.TrcRobot;
 
 @TeleOp(name="TeleOp", group="3543TeleOp")
@@ -173,7 +172,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                     // Load particle.
                     //
                     robot.shooter.setBallGatePosition(
-                            pressed? RobotInfo.BALLGATE_OPEN_POSITION: RobotInfo.BALLGATE_CLOSE_POSITION);
+                            pressed? RobotInfo.BALLGATE_UP_POSITION : RobotInfo.BALLGATE_DOWN_POSITION);
                     break;
 
                 case FtcGamepad.GAMEPAD_B:

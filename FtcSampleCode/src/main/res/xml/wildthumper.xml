@@ -42,8 +42,6 @@ SOFTWARE.
     <DeviceInterfaceModule name="Device Interface Module 1" serialNumber="AI02RLBT">
         <Gyro name="gyroSensor" port="0" />
         <I2cDevice name="mrGyro" port="1" />
-        <ModernRoboticsI2cRangeSensor name="rangeSensor" port="2" />
-        <I2cDevice name="zxSensor" port="3" />
         <AnalogOutput name="AnalogTone" port="0" />
     </DeviceInterfaceModule>
 </Robot>

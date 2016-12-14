@@ -13,7 +13,7 @@ import ftclib.FtcOpMode;
 import trclib.TrcGyro;
 
 @TeleOp(name="Test: Sensor Sample Time", group="3543TestSamples")
-//@Disabled
+@Disabled
 public class FtcTestSensorSampleTime extends FtcOpMode
 {
     private enum SensorType

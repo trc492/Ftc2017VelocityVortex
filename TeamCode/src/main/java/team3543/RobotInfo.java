@@ -27,14 +27,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class RobotInfo
 {
     //
-    // Tone device.
-    //
-    public static final double TONE_ATTACK                      = 0.0;      // in seconds
-    public static final double TONE_DECAY                       = 0.0;      // in seconds
-    public static final double TONE_SUSTAIN                     = 1.0;      // in proportion
-    public static final double TONE_RELEASE                     = 0.02;     // in seconds
-
-    //
     // DriveBase subsystem.
     //
 

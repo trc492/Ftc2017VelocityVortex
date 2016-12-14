@@ -44,6 +44,7 @@ import hallib.HalDashboard;
 import trclib.TrcAnalogTrigger;
 import trclib.TrcDbgTrace;
 import trclib.TrcDriveBase;
+import trclib.TrcGyro;
 import trclib.TrcPidController;
 import trclib.TrcPidDrive;
 import trclib.TrcRobot;
@@ -69,8 +70,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     //
     // Sensors.
     //
-    public FtcMRGyro gyro = null;
-    public FtcAnalogGyro analogGyro = null;
+    public TrcGyro gyro = null;
     public ColorSensor beaconColorSensor = null;
     public FtcMRI2cColorSensor lineDetectionSensor = null;
     public FtcOpticalDistanceSensor odsLineDetector = null;
@@ -122,13 +122,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         if (USE_ANALOG_GYRO)
         {
-            analogGyro = new FtcAnalogGyro("analogGyro", RobotInfo.ANALOG_GYRO_VOLT_PER_DEG_PER_SEC);
-            analogGyro.calibrate();
+            gyro = new FtcAnalogGyro("analogGyro", RobotInfo.ANALOG_GYRO_VOLT_PER_DEG_PER_SEC);
+            ((FtcAnalogGyro)gyro).calibrate();
         }
         else
         {
             gyro = new FtcMRGyro("gyroSensor");
-            gyro.calibrate();
+            ((FtcMRGyro)gyro).calibrate();
         }
 
         if (USE_COLOR_SENSOR)
@@ -174,18 +174,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         leftFrontWheel.setInverted(true);
         leftRearWheel.setInverted(true);
 
-        driveBase = new TrcDriveBase(
-                leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel,
-                USE_ANALOG_GYRO? analogGyro: gyro);
+        driveBase = new TrcDriveBase(leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel, gyro);
         driveBase.setXPositionScale(RobotInfo.ENCODER_X_INCHES_PER_COUNT);
         driveBase.setYPositionScale(RobotInfo.ENOCDER_Y_INCHES_PER_COUNT);
         //
         // Initialize tone device.
         //
         androidTone = new FtcAndroidTone("AndroidTone");
-        androidTone.setSoundEnvelope(
-                RobotInfo.TONE_ATTACK, RobotInfo.TONE_DECAY, RobotInfo.TONE_SUSTAIN, RobotInfo.TONE_RELEASE);
-        androidTone.setSoundEnvelopeEnabled(true);
         //
         // Initialize PID drive.
         //
@@ -265,15 +260,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
     public void startMode(TrcRobot.RunMode runMode)
     {
-        if (USE_ANALOG_GYRO)
-        {
-            analogGyro.resetZIntegrator();
-            analogGyro.setEnabled(true);
-        }
-        else
-        {
-            gyro.resetZIntegrator();
-        }
+        gyro.resetZIntegrator();
+        gyro.setEnabled(true);
 
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)
         {
@@ -287,10 +275,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     {
         shooter.stop();
 
-        if (USE_ANALOG_GYRO)
-        {
-            analogGyro.setEnabled(false);
-        }
+        gyro.setEnabled(false);
 
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)
         {
@@ -323,10 +308,10 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         {
             input = rangeSensor.sensor.getDistance(DistanceUnit.INCH);
             //
-            // The range sensor sometimes gives us a bogus value. When that happens, it's always with
-            // the value 100.4. If so, throw it away and use the previous value instead.
+            // The range sensor sometimes does not detect the echo and returns 255cm (approx. 100.4 inches).
+            // If so, throw it away and use the previous value instead.
             //
-            if (Math.abs(input - 100.4) < 0.1)
+            if (input > 100.0)
             {
                 input = prevRangeValue;
             }

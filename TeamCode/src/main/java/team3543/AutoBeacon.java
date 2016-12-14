@@ -22,8 +22,6 @@
 
 package team3543;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import ftclib.FtcOpMode;
 import trclib.TrcAnalogInput;
 import trclib.TrcDbgTrace;
@@ -48,8 +46,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
         PARK_CENTER1,
         TURN_TO_CORNER1,
         PARK_CORNER1,
-        TURN_TO_BEACON,
+        TURN_TO_WALL,
         GOTO_WALL,
+        PARALLEL_WALL,
         ALIGN_WALL1,
         ALIGN_WALL2,
         FIND_LINE,
@@ -255,12 +254,12 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case KNOCK_OUT_CAPBALL:
-                    nextState = beaconButtons == 0? State.BACKUP: State.TURN_TO_BEACON;
+                    nextState = beaconButtons == 0? State.BACKUP: State.TURN_TO_WALL;
                     xDistance = 0.0;
                     yDistance = selectParameter(
                             startPos, alliance,
-                            //NEAR
-                            beaconButtons != 0? 64.0: 60, beaconButtons != 0? 70.0: 52.0,
+                            //NEAR (old value = 64.0)
+                            beaconButtons != 0? 60.0: 60, beaconButtons != 0? 70.0: 52.0,
                             //FAR
                             80.0, 80.0);
 
@@ -343,9 +342,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 
-                case TURN_TO_BEACON:
+                case TURN_TO_WALL:
                     xDistance = yDistance = 0.0;
-                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -90.0: 90.0;
 
                     robot.setTurnPID(xDistance, yDistance, heading);
                     robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
@@ -356,37 +355,52 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     //
                     // Crab towards wall using the Range Sensor.
                     //
-                    if (robot.USE_RANGE_SENSOR)
-                    {
-                        xDistance = 6.0;
-                        yDistance = 0.0;
-                    }
-                    else
-                    {
-                        if (beaconButtons == 2 && remainingBeaconButtons == 1)
-                        {
-                            xDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -7.0: -7.0;
-                        }
-                        else
-                        {
-                            xDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -25.0;
-                        }
-                        yDistance = 0.0;
-                    }
+//                    if (robot.USE_RANGE_SENSOR)
+//                    {
+//                        xDistance = 6.0;
+//                        yDistance = 0.0;
+//                    }
+//                    else
+//                    {
+//                        if (beaconButtons == 2 && remainingBeaconButtons == 1)
+//                        {
+//                            xDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -7.0: -7.0;
+//                        }
+//                        else
+//                        {
+//                            xDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -25.0;
+//                        }
+//                        yDistance = 0.0;
+//                    }
+
+                    xDistance = 0.0;
+                    yDistance = 30.0;
+
+                    // Repel particles that may be in front of us.
+//                    robot.ballPickUp.setPower(-RobotInfo.BALL_PICKUP_MOTOR_POWER);
+                    robot.setTurnPID(xDistance, yDistance, heading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                    sm.waitForSingleEvent(event, State.PARALLEL_WALL);
+                    break;
+
+                case PARALLEL_WALL:
+                    xDistance = yDistance = 0.0;
+                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
 
                     robot.setTurnPID(xDistance, yDistance, heading);
-                    robot.rangePidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                    robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.ALIGN_WALL1);
                     break;
 
                 case ALIGN_WALL1:
+//                    robot.ballPickUp.setPower(0.0);
                     robot.driveBase.mecanumDrive_Cartesian(-0.75, 0.0, 0.0);
-                    timeout = elapsedTime + 1.5;
+                    timeout = elapsedTime + 1.0;
                     sm.setState(State.ALIGN_WALL2);
                     break;
 
                 case ALIGN_WALL2:
-                    if (robot.rangeSensor.sensor.getDistance(DistanceUnit.INCH) < 3.5 || elapsedTime >= timeout)
+                    if (robot.getInput(robot.rangePidCtrl) < 3.5 || elapsedTime >= timeout)
                     {
                         robot.driveBase.mecanumDrive_Cartesian(0.0, 0.0, 0.0);
                         sm.setState(State.FIND_LINE);
@@ -498,7 +512,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         robot.setTurnPID(xDistance, yDistance, heading);
                         robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
                         remainingBeaconButtons--;
-                        sm.waitForSingleEvent(event, State.GOTO_WALL);
+                        sm.waitForSingleEvent(event, State.ALIGN_WALL1);
                     }
                     else if (parkOption == FtcAuto.ParkOption.DO_NOTHING)
                     {
@@ -629,7 +643,7 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                 moduleName, "[%5.3f] %17s: xPos=%6.2f,yPos=%6.2f,heading=%6.1f/%6.1f,range=%5.2f,volt=%5.2fV(%5.2fV)",
                 elapsedTime, state.toString(),
                 robot.driveBase.getXPosition(), robot.driveBase.getYPosition(), robot.driveBase.getHeading(), heading,
-                robot.rangeSensor.sensor.getDistance(DistanceUnit.INCH),
+                robot.getInput(robot.rangePidCtrl),
                 robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
     }   //traceStateInfo
 

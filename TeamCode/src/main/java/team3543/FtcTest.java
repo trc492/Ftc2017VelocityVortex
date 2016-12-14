@@ -24,8 +24,6 @@ package team3543;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
 import ftclib.FtcChoiceMenu;
 import ftclib.FtcGamepad;
 import ftclib.FtcMenu;
@@ -247,18 +245,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                                 robot.shooter.getPosition(), Boolean.toString(robot.shooter.isTouchActive()));
         dashboard.displayPrintf(6, LABEL_WIDTH, "ServoPos: ", "BallGate=%.2f,Pusher=%.2f",
                                 ballGatePos, buttonPusherPos);
-        if (robot.USE_ANALOG_GYRO)
-        {
-            dashboard.displayPrintf(9, LABEL_WIDTH, "Gyro: ", "Rate=%.3f,Heading=%.1f",
-                                    (Double)robot.analogGyro.getZRotationRate().value,
-                                    (Double)robot.analogGyro.getZHeading().value);
-        }
-        else
-        {
-            dashboard.displayPrintf(9, LABEL_WIDTH, "Gyro: ", "Rate=%.1f,Heading=%.1f",
-                                    (Double)robot.gyro.getZRotationRate().value,
-                                    (Double)robot.gyro.getZHeading().value);
-        }
+        dashboard.displayPrintf(9, LABEL_WIDTH, "Gyro: ", "Rate=%.3f,Heading=%.1f",
+                                (Double)robot.gyro.getZRotationRate().value,
+                                (Double)robot.gyro.getZHeading().value);
 
         if (robot.USE_COLOR_SENSOR)
         {
@@ -286,8 +275,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         if (robot.USE_RANGE_SENSOR)
         {
-            dashboard.displayPrintf(12, LABEL_WIDTH, "Range: ", "%.3f in",
-                                    robot.rangeSensor.sensor.getDistance(DistanceUnit.INCH.INCH));
+            dashboard.displayPrintf(12, LABEL_WIDTH, "Range: ", "%.3f in", robot.getInput(robot.rangePidCtrl));
         }
     }   //doSensorsTest
 

@@ -201,6 +201,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 this);
         gyroPidCtrl.setAbsoluteSetPoint(true);
         gyroPidCtrl.setNoOscillation(true);
+        gyroPidCtrl.setOutputRange(-RobotInfo.TURN_POWER_LIMIT, RobotInfo.TURN_POWER_LIMIT);
         if (USE_RANGE_SENSOR)
         {
             rangePidCtrl = new TrcPidController(
@@ -360,7 +361,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         if (xDistance != 0.0 || yDistance != 0)
         {
-            gyroPidCtrl.setOutputRange(-RobotInfo.TURN_POWER_LIMIT, RobotInfo.TURN_POWER_LIMIT);
             gyroPidCtrl.setPID(RobotInfo.GYRO_KP, RobotInfo.GYRO_KI, RobotInfo.GYRO_KD, 0.0);
         }
         else if (degrees < RobotInfo.SMALL_TURN_THRESHOLD)
@@ -368,7 +368,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             //
             // We are turning a small angle, use stronger PID.
             //
-            gyroPidCtrl.setOutputRange(-RobotInfo.TURN_POWER_LIMIT, RobotInfo.TURN_POWER_LIMIT);
             gyroPidCtrl.setPID(RobotInfo.GYRO_SMALL_TURN_KP, RobotInfo.GYRO_SMALL_TURN_KI,
                                RobotInfo.GYRO_SMALL_TURN_KD, 0.0);
         }
@@ -377,7 +376,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             //
             // We are turning a medium angle, use normal PID.
             //
-            gyroPidCtrl.setOutputRange(-RobotInfo.TURN_POWER_LIMIT, RobotInfo.TURN_POWER_LIMIT);
             gyroPidCtrl.setPID(RobotInfo.GYRO_KP, RobotInfo.GYRO_KI, RobotInfo.GYRO_KD, 0.0);
         }
         else
@@ -385,7 +383,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             //
             // We are turning a large angle, use weaker PID.
             //
-            gyroPidCtrl.setOutputRange(-RobotInfo.TURN_POWER_LIMIT, RobotInfo.TURN_POWER_LIMIT);
             gyroPidCtrl.setPID(RobotInfo.GYRO_LARGE_TURN_KP, RobotInfo.GYRO_LARGE_TURN_KI,
                                RobotInfo.GYRO_LARGE_TURN_KD, 0.0);
         }

@@ -66,7 +66,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public HalDashboard dashboard;
     public FtcRobotControllerActivity activity;
     public TrcDbgTrace tracer;
-
     //
     // Sensors.
     //
@@ -84,6 +83,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public FtcDcMotor leftRearWheel = null;
     public FtcDcMotor rightRearWheel = null;
     public TrcDriveBase driveBase = null;
+    public FtcRobotBattery battery = null;
     public FtcAndroidTone androidTone = null;
 
     public TrcPidController encoderXPidCtrl = null;
@@ -94,11 +94,9 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public TrcPidDrive rangePidDrive = null;
 
     public TrcAnalogTrigger lineTrigger = null;
-    public TrcAnalogTrigger sonarTrigger = null;
     //
     // Other subsystems.
     //
-    public FtcRobotBattery battery = null;
     public Shooter shooter = null;
     public FtcServo leftButtonPusher = null;
     public FtcServo rightButtonPusher = null;
@@ -177,6 +175,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         driveBase = new TrcDriveBase(leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel, gyro);
         driveBase.setXPositionScale(RobotInfo.ENCODER_X_INCHES_PER_COUNT);
         driveBase.setYPositionScale(RobotInfo.ENOCDER_Y_INCHES_PER_COUNT);
+
+        battery = new FtcRobotBattery(leftFrontWheel.motor.getController());
         //
         // Initialize tone device.
         //
@@ -233,18 +233,14 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         if (USE_RANGE_SENSOR)
         {
-            double[] sonarZones = {RobotInfo.WALL_NEAR, RobotInfo.WALL_FAR};
             rangePidDrive = new TrcPidDrive("rangePidDrive", driveBase, rangePidCtrl, encoderYPidCtrl, gyroPidCtrl);
             rangePidDrive.setStallTimeout(RobotInfo.PIDDRIVE_STALL_TIMEOUT);
             rangePidDrive.setBeep(androidTone);
-            sonarTrigger = new TrcAnalogTrigger("sonarTrigger", rangeSensor, 0, sonarZones, this);
         }
 
         //
         // Initialize other subsystems.
         //
-
-        battery = new FtcRobotBattery(leftFrontWheel.motor.getController());
 
         shooter = new Shooter("shooter");
 
@@ -339,16 +335,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             {
                 //
                 // Encountering white line, abort PID drive.
-                //
-                pidDrive.cancel();
-            }
-        }
-        else if (analogTrigger == sonarTrigger && pidDrive.isEnabled())
-        {
-            if (zoneIndex == 0)
-            {
-                //
-                // Getting close to wall, abort PID drive.
                 //
                 pidDrive.cancel();
             }

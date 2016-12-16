@@ -37,7 +37,6 @@ public class RobotInfo
 
     //
     // INCHES_PER_COUNT: 0.0132166817227156
-    // Good PID: 0.062, 0.0, 0.0
     // 12/06/2016: 0.2, 0.0, 0.0 (No speed control)
     //
     public static final double ENCODER_X_KP                     = 0.2;
@@ -49,7 +48,6 @@ public class RobotInfo
     public static final double ENCODER_X_INCHES_PER_COUNT       = 0.0132166817227156;
     //
     // INCHES_PER_COUNT: 0.01667
-    // Good PID (with speed control ON): 0.05, 0.0, 0.0
     // 12/06/2016: 0.045, 0.0, 0.0045 (No speed control)
     //
     public static final double ENCODER_Y_KP                     = 0.045;
@@ -86,8 +84,6 @@ public class RobotInfo
     public static final double GYRO_LARGE_TURN_KI               = 0.0;
     public static final double GYRO_LARGE_TURN_KD               = GYRO_KD;
     //
-    // Good PID: 0.085, 0.0, 0.0
-    // No speed control: 0.2, 0.0, 0.0
     // 12/07/2016: 0.4, 0.0, 0.04 (No speed control)
     //
     public static final double RANGE_KP                         = 0.4;
@@ -96,9 +92,6 @@ public class RobotInfo
     public static final double RANGE_KF                         = 0.0;
     public static final double RANGE_TOLERANCE                  = 0.5;
     public static final double RANGE_SETTLING                   = 0.2;
-
-    public static final double WALL_NEAR                        = 3.0;      //in inches
-    public static final double WALL_FAR                         = 6.0;      //in inches
 
     public static final double PIDDRIVE_STALL_TIMEOUT           = 0.5;      //in msec.
 
@@ -129,7 +122,7 @@ public class RobotInfo
     // Ball gate subsystem.
     //
     public static final double BALLGATE_DOWN_POSITION           = 0.72;
-    public static final double BALLGATE_UP_POSITION             = 0.56;     //Dumping
+    public static final double BALLGATE_UP_POSITION             = 0.56;
 
     //
     // Button pusher subsystem.

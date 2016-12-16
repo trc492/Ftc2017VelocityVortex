@@ -50,7 +50,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     {
         DO_NOTHING,
         BEACON,
-        DEFENSE
+        DRIVE_STRAIGHT
     }   //enum Strategy
 
     public enum ParkOption
@@ -99,8 +99,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                         robot, alliance, startPos, delay, shootParticles, beaconButtons, parkOption);
                 break;
 
-            case DEFENSE:
-                autoStrategy = new AutoDefense(robot, delay, driveDistance);
+            case DRIVE_STRAIGHT:
+                autoStrategy = new AutoDriveStraight(robot, delay, driveDistance);
                 break;
 
             case DO_NOTHING:
@@ -172,7 +172,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 "Delay time: ", startPosMenu, this, 0.0, 15.0, 1.0, 0.0, " %.0f sec");
         FtcChoiceMenu strategyMenu = new FtcChoiceMenu("Strategies:", delayMenu, this);
         FtcValueMenu distanceMenu = new FtcValueMenu(
-                "Distance: ", strategyMenu, this, 1.0, 10.0, 1.0, 1.0, " %.0f ft");
+                "Distance: ", strategyMenu, this, -10.0, 10.0, 0.5, 5.0, " %.0f ft");
         FtcValueMenu shootParticlesMenu = new FtcValueMenu(
                 "Shoot particles: ", strategyMenu, this, 0.0, 2.0, 1.0, 2.0, "%.0f");
         FtcValueMenu beaconButtonsMenu = new FtcValueMenu(
@@ -189,7 +189,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
         strategyMenu.addChoice("Do nothing", Strategy.DO_NOTHING);
         strategyMenu.addChoice("Beacon", Strategy.BEACON, shootParticlesMenu);
-        strategyMenu.addChoice("Defense", Strategy.DEFENSE, distanceMenu);
+        strategyMenu.addChoice("Drive straight", Strategy.DRIVE_STRAIGHT, distanceMenu);
 
         shootParticlesMenu.setChildMenu(beaconButtonsMenu);
         beaconButtonsMenu.setChildMenu(parkOptionMenu);
@@ -212,7 +212,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         dashboard.displayPrintf(0, "Auto Strategy: %s (%s)", strategyMenu.getCurrentChoiceText(), alliance.toString());
         dashboard.displayPrintf(1, "Start position: %s", startPos.toString());
         dashboard.displayPrintf(2, "Delay = %.0f sec", delay);
-        dashboard.displayPrintf(3, "Defense: distance=%.0f ft", driveDistance);
+        dashboard.displayPrintf(3, "Drive: distance=%.0f ft", driveDistance);
         dashboard.displayPrintf(
                 4, "Beacon: ShootParticles=%d,BeaconButtons=%d,ParkOption=%s",
                 shootParticles, beaconButtons, parkOption.toString());

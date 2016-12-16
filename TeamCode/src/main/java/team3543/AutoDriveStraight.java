@@ -30,7 +30,7 @@ import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
-public class AutoDefense implements TrcRobot.AutoStrategy
+public class AutoDriveStraight implements TrcRobot.AutoStrategy
 {
     private enum State
     {
@@ -39,7 +39,7 @@ public class AutoDefense implements TrcRobot.AutoStrategy
         DONE
     }   //enum State
 
-    private static final String moduleName = "AutoDefense";
+    private static final String moduleName = "AutoDriveStraight";
 
     private HalDashboard dashboard;
     private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
@@ -51,7 +51,7 @@ public class AutoDefense implements TrcRobot.AutoStrategy
     private TrcTimer timer;
     private TrcStateMachine sm;
 
-    public AutoDefense(Robot robot, double delay, double distance)
+    public AutoDriveStraight(Robot robot, double delay, double distance)
     {
         this.robot = robot;
         this.dashboard = robot.dashboard;
@@ -78,16 +78,15 @@ public class AutoDefense implements TrcRobot.AutoStrategy
             switch (state)
             {
                 case DO_DELAY:
-                    //
-                    // If the delay is less than 10, make it at least 10 seconds.
-                    // We cannot cross to the opponent's side before 10 seconds.
-                    //
-                    if (delay < 10.0)
+                    if (delay == 0.0)
                     {
-                        delay = 10.0;
+                        sm.setState(State.DRIVE_DISTANCE);
                     }
-                    timer.set(delay, event);
-                    sm.waitForSingleEvent(event, State.DRIVE_DISTANCE);
+                    else
+                    {
+                        timer.set(delay, event);
+                        sm.waitForSingleEvent(event, State.DRIVE_DISTANCE);
+                    }
                     break;
 
                 case DRIVE_DISTANCE:
@@ -109,4 +108,4 @@ public class AutoDefense implements TrcRobot.AutoStrategy
         }
     }
 
-}   //class AutoDefense
+}   //class AutoDriveStraight

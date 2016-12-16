@@ -352,32 +352,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case GOTO_WALL:
-                    //
-                    // Crab towards wall using the Range Sensor.
-                    //
-//                    if (robot.USE_RANGE_SENSOR)
-//                    {
-//                        xDistance = 6.0;
-//                        yDistance = 0.0;
-//                    }
-//                    else
-//                    {
-//                        if (beaconButtons == 2 && remainingBeaconButtons == 1)
-//                        {
-//                            xDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -7.0: -7.0;
-//                        }
-//                        else
-//                        {
-//                            xDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -37.0: -25.0;
-//                        }
-//                        yDistance = 0.0;
-//                    }
-
                     xDistance = 0.0;
                     yDistance = 30.0;
 
-                    // Repel particles that may be in front of us.
-//                    robot.ballPickUp.setPower(-RobotInfo.BALL_PICKUP_MOTOR_POWER);
                     robot.setTurnPID(xDistance, yDistance, heading);
                     robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.PARALLEL_WALL);
@@ -393,7 +370,6 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case ALIGN_WALL1:
-//                    robot.ballPickUp.setPower(0.0);
                     robot.driveBase.mecanumDrive_Cartesian(-0.75, 0.0, 0.0);
                     timeout = elapsedTime + 1.0;
                     sm.setState(State.ALIGN_WALL2);
@@ -417,7 +393,6 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         robot.lineTrigger.setEnabled(true);
                     }
 
-//                    robot.encoderYPidCtrl.setDebugTraceEnabled(tracer, true);
                     robot.encoderYPidCtrl.setOutputRange(-0.12, 0.12);
                     robot.setTurnPID(xDistance, yDistance, heading);
                     robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
@@ -425,7 +400,6 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     break;
 
                 case PUSH_BUTTON:
-//                    robot.encoderYPidCtrl.setDebugTraceEnabled(null, false);
                     robot.encoderYPidCtrl.setOutputRange(-1.0, 1.0);
                     if (robot.USE_LINE_DETECTOR)
                     {

@@ -66,7 +66,6 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                 instanceName,
                 RobotInfo.SHOOTER_KP, RobotInfo.SHOOTER_KI, RobotInfo.SHOOTER_KD, RobotInfo.SHOOTER_KF,
                 RobotInfo.SHOOTER_TOLERANCE, RobotInfo.SHOOTER_SETTLING, this);
-        pidCtrl.setNoOscillation(true);
         pidMotor = new TrcPidMotor(instanceName, shooterMotor, pidCtrl);
         pidMotor.setPositionScale(RobotInfo.SHOOTER_DEGREES_PER_COUNT);
         touchSensor = new FtcTouchSensor("shooterTouchSensor");

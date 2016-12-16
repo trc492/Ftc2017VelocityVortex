@@ -200,7 +200,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 RobotInfo.GYRO_TOLERANCE, RobotInfo.GYRO_SETTLING,
                 this);
         gyroPidCtrl.setAbsoluteSetPoint(true);
-        gyroPidCtrl.setNoOscillation(true);
+//        gyroPidCtrl.setNoOscillation(true);
         gyroPidCtrl.setOutputRange(-RobotInfo.TURN_POWER_LIMIT, RobotInfo.TURN_POWER_LIMIT);
         if (USE_RANGE_SENSOR)
         {

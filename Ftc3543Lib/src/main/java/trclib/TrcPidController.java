@@ -473,7 +473,7 @@ public class TrcPidController
 
         if (noOscillation)
         {
-            if (Math.abs(prevError) <= tolerance)
+            if (prevError <= 0.0 || Math.abs(prevError) <= tolerance)
             {
                 onTarget = true;
             }

@@ -442,7 +442,7 @@ public class TrcPidDrive implements TrcTaskMgr.Task
         boolean yOnTarget = yPidCtrl == null || yPidCtrl.isOnTarget();
         boolean turnOnTarget = turnPidCtrl == null || turnPidCtrl.isOnTarget();
 
-        if (stalled && beepDevice != null)
+        if ((stalled || expired) && beepDevice != null)
         {
             beepDevice.playTone(beepFrequency, beepDuration);
         }

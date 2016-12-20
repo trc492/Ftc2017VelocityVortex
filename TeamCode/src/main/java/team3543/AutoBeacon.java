@@ -152,6 +152,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
             State nextState;
             double xDistance;
             double yDistance;
+            int redValue = 0;
+            int greenValue = 0;
+            int blueValue = 0;
 
             robot.traceStateInfo(elapsedTime, state.toString(), heading);
             switch (state)
@@ -418,15 +421,11 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         robot.lineTrigger.setEnabled(false);
                     }
 
-                    int redValue = 0;
-                    int greenValue = 0;
-                    int blueValue = 0;
                     if (Robot.USE_COLOR_SENSOR)
                     {
                         redValue = robot.beaconColorSensor.sensor.red();
                         greenValue = robot.beaconColorSensor.sensor.green();
                         blueValue = robot.beaconColorSensor.sensor.blue();
-                        robot.beaconColorSensor.setDeviceEnabled(false);
                     }
                     boolean isRed = redValue > blueValue && redValue > greenValue;
                     boolean isBlue = blueValue > redValue && blueValue > greenValue;
@@ -454,14 +453,10 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                     robot.dashboard.displayPrintf(
                             15, "leftPusher=%s, rightPusher=%s",
                             Boolean.toString(leftPusherExtended), Boolean.toString(rightPusherExtended));
-                    //
-                    // It takes sometime for the button pusher to extend, set a timer to wait for it.
-                    // TODO: add code to check color change and not wait the full 1.5 sec.
-                    //
                     if (leftPusherExtended || rightPusherExtended)
                     {
                         timer.set(1.5, event);
-                        sm.waitForSingleEvent(event, State.RETRACT);
+                        sm.setState(State.RETRACT);
                     }
                     else
                     {
@@ -471,24 +466,52 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
 
                 case RETRACT:
                     //
-                    // Release the button pusher and retract the hanging hook.
+                    // It takes sometime for the button pusher to extend, either wait for the color change or
+                    // a timeout.
                     //
-                    if (leftPusherExtended)
+                    if (Robot.USE_COLOR_SENSOR)
                     {
-                        robot.leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
-                        leftPusherExtended = false;
-                    }
+                        int currRed = robot.beaconColorSensor.sensor.red();
+                        int currGreen = robot.beaconColorSensor.sensor.green();
+                        int currBlue = robot.beaconColorSensor.sensor.blue();
+                        tracer.traceInfo(
+                                state.toString(), "[%d,%d,%d]->[%d,%d,%d]",
+                                redValue, greenValue, blueValue, currRed, currGreen, currBlue);
+                        //
+                        // Either the beacon has changed color or we timed out, start retracting the button pusher
+                        // and move on.
+                        //
+                        if (currRed > redValue || currBlue > blueValue || event.isSignaled())
+                        {
+                            robot.beaconColorSensor.setDeviceEnabled(false);
+                            //
+                            // Release the button pusher and retract the hanging hook.
+                            //
+                            if (leftPusherExtended)
+                            {
+                                robot.leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+                                leftPusherExtended = false;
+                            }
 
-                    if (rightPusherExtended)
-                    {
-                        robot.rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
-                        rightPusherExtended = false;
+                            if (rightPusherExtended)
+                            {
+                                robot.rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_RETRACT_POSITION);
+                                rightPusherExtended = false;
+                            }
+                            //
+                            // It takes sometime for the button pusher to retract, set a timer to wait for it.
+                            //
+                            timer.set(0.2, event);
+                            sm.waitForSingleEvent(event, State.NEXT_BEACON);
+                        }
                     }
-                    //
-                    // It takes sometime for the button pusher to retract, set a timer to wait for it.
-                    //
-                    timer.set(0.2, event);
-                    sm.waitForSingleEvent(event, State.NEXT_BEACON);
+                    else
+                    {
+                        //
+                        // Should never come here but just in case.
+                        //
+                        sm.setState(State.NEXT_BEACON);
+                    }
                     break;
 
                 case NEXT_BEACON:

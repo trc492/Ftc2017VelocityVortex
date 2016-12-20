@@ -475,8 +475,9 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                         int currGreen = robot.beaconColorSensor.sensor.green();
                         int currBlue = robot.beaconColorSensor.sensor.blue();
                         tracer.traceInfo(
-                                state.toString(), "[%d,%d,%d]->[%d,%d,%d]",
-                                redValue, greenValue, blueValue, currRed, currGreen, currBlue);
+                                state.toString(), "[%d,%d,%d]->[%d,%d,%d] (expired=%s)",
+                                redValue, greenValue, blueValue, currRed, currGreen, currBlue,
+                                Boolean.toString(event.isSignaled()));
                         //
                         // Either the beacon has changed color or we timed out, start retracting the button pusher
                         // and move on.
@@ -499,7 +500,8 @@ public class AutoBeacon implements TrcRobot.AutoStrategy
                                 rightPusherExtended = false;
                             }
                             //
-                            // It takes sometime for the button pusher to retract, set a timer to wait for it.
+                            // We need to retract the pusher a little bit before start moving so it doesn't get
+                            // caught on by the beacon.
                             //
                             timer.set(0.2, event);
                             sm.waitForSingleEvent(event, State.NEXT_BEACON);

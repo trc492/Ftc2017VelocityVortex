@@ -32,6 +32,7 @@ import ftclib.FtcValueMenu;
 import trclib.TrcAnalogInput;
 import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
+import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
@@ -106,6 +107,52 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     // Overrides TrcRobot.RobotMode methods.
     //
 
+    @Override
+    public void startMode()
+    {
+        super.startMode();
+        if (test == Test.SENSORS_TEST)
+        {
+            if (Robot.USE_COLOR_SENSOR)
+            {
+                robot.beaconColorSensor.setEnabled(true);
+            }
+
+            if (Robot.USE_RANGE_SENSOR)
+            {
+                robot.rangeSensor.setEnabled(true);
+            }
+
+            if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
+            {
+                robot.lineDetectionSensor.setEnabled(true);
+            }
+        }
+    }   //startMode
+
+    @Override
+    public void stopMode()
+    {
+        super.stopMode();
+        if (test == Test.SENSORS_TEST)
+        {
+            if (Robot.USE_COLOR_SENSOR)
+            {
+                robot.beaconColorSensor.setEnabled(false);
+            }
+
+            if (Robot.USE_RANGE_SENSOR)
+            {
+                robot.rangeSensor.setEnabled(false);
+            }
+
+            if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
+            {
+                robot.lineDetectionSensor.setEnabled(false);
+            }
+        }
+    }   //stopMode
+
     //
     // Must override TeleOp so it doesn't fight with us.
     //
@@ -154,7 +201,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 break;
 
             case RANGE_DRIVE:
-                if (robot.USE_RANGE_SENSOR)
+                if (Robot.USE_RANGE_SENSOR)
                 {
                     doRangeDrive(rangeDistance);
                 }
@@ -249,17 +296,17 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                                 (Double)robot.gyro.getZRotationRate().value,
                                 (Double)robot.gyro.getZHeading().value);
 
-        if (robot.USE_COLOR_SENSOR)
+        if (Robot.USE_COLOR_SENSOR)
         {
             dashboard.displayPrintf(10, LABEL_WIDTH, "Beacon: ", "RGBAH=[%d,%d,%d,%d,%x]",
-                                    robot.beaconColorSensor.red(), robot.beaconColorSensor.green(),
-                                    robot.beaconColorSensor.blue(),
-                                    robot.beaconColorSensor.alpha(), robot.beaconColorSensor.argb());
+                                    robot.beaconColorSensor.sensor.red(), robot.beaconColorSensor.sensor.green(),
+                                    robot.beaconColorSensor.sensor.blue(),
+                                    robot.beaconColorSensor.sensor.alpha(), robot.beaconColorSensor.sensor.argb());
         }
 
-        if (robot.USE_LINE_DETECTOR)
+        if (Robot.USE_LINE_DETECTOR)
         {
-            if (robot.USE_ODS_LINE_DETECTOR)
+            if (Robot.USE_ODS_LINE_DETECTOR)
             {
                 dashboard.displayPrintf(11, LABEL_WIDTH, "Line: ", "light=%.3f",
                                         (Double) robot.odsLineDetector.getRawData(
@@ -267,13 +314,13 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
             }
             else
             {
-                dashboard.displayPrintf(11, LABEL_WIDTH, "Line: ", "color=%d,white=%d",
-                                        (Integer) robot.lineDetectionSensor.getColorNumber().value,
-                                        (Integer) robot.lineDetectionSensor.getWhiteValue().value);
+                dashboard.displayPrintf(11, LABEL_WIDTH, "Line: ", "argb=%d,white=%d",
+                                        robot.lineDetectionSensor.sensor.argb(),
+                                        robot.lineDetectionSensor.sensor.alpha());
             }
         }
 
-        if (robot.USE_RANGE_SENSOR)
+        if (Robot.USE_RANGE_SENSOR)
         {
             dashboard.displayPrintf(12, LABEL_WIDTH, "Range: ", "%.3f in", robot.getInput(robot.rangePidCtrl));
         }

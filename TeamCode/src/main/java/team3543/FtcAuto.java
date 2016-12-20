@@ -50,6 +50,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     {
         DO_NOTHING,
         BEACON,
+//        OP_BEACON,
         DRIVE_STRAIGHT
     }   //enum Strategy
 
@@ -98,6 +99,10 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 autoStrategy = new AutoBeacon(
                         robot, alliance, startPos, delay, shootParticles, beaconButtons, parkOption);
                 break;
+
+//            case OP_BEACON:
+//                autoStrategy = new AutoOpBeacon(robot, alliance, delay, shootParticles, beaconButtons, parkOption);
+//                break;
 
             case DRIVE_STRAIGHT:
                 autoStrategy = new AutoDriveStraight(robot, delay, driveDistance);
@@ -189,6 +194,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
         strategyMenu.addChoice("Do nothing", Strategy.DO_NOTHING);
         strategyMenu.addChoice("Beacon", Strategy.BEACON, shootParticlesMenu);
+//        strategyMenu.addChoice("Op Beacon", Strategy.OP_BEACON, shootParticlesMenu);
         strategyMenu.addChoice("Drive straight", Strategy.DRIVE_STRAIGHT, distanceMenu);
 
         shootParticlesMenu.setChildMenu(beaconButtonsMenu);
@@ -213,8 +219,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         dashboard.displayPrintf(1, "Start position: %s", startPos.toString());
         dashboard.displayPrintf(2, "Delay = %.0f sec", delay);
         dashboard.displayPrintf(3, "Drive: distance=%.0f ft", driveDistance);
-        dashboard.displayPrintf(
-                4, "Beacon: ShootParticles=%d,BeaconButtons=%d,ParkOption=%s",
+        dashboard.displayPrintf(4, "Beacon: ShootParticles=%d,BeaconButtons=%d,ParkOption=%s",
                 shootParticles, beaconButtons, parkOption.toString());
     }   //doMenus
 

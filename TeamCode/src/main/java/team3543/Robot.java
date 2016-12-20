@@ -24,8 +24,8 @@ package team3543;
 
 import android.widget.TextView;
 
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.I2cAddr;
 
 import org.firstinspires.ftc.robotcontroller.internal.FtcRobotControllerActivity;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -33,8 +33,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import ftclib.FtcAnalogGyro;
 import ftclib.FtcAndroidTone;
 import ftclib.FtcDcMotor;
+import ftclib.FtcMRColorSensor;
 import ftclib.FtcMRGyro;
-import ftclib.FtcMRI2cColorSensor;
 import ftclib.FtcMRRangeSensor;
 import ftclib.FtcOpMode;
 import ftclib.FtcOpticalDistanceSensor;
@@ -70,8 +70,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     // Sensors.
     //
     public TrcGyro gyro = null;
-    public ColorSensor beaconColorSensor = null;
-    public FtcMRI2cColorSensor lineDetectionSensor = null;
+    public FtcMRColorSensor beaconColorSensor = null;
+    public FtcMRColorSensor lineDetectionSensor = null;
     public FtcOpticalDistanceSensor odsLineDetector = null;
     public FtcMRRangeSensor rangeSensor = null;
     private double prevRangeValue = 0.0;
@@ -131,8 +131,9 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         if (USE_COLOR_SENSOR)
         {
-            beaconColorSensor = hardwareMap.colorSensor.get("colorSensor");
-            beaconColorSensor.enableLed(false);
+            beaconColorSensor = new FtcMRColorSensor("colorSensor");
+            beaconColorSensor.sensor.enableLed(false);
+            beaconColorSensor.setEnabled(false);
         }
 
         if (USE_LINE_DETECTOR)
@@ -143,14 +144,17 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             }
             else
             {
-                lineDetectionSensor = new FtcMRI2cColorSensor("lineDetectionSensor", 0x40, false);
-                lineDetectionSensor.setLEDEnabled(true);
+                lineDetectionSensor = new FtcMRColorSensor("lineDetectionSensor");
+                lineDetectionSensor.sensor.setI2cAddress(I2cAddr.create8bit(0x40));
+                lineDetectionSensor.sensor.enableLed(true);
+                lineDetectionSensor.setEnabled(false);
             }
         }
 
         if (USE_RANGE_SENSOR)
         {
             rangeSensor = new FtcMRRangeSensor("rangeSensor");
+            rangeSensor.setEnabled(false);
         }
         //
         // Initialize DriveBase.
@@ -261,7 +265,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)
         {
-            lineDetectionSensor.setLEDEnabled(true);
+            lineDetectionSensor.sensor.enableLed(true);
         }
 
         driveBase.resetPosition();
@@ -275,7 +279,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)
         {
-            lineDetectionSensor.setLEDEnabled(false);
+            lineDetectionSensor.sensor.enableLed(false);
         }
     }   //stopMode
 
@@ -371,6 +375,43 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             gyroPidCtrl.setPID(RobotInfo.GYRO_LARGE_TURN_KP, RobotInfo.GYRO_LARGE_TURN_KI,
                                RobotInfo.GYRO_LARGE_TURN_KD, 0.0);
         }
-    }
+    }   //setTurnPID
+
+    public void traceStateInfo(double elapsedTime, String stateName, double currHeading)
+    {
+        tracer.traceInfo(
+                moduleName, "[%5.3f] %17s: xPos=%6.2f,yPos=%6.2f,heading=%6.1f/%6.1f,range=%5.2f,volt=%5.2fV(%5.2fV)",
+                elapsedTime, stateName,
+                driveBase.getXPosition(), driveBase.getYPosition(), driveBase.getHeading(), currHeading,
+                getInput(rangePidCtrl), battery.getCurrentVoltage(), battery.getLowestVoltage());
+    }   //traceStateInfo
+
+    public double selectParameter(
+            FtcAuto.StartPosition startPos, FtcAuto.Alliance alliance,
+            double nearRed, double nearBlue, double farRed, double farBlue)
+    {
+        if (startPos == FtcAuto.StartPosition.NEAR)
+        {
+            if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
+            {
+                return nearRed;
+            }
+            else
+            {
+                return nearBlue;
+            }
+        }
+        else
+        {
+            if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
+            {
+                return farRed;
+            }
+            else
+            {
+                return farBlue;
+            }
+        }
+    }   //selectParameter
 
 }   //class Robot

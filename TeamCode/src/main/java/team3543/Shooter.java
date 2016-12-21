@@ -78,7 +78,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         event = new TrcEvent(instanceName);
     }
 
-    private void setEnabled(boolean enabled)
+    private void setTaskEnabled(boolean enabled)
     {
         if (enabled)
         {
@@ -98,7 +98,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         {
             sm.stop();
         }
-        setEnabled(false);
+        setTaskEnabled(false);
         continuousModeOn = false;
         pidMotor.cancel();
     }
@@ -132,7 +132,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
             stop();
         }
         sm.start(startState);
-        setEnabled(true);
+        setTaskEnabled(true);
     }
 
     public void fireOneShot(TrcEvent event)
@@ -236,7 +236,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                         completionEvent = null;
                     }
                     sm.stop();
-                    setEnabled(false);
+                    setTaskEnabled(false);
                     break;
             }
         }

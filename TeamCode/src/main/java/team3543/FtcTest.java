@@ -32,7 +32,6 @@ import ftclib.FtcValueMenu;
 import trclib.TrcAnalogInput;
 import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
-import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
@@ -118,10 +117,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 robot.beaconColorSensor.setEnabled(true);
             }
 
-            if (Robot.USE_RANGE_SENSOR)
-            {
-                robot.rangeSensor.setEnabled(true);
-            }
+//            if (Robot.USE_RANGE_SENSOR)
+//            {
+//                robot.rangeSensor.setEnabled(true);
+//            }
 
             if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
             {
@@ -141,10 +140,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 robot.beaconColorSensor.setEnabled(false);
             }
 
-            if (Robot.USE_RANGE_SENSOR)
-            {
-                robot.rangeSensor.setEnabled(false);
-            }
+//            if (Robot.USE_RANGE_SENSOR)
+//            {
+//                robot.rangeSensor.setEnabled(false);
+//            }
 
             if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
             {
@@ -588,7 +587,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     }   //doRangeDrive
 
     //
-    // Implements FtcGamepad.ButtonHandler interface.
+    // Overrides FtcGamepad.ButtonHandler in FtcTeleOp.
     //
 
     @Override

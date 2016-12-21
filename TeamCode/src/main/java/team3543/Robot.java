@@ -154,7 +154,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         if (USE_RANGE_SENSOR)
         {
             rangeSensor = new FtcMRRangeSensor("rangeSensor");
-            rangeSensor.setEnabled(false);
+//            rangeSensor.setEnabled(false);
         }
         //
         // Initialize DriveBase.
@@ -260,21 +260,17 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
     public void startMode(TrcRobot.RunMode runMode)
     {
-        gyro.resetZIntegrator();
-        gyro.setEnabled(true);
-
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)
         {
             lineDetectionSensor.sensor.enableLed(true);
         }
-
+        gyro.setEnabled(true);
         driveBase.resetPosition();
     }   //startMode
 
     public void stopMode(TrcRobot.RunMode runMode)
     {
         shooter.stop();
-
         gyro.setEnabled(false);
 
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)

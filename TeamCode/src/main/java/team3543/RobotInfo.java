@@ -60,11 +60,11 @@ public class RobotInfo
     //
     // Accurate PID but slow (with speed control ON): 0.02, 0.0, 0.0028
     // Faster PID but may oscillate (with speed control ON): 0.022, 0.0, 0.0046 (limit to half power for mid-range)
-    // 12/06/2016: 0.021, 0.0, 0.0021; [< 15] 0.024, 0.0, 0.002; (No speed control, 0.75 power limit)
-    // 12/07/2016: 0.021, 0.0, 0.0021; [< 15] 0.023, 0.0, 0.0023; (No speed control, 0.75 power limit)
-    // 12/07/2016: 0.02, 0.0, 0.0022; [< 15] 0.024, 0.0, 0.0024; (No speed control, 0.75 power limit)
-    // 12/08/2016: 0.02, 0.0, 0.0022; [< 15] 0.055, 0.0, 0.011; (No speed control, 0.75 power limit)
-    // 12/10/2016: 0.022, 0.0, 0.0024; [< 15] 0.028, 0.0, 0.0; (No speed control, 0.75 power limit)
+    // 12/06/2016: 0.021, 0.0, 0.0021; [< 15] 0.024, 0.0, 0.002;    (No speed control, 0.75 power limit)
+    // 12/07/2016: 0.021, 0.0, 0.0021; [< 15] 0.023, 0.0, 0.0023;   (No speed control, 0.75 power limit)
+    // 12/07/2016: 0.02,  0.0, 0.0022; [< 15] 0.024, 0.0, 0.0024;   (No speed control, 0.75 power limit)
+    // 12/08/2016: 0.02,  0.0, 0.0022; [< 15] 0.055, 0.0, 0.011;    (No speed control, 0.75 power limit)
+    // 12/10/2016: 0.022, 0.0, 0.0024; [< 15] 0.028, 0.0, 0.0;      (No speed control, 0.75 power limit)
     //
     public static final double ANALOG_GYRO_VOLT_PER_DEG_PER_SEC = 0.007;
     public static final double GYRO_KP                          = 0.022;
@@ -116,7 +116,7 @@ public class RobotInfo
     public static final double SHOOTER_BALLGATE_OPEN_TIME       = 0.7;
     public static final double SHOOTER_PAUSE_TIME               = 0.1;
     public static final double SHOOTER_DEGREES_PER_COUNT        = (360.0/1680.0);
-    public static final double SHOOTER_PULLBACK_TARGET          = 80.0; //in degrees
+    public static final double SHOOTER_PULLBACK_TARGET          = 220.0;    //in degrees
 
     //
     // Ball gate subsystem.

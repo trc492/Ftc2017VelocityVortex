@@ -50,7 +50,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     {
         DO_NOTHING,
         BEACON,
-//        OP_BEACON,
         DRIVE_STRAIGHT
     }   //enum Strategy
 
@@ -99,10 +98,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 autoStrategy = new AutoBeacon(
                         robot, alliance, startPos, delay, shootParticles, beaconButtons, parkOption);
                 break;
-
-//            case OP_BEACON:
-//                autoStrategy = new AutoOpBeacon(robot, alliance, delay, shootParticles, beaconButtons, parkOption);
-//                break;
 
             case DRIVE_STRAIGHT:
                 autoStrategy = new AutoDriveStraight(robot, delay, driveDistance);
@@ -194,7 +189,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
         strategyMenu.addChoice("Do nothing", Strategy.DO_NOTHING);
         strategyMenu.addChoice("Beacon", Strategy.BEACON, shootParticlesMenu);
-//        strategyMenu.addChoice("Op Beacon", Strategy.OP_BEACON, shootParticlesMenu);
         strategyMenu.addChoice("Drive straight", Strategy.DRIVE_STRAIGHT, distanceMenu);
 
         shootParticlesMenu.setChildMenu(beaconButtonsMenu);

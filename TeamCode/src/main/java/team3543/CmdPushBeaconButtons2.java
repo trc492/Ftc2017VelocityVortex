@@ -55,7 +55,6 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
     private FtcAuto.Alliance alliance;
     private int remainingBeaconButtons;
     private FtcAuto.ParkOption parkOption;
-    private double heading;
     private TrcEvent event;
     private TrcTimer timer;
     private TrcStateMachine<State> sm;
@@ -69,7 +68,6 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
         this.alliance = alliance;
         this.remainingBeaconButtons = beaconButtons;
         this.parkOption = parkOption;
-        heading = robot.driveBase.getHeading();
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine<>(moduleName);
@@ -97,7 +95,7 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
             int redValue, greenValue, blueValue;
             boolean isRed, isBlue;
 
-            robot.traceStateInfo(elapsedTime, state.toString(), heading);
+            robot.traceStateInfo(elapsedTime, state.toString());
             switch (state)
             {
                 case ALIGN_WALL1:
@@ -129,7 +127,7 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE && remainingBeaconButtons == 2 ||
                                 alliance == FtcAuto.Alliance.BLUE_ALLIANCE && remainingBeaconButtons == 1? 30.0: -30.0;
-                    heading = robot.driveBase.getHeading();
+                    robot.targetHeading = robot.driveBase.getHeading();
 
                     if (Robot.USE_LINE_DETECTOR)
                     {
@@ -137,8 +135,8 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
                     }
 
                     robot.encoderYPidCtrl.setOutputRange(-0.12, 0.12);
-                    robot.setTurnPID(xDistance, yDistance, heading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PUSH_BUTTON1);
                     break;
 
@@ -258,8 +256,8 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
                         xDistance = 0.0;
                         yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -40.0: 40.0;
 
-                        robot.setTurnPID(xDistance, yDistance, heading);
-                        robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                        robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                        robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                         remainingBeaconButtons--;
                         sm.waitForSingleEvent(event, State.ALIGN_WALL1);
                     }
@@ -276,8 +274,8 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
                         xDistance = 16.0;//32.0;
                         yDistance = 0.0;
 
-                        robot.setTurnPID(xDistance, yDistance, heading);
-                        robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                        robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                        robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                         sm.waitForSingleEvent(event, State.PARK_CORNER);//GOTO_CORNER);
                     }
                     break;
@@ -286,17 +284,17 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -24.0: 24.0;
 
-                    robot.setTurnPID(xDistance, yDistance, heading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.TURN_TO_CORNER);
                     break;
 
                 case TURN_TO_CORNER:
                     xDistance = yDistance = 0.0;
-                    heading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 135.0;
+                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 135.0;
 
-                    robot.setTurnPID(xDistance, yDistance, heading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PARK_CORNER);
                     break;
 
@@ -304,8 +302,8 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -36.0: 36.0;
 
-                    robot.setTurnPID(xDistance, yDistance, heading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 

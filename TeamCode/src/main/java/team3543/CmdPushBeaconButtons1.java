@@ -54,7 +54,6 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
     private int beaconButtons;
     private FtcAuto.ParkOption parkOption;
     private int remainingBeaconButtons;
-    private double heading;
     private TrcEvent event;
     private TrcTimer timer;
     private TrcStateMachine<State> sm;
@@ -69,7 +68,6 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
         this.beaconButtons = beaconButtons;
         this.parkOption = parkOption;
         remainingBeaconButtons = beaconButtons;
-        heading = robot.driveBase.getHeading();
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine<>(moduleName);
@@ -97,7 +95,7 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
             int redValue, greenValue, blueValue;
             boolean isRed, isBlue;
 
-            robot.traceStateInfo(elapsedTime, state.toString(), heading);
+            robot.traceStateInfo(elapsedTime, state.toString());
             switch (state)
             {
                 case ALIGN_WALL1:
@@ -128,7 +126,7 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
                 case FIND_LINE:
                     xDistance = 0.0;
                     yDistance = -30.0;
-                    heading = robot.driveBase.getHeading();
+                    robot.targetHeading = robot.driveBase.getHeading();
 
                     if (Robot.USE_LINE_DETECTOR)
                     {
@@ -136,8 +134,8 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
                     }
 
                     robot.encoderYPidCtrl.setOutputRange(-0.12, 0.12);
-                    robot.setTurnPID(xDistance, yDistance, heading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PUSH_BUTTON1);
                     break;
 
@@ -257,8 +255,8 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
                         xDistance = 0.0;
                         yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 57.0: 57.0;
 
-                        robot.setTurnPID(xDistance, yDistance, heading);
-                        robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                        robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                        robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                         remainingBeaconButtons--;
                         sm.waitForSingleEvent(event, State.ALIGN_WALL1);
                     }
@@ -275,8 +273,8 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
                         xDistance = 12.0;
                         yDistance = 0.0;
 
-                        robot.setTurnPID(xDistance, yDistance, heading);
-                        robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                        robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                        robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                         sm.waitForSingleEvent(event, State.PARK_CORNER);
                     }
                     break;
@@ -292,8 +290,8 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
                         yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -40.0: 84.0;
                     }
 
-                    robot.setTurnPID(xDistance, yDistance, heading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, heading, false, event);
+                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 

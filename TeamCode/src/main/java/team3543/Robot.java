@@ -94,6 +94,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public TrcPidDrive rangePidDrive = null;
 
     public TrcAnalogTrigger lineTrigger = null;
+    public double targetHeading = 0.0;
     //
     // Other subsystems.
     //
@@ -265,6 +266,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         }
         gyro.setEnabled(true);
         driveBase.resetPosition();
+        targetHeading = 0.0;
     }   //startMode
 
     public void stopMode(TrcRobot.RunMode runMode)
@@ -372,20 +374,20 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         }
     }   //setTurnPID
 
-    public void traceStateInfo(double elapsedTime, String stateName, double currHeading)
+    public void traceStateInfo(double elapsedTime, String stateName)
     {
         tracer.traceInfo(
                 moduleName, "[%5.3f] %17s: xPos=%6.2f,yPos=%6.2f,heading=%6.1f/%6.1f,range=%5.2f,volt=%5.2fV(%5.2fV)",
                 elapsedTime, stateName,
-                driveBase.getXPosition(), driveBase.getYPosition(), driveBase.getHeading(), currHeading,
+                driveBase.getXPosition(), driveBase.getYPosition(), driveBase.getHeading(), targetHeading,
                 getInput(rangePidCtrl), battery.getCurrentVoltage(), battery.getLowestVoltage());
     }   //traceStateInfo
 
     public double selectParameter(
-            FtcAuto.StartPosition startPos, FtcAuto.Alliance alliance,
+            boolean startNear, FtcAuto.Alliance alliance,
             double nearRed, double nearBlue, double farRed, double farBlue)
     {
-        if (startPos == FtcAuto.StartPosition.NEAR)
+        if (startNear)
         {
             if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
             {

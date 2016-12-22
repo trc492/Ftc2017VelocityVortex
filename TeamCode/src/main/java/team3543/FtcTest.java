@@ -67,7 +67,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     //
     private TrcEvent event;
     private TrcTimer timer;
-    private TrcStateMachine sm;
+    private TrcStateMachine<State> sm;
     //
     // Menu choices.
     //
@@ -94,7 +94,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         //
         event = new TrcEvent("TestEvent");
         timer = new TrcTimer("TestTimer");
-        sm = new TrcStateMachine("TestSM");
+        sm = new TrcStateMachine<>("TestSM");
         //
         // Choice menus.
         //
@@ -117,11 +117,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 robot.beaconColorSensor.setEnabled(true);
             }
 
-//            if (Robot.USE_RANGE_SENSOR)
-//            {
-//                robot.rangeSensor.setEnabled(true);
-//            }
-
             if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
             {
                 robot.lineDetectionSensor.setEnabled(true);
@@ -139,11 +134,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
             {
                 robot.beaconColorSensor.setEnabled(false);
             }
-
-//            if (Robot.USE_RANGE_SENSOR)
-//            {
-//                robot.rangeSensor.setEnabled(false);
-//            }
 
             if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
             {
@@ -170,7 +160,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     @Override
     public void runContinuous(double elapsedTime)
     {
-        State state = (State)sm.getState();
+        State state = sm.getState();
         dashboard.displayPrintf(8, "%s: %s", test.toString(), state != null? state.toString(): "STOPPED!");
 
         switch (test)
@@ -242,7 +232,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
     private void doMenus()
     {
-        FtcChoiceMenu testMenu = new FtcChoiceMenu("Tests:", null, this);
+        FtcChoiceMenu<Test> testMenu = new FtcChoiceMenu<>("Tests:", null, this);
         FtcValueMenu driveTimeMenu = new FtcValueMenu("Drive time:", testMenu, this, 1.0, 10.0, 1.0, 4.0, " %.0f sec");
         FtcValueMenu driveDistanceMenu = new FtcValueMenu(
                 "Drive distance:", testMenu, this, -10.0, 10.0, 0.5, 4.0, " %.1f ft");
@@ -262,7 +252,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         FtcMenu.walkMenuTree(testMenu);
 
-        test = (Test)testMenu.getCurrentChoiceObject();
+        test = testMenu.getCurrentChoiceObject();
         driveTime = driveTimeMenu.getCurrentValue();
         driveDistance = driveDistanceMenu.getCurrentValue();
         rangeDistance = rangeDistanceMenu.getCurrentValue();
@@ -342,7 +332,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         if (sm.isReady())
         {
-            State state = (State)sm.getState();
+            State state = sm.getState();
             switch (state)
             {
                 case START:
@@ -429,7 +419,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         if (sm.isReady())
         {
-            State state = (State)sm.getState();
+            State state = sm.getState();
             switch (state)
             {
                 case START:
@@ -499,7 +489,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         if (sm.isReady())
         {
-            State state = (State)sm.getState();
+            State state = sm.getState();
             switch (state)
             {
                 case START:
@@ -561,7 +551,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         if (sm.isReady())
         {
-            State state = (State) sm.getState();
+            State state = sm.getState();
             switch (state)
             {
                 case START:

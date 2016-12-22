@@ -154,7 +154,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         if (USE_RANGE_SENSOR)
         {
             rangeSensor = new FtcMRRangeSensor("rangeSensor");
-//            rangeSensor.setEnabled(false);
         }
         //
         // Initialize DriveBase.

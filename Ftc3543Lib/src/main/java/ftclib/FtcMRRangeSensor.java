@@ -44,7 +44,6 @@ public class FtcMRRangeSensor extends TrcAnalogInput
     private TrcDbgTrace dbgTrace = null;
 
     public ModernRoboticsI2cRangeSensor sensor;
-//    private FtcI2cDeviceState sensorState;
 
     /**
      * Constructor: Creates an instance of the object.
@@ -65,7 +64,6 @@ public class FtcMRRangeSensor extends TrcAnalogInput
         }
 
         sensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, instanceName);
-//        sensorState = new FtcI2cDeviceState((I2cDeviceSynch)sensor);
     }   //FtcMRRangeSensor
 
     /**
@@ -97,43 +95,6 @@ public class FtcMRRangeSensor extends TrcAnalogInput
     {
         calibrate(DataType.INPUT_DATA);
     }   //calibrate
-
-//    /**
-//     * This method check if the range sensor is enabled.
-//     *
-//     * @return true if the device state indicates it is enabled, false otherwise.
-//     */
-//    public boolean isDeviceEnabled()
-//    {
-//        final String funcName = "isDeviceEnabled";
-//        boolean enabled = sensorState.isEnabled();
-//
-//        if (debugEnabled)
-//        {
-//            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
-//            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API, "=%s", Boolean.toString(enabled));
-//        }
-//
-//        return enabled;
-//    }   //isDeviceEnabled
-//
-//    /**
-//     * This method is called to enable/disable the sensor so it is not hogging I2c bus bandwidth when not in use.
-//     *
-//     * @param enabled specifies true if enabling, false otherwise.
-//     */
-//    public void setDeviceEnabled(boolean enabled)
-//    {
-//        final String funcName = "setDeviceEnabled";
-//
-//        if (debugEnabled)
-//        {
-//            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API, "enabled=%s", Boolean.toString(enabled));
-//            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API);
-//        }
-//
-//        sensorState.setEnabled(enabled);
-//    }   //setDeviceEnabled
 
     //
     // Implements TrcAnalogInput abstract methods.

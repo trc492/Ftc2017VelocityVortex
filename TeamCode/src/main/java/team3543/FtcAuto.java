@@ -166,19 +166,24 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
     private void doMenus()
     {
-        FtcChoiceMenu allianceMenu = new FtcChoiceMenu("Alliance:", null, this);
-        FtcChoiceMenu startPosMenu = new FtcChoiceMenu("Start position:", allianceMenu, this);
-        FtcValueMenu delayMenu = new FtcValueMenu(
-                "Delay time: ", startPosMenu, this, 0.0, 15.0, 1.0, 0.0, " %.0f sec");
-        FtcChoiceMenu strategyMenu = new FtcChoiceMenu("Strategies:", delayMenu, this);
+        //
+        // Create menus.
+        //
+        FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", null, this);
+        FtcChoiceMenu<StartPosition> startPosMenu = new FtcChoiceMenu<>("Start position:", allianceMenu, this);
+        FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", startPosMenu, this, 0.0, 15.0, 1.0, 0.0, " %.0f sec");
+        FtcChoiceMenu<Strategy> strategyMenu = new FtcChoiceMenu<>("Strategies:", delayMenu, this);
         FtcValueMenu distanceMenu = new FtcValueMenu(
-                "Distance: ", strategyMenu, this, -10.0, 10.0, 0.5, 5.0, " %.0f ft");
+                "Distance:", strategyMenu, this, -10.0, 10.0, 0.5, 5.0, " %.0f ft");
         FtcValueMenu shootParticlesMenu = new FtcValueMenu(
-                "Shoot particles: ", strategyMenu, this, 0.0, 2.0, 1.0, 2.0, "%.0f");
+                "Shoot particles:", strategyMenu, this, 0.0, 2.0, 1.0, 2.0, " %.0f");
         FtcValueMenu beaconButtonsMenu = new FtcValueMenu(
-                "Push beacon buttons: ", shootParticlesMenu, this, 0.0, 2.0, 1.0, 2.0, "%.0f");
-        FtcChoiceMenu parkOptionMenu = new FtcChoiceMenu("Park options", beaconButtonsMenu, this);
-
+                "Push beacon buttons:", shootParticlesMenu, this, 0.0, 2.0, 1.0, 2.0, " %.0f");
+        FtcChoiceMenu<ParkOption> parkOptionMenu = new FtcChoiceMenu<>(
+                "Park options:", beaconButtonsMenu, this);
+        //
+        // Populate menus.
+        //
         allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, startPosMenu);
         allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, startPosMenu);
 
@@ -197,18 +202,24 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         parkOptionMenu.addChoice("Do nothing", ParkOption.DO_NOTHING);
         parkOptionMenu.addChoice("Park center", ParkOption.PARK_CENTER);
         parkOptionMenu.addChoice("Park corner", ParkOption.PARK_CORNER);
-
+        //
+        // Traverse menus.
+        //
         FtcMenu.walkMenuTree(allianceMenu);
-
-        alliance = (Alliance)allianceMenu.getCurrentChoiceObject();
-        startPos = (StartPosition)startPosMenu.getCurrentChoiceObject();
+        //
+        // Fetch choices.
+        //
+        alliance = allianceMenu.getCurrentChoiceObject();
+        startPos = startPosMenu.getCurrentChoiceObject();
         delay = delayMenu.getCurrentValue();
-        strategy = (Strategy)strategyMenu.getCurrentChoiceObject();
+        strategy = strategyMenu.getCurrentChoiceObject();
         driveDistance = distanceMenu.getCurrentValue();
         shootParticles = (int)shootParticlesMenu.getCurrentValue();
         beaconButtons = (int)beaconButtonsMenu.getCurrentValue();
-        parkOption = (ParkOption)parkOptionMenu.getCurrentChoiceObject();
-
+        parkOption = parkOptionMenu.getCurrentChoiceObject();
+        //
+        // Show choices.
+        //
         dashboard.displayPrintf(0, "Auto Strategy: %s (%s)", strategyMenu.getCurrentChoiceText(), alliance.toString());
         dashboard.displayPrintf(1, "Start position: %s", startPos.toString());
         dashboard.displayPrintf(2, "Delay = %.0f sec", delay);

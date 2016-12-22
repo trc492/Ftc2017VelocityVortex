@@ -24,20 +24,13 @@ package ftclib;
 
 import com.qualcomm.robotcore.hardware.I2cController;
 import com.qualcomm.robotcore.hardware.I2cControllerPortDevice;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 public class FtcI2cDeviceState
 {
-    private I2cDeviceSynch syncDevice = null;
     private I2cController i2cController = null;
     private int port = 0;
     private I2cController.I2cPortReadyCallback deviceCallback = null;
     private boolean deviceEnabled = true;
-
-    public FtcI2cDeviceState(I2cDeviceSynch device)
-    {
-        this.syncDevice = device;
-    }   //FtcI2cDeviceState
 
     public FtcI2cDeviceState(I2cControllerPortDevice device)
     {
@@ -57,25 +50,11 @@ public class FtcI2cDeviceState
         {
             if (enabled)
             {
-                if (syncDevice != null)
-                {
-                    syncDevice.engage();
-                }
-                else
-                {
-                    i2cController.registerForI2cPortReadyCallback(deviceCallback, port);
-                }
+                i2cController.registerForI2cPortReadyCallback(deviceCallback, port);
             }
             else
             {
-                if (syncDevice != null)
-                {
-                    syncDevice.disengage();
-                }
-                else
-                {
-                    i2cController.deregisterForPortReadyCallback(port);
-                }
+                i2cController.deregisterForPortReadyCallback(port);
             }
             deviceEnabled = enabled;
         }

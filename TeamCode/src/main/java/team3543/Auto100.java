@@ -106,6 +106,11 @@ public class Auto100 implements TrcRobot.AutoStrategy
             State state = sm.getState();
             double xDistance, yDistance;
 
+            if (state != State.NEAR_START && state != State.PUSH_BEACON_BUTTONS)
+            {
+                robot.traceStateInfo(elapsedTime, state.toString());
+            }
+
             switch (state)
             {
                 case NEAR_START:

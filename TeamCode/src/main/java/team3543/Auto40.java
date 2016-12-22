@@ -89,6 +89,11 @@ public class Auto40 implements TrcRobot.AutoStrategy
             State nextState;
             double xDistance, yDistance;
 
+            if (state != State.START)
+            {
+                robot.traceStateInfo(elapsedTime, state.toString());
+            }
+
             switch (state)
             {
                 case START:

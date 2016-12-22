@@ -23,7 +23,6 @@
 package team3543;
 
 import ftclib.FtcOpMode;
-import hallib.HalDashboard;
 import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
@@ -41,7 +40,6 @@ public class AutoDriveStraight implements TrcRobot.AutoStrategy
 
     private static final String moduleName = "AutoDriveStraight";
 
-    private HalDashboard dashboard;
     private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private Robot robot;
@@ -54,27 +52,27 @@ public class AutoDriveStraight implements TrcRobot.AutoStrategy
     public AutoDriveStraight(Robot robot, double delay, double distance)
     {
         this.robot = robot;
-        this.dashboard = robot.dashboard;
         this.delay = delay;
         this.distance = distance;
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine(moduleName);
         sm.start(State.DO_DELAY);
-    }
+    }   //AutoDriveStraight
 
     @Override
     public void autoPeriodic(double elapsedTime)
     {
-        dashboard.displayPrintf(1, moduleName + ": delay=%.0f, distance=%.0f",
-                                delay, distance);
+        //
+        // Print debug info.
+        //
+        robot.dashboard.displayPrintf(1, "State: %s", sm.isReady()? (sm.getState()).toString(): "Disabled");
 
         if (sm.isReady())
         {
             State state = (State)sm.getState();
-            tracer.traceInfo(moduleName, "State: %s [%.3f]", state.toString(), elapsedTime);
-            dashboard.displayPrintf(7, "State: %s [%.3f]", state.toString(), elapsedTime);
 
+            robot.traceStateInfo(elapsedTime, state.toString());
             switch (state)
             {
                 case DO_DELAY:

@@ -85,8 +85,7 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
         //
         // Print debug info.
         //
-        robot.dashboard.displayPrintf(
-                1, "State: %s", sm.isReady()? (sm.getState()).toString(): "Disabled");
+        robot.dashboard.displayPrintf(1, "State: %s", sm.isReady()? (sm.getState()).toString(): "Disabled");
 
         if (sm.isReady())
         {

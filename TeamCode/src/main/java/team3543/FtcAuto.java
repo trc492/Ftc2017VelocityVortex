@@ -97,15 +97,11 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         switch (strategy)
         {
             case AUTO_100_1:
-                CmdPushBeaconButtons1 pushBeaconButtons1Cmd = new CmdPushBeaconButtons1(
-                        robot, alliance, beaconButtons, parkOption);
-                autoStrategy = new Auto100(robot, alliance, delay, numParticles, pushBeaconButtons1Cmd);
+                autoStrategy = new Auto100(robot, alliance, delay, numParticles, parkOption, beaconButtons, true);
                 break;
 
             case AUTO_100_2:
-                CmdPushBeaconButtons2 pushBeaconButtons2Cmd = new CmdPushBeaconButtons2(
-                        robot, alliance, beaconButtons, parkOption);
-                autoStrategy = new Auto100(robot, alliance, delay, numParticles, pushBeaconButtons2Cmd);
+                autoStrategy = new Auto100(robot, alliance, delay, numParticles, parkOption, beaconButtons, false);
                 break;
 
             case AUTO_40_NEAR:

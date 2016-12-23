@@ -308,7 +308,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             // The range sensor sometimes does not detect the echo and returns 255cm (approx. 100.4 inches).
             // If so, throw it away and use the previous value instead.
             //
-            if (input > 100.0)
+            if (input > 100.0 && prevRangeValue <= 100.0)
             {
                 input = prevRangeValue;
             }

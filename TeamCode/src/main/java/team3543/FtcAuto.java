@@ -70,9 +70,9 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     private Alliance alliance = Alliance.RED_ALLIANCE;
     private double delay = 0.0;
     private int numParticles = 2;
+    private ParkOption parkOption = ParkOption.PARK_CORNER;
     private Strategy strategy = Strategy.AUTO_100_1;
     private int beaconButtons = 2;
-    private ParkOption parkOption = ParkOption.PARK_CORNER;
     private double driveDistance = 0.0;
 
     //
@@ -194,10 +194,10 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", allianceMenu, this, 0.0, 15.0, 1.0, 0.0, " %.0f sec");
         FtcValueMenu numParticlesMenu = new FtcValueMenu(
                 "Shoot particles:", delayMenu, this, 0.0, 2.0, 1.0, 2.0, " %.0f");
-        FtcChoiceMenu<Strategy> strategyMenu = new FtcChoiceMenu<>("Strategies:", numParticlesMenu, this);
+        FtcChoiceMenu<ParkOption> parkOptionMenu = new FtcChoiceMenu<>("Park options:", numParticlesMenu, this);
+        FtcChoiceMenu<Strategy> strategyMenu = new FtcChoiceMenu<>("Strategies:", parkOptionMenu, this);
         FtcValueMenu beaconButtonsMenu = new FtcValueMenu(
                 "Push beacon buttons:", strategyMenu, this, 0.0, 2.0, 1.0, 2.0, " %.0f");
-        FtcChoiceMenu<ParkOption> parkOptionMenu = new FtcChoiceMenu<>("Park options:", strategyMenu, this);
         FtcValueMenu distanceMenu = new FtcValueMenu(
                 "Distance:", strategyMenu, this, -10.0, 10.0, 0.5, 5.0, " %.0f ft");
         //
@@ -207,18 +207,18 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, delayMenu);
 
         delayMenu.setChildMenu(numParticlesMenu);
-        numParticlesMenu.setChildMenu(strategyMenu);
+        numParticlesMenu.setChildMenu(parkOptionMenu);
+
+        parkOptionMenu.addChoice("Do nothing", ParkOption.DO_NOTHING, strategyMenu);
+        parkOptionMenu.addChoice("Park center", ParkOption.PARK_CENTER, strategyMenu);
+        parkOptionMenu.addChoice("Park corner", ParkOption.PARK_CORNER, strategyMenu);
 
         strategyMenu.addChoice("Do nothing", Strategy.DO_NOTHING);
         strategyMenu.addChoice("Auto 100pt 1", Strategy.AUTO_100_1, beaconButtonsMenu);
         strategyMenu.addChoice("Auto 100pt 2", Strategy.AUTO_100_2, beaconButtonsMenu);
-        strategyMenu.addChoice("Auto 40pt near", Strategy.AUTO_40_NEAR, parkOptionMenu);
-        strategyMenu.addChoice("Auto 40pt far", Strategy.AUTO_40_FAR, parkOptionMenu);
+        strategyMenu.addChoice("Auto 40pt near", Strategy.AUTO_40_NEAR);
+        strategyMenu.addChoice("Auto 40pt far", Strategy.AUTO_40_FAR);
         strategyMenu.addChoice("Drive straight", Strategy.DRIVE_STRAIGHT, distanceMenu);
-
-        parkOptionMenu.addChoice("Do nothing", ParkOption.DO_NOTHING);
-        parkOptionMenu.addChoice("Park center", ParkOption.PARK_CENTER);
-        parkOptionMenu.addChoice("Park corner", ParkOption.PARK_CORNER);
         //
         // Traverse menus.
         //
@@ -236,11 +236,11 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Show choices.
         //
-        dashboard.displayPrintf(0, "Auto Strategy: %s", strategyMenu.getCurrentChoiceText());
-        dashboard.displayPrintf(1, "Alliance=%s,Delay=%.0f sec", alliance.toString(), delay);
-        dashboard.displayPrintf(2, "Auto100: NumParticles=%d,BeaconButtons=%d", numParticles, beaconButtons);
-        dashboard.displayPrintf(3, "Auto40: ParkOption=%s", parkOption.toString());
-        dashboard.displayPrintf(3, "Drive: distance=%.0f ft", driveDistance);
+        dashboard.displayPrintf(1, "-- Auto Strategy: %s --", strategyMenu.getCurrentChoiceText());
+        dashboard.displayPrintf(2, "Alliance=%s,Delay=%.0f sec", alliance.toString(), delay);
+        dashboard.displayPrintf(3, "Auto100: NumParticles=%d,BeaconButtons=%d", numParticles, beaconButtons);
+        dashboard.displayPrintf(4, "Auto40: ParkOption=%s", parkOption.toString());
+        dashboard.displayPrintf(5, "Drive: distance=%.0f ft", driveDistance);
     }   //doMenus
 
 }   //class FtcAuto

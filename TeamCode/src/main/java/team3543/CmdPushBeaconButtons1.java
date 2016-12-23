@@ -41,7 +41,9 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
         PUSH_BUTTON2,
         RETRACT,
         NEXT_BEACON,
-        PARK_CORNER,
+        GOTO_VORTEX,
+        TURN_TO_VORTEX,
+        PARK_VORTEX,
         DONE
     }   //enum State
 
@@ -269,24 +271,49 @@ public class CmdPushBeaconButtons1 implements TrcRobot.RobotCommand
                         // We are going somewhere. let's get off the wall so we can turn.
                         // We don't have enough time to go to the center vortex, so always head for the corner vortex.
                         //
-                        xDistance = 12.0;
+                        xDistance = 24.0;
                         yDistance = 0.0;
 
                         robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                         robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
-                        sm.waitForSingleEvent(event, State.PARK_CORNER);
+                        sm.waitForSingleEvent(event, State.GOTO_VORTEX);
                     }
                     break;
 
-                case PARK_CORNER:
+                case GOTO_VORTEX:
                     xDistance = 0.0;
                     if (beaconButtons == 2)
                     {
-                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -96.0: 20.0;
+                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -72.0: 20.0;
                     }
                     else
                     {
                         yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -40.0: 84.0;
+                    }
+
+                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    sm.waitForSingleEvent(event, State.TURN_TO_VORTEX);
+                    break;
+
+                case TURN_TO_VORTEX:
+                    xDistance = yDistance = 0.0;
+                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 45.0;
+
+                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
+                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    sm.waitForSingleEvent(event, State.PARK_VORTEX);
+                    break;
+
+                case PARK_VORTEX:
+                    xDistance = 0.0;
+                    if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
+                    {
+                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? 36.0: -36.0;
+                    }
+                    else
+                    {
+                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? -36.0: 36.0;
                     }
 
                     robot.setTurnPID(xDistance, yDistance, robot.targetHeading);

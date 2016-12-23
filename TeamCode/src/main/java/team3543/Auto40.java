@@ -61,7 +61,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
         this.alliance = alliance;
         this.parkOption = parkOption;
         this.startNear = startNear;
-        startCmd = startNear? new CmdNearStart(robot, alliance, delay, numParticles):
+        startCmd = startNear? new CmdNearStart(robot, alliance, delay, numParticles, true):
                               new CmdFarStart(robot, alliance, delay, numParticles);
         event = new TrcEvent(moduleName);
         sm = new TrcStateMachine<>(moduleName);
@@ -112,7 +112,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
                         yDistance = robot.selectParameter(
                                 startNear, alliance,
                                 //NEAR
-                                -24.0, -17.0,
+                                -32.0, -17.0,
                                 //FAR
                                 -24.0, -20.0);
                     }
@@ -136,7 +136,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
                     robot.targetHeading = robot.selectParameter(
                             startNear, alliance,
                             //NEAR
-                            13.0, -11.0,
+                            0.0, -11.0,
                             //FAR
                             -0.3, -2.0);
 
@@ -150,7 +150,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
                     yDistance = robot.selectParameter(
                             startNear, alliance,
                             //NEAR
-                            50.0, 50.0,
+                            48.0, 50.0,
                             //FAR
                             22.0, 32.0);
 
@@ -161,7 +161,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
 
                 case TURN_TO_CORNER:
                     xDistance = yDistance = 0.0;
-                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -130.0: 135.0;
+                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 135.0;
 
                     robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                     robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
@@ -170,7 +170,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
 
                 case PARK_CORNER:
                     xDistance = 0.0;
-                    yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 52.0: 52.0;
+                    yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -42.0: 42.0;
 
                     robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                     robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);

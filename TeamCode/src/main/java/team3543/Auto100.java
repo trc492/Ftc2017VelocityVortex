@@ -58,7 +58,9 @@ public class Auto100 implements TrcRobot.AutoStrategy
         this.robot = robot;
         this.alliance = alliance;
         this.pushBeaconButtonsCmd = pushBeaconButtonsCmd;
-        nearStartCmd = new CmdNearStart(robot, alliance, delay, numParticles);
+        boolean shortRun = alliance == FtcAuto.Alliance.RED_ALLIANCE &&
+                           pushBeaconButtonsCmd instanceof CmdPushBeaconButtons1;
+        nearStartCmd = new CmdNearStart(robot, alliance, delay, numParticles, shortRun);
         event = new TrcEvent(moduleName);
         sm = new TrcStateMachine<>(moduleName);
         sm.start(State.NEAR_START);
@@ -131,7 +133,8 @@ public class Auto100 implements TrcRobot.AutoStrategy
 
                 case GOTO_WALL:
                     xDistance = 0.0;
-                    yDistance = 22.0;
+                    yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE &&
+                                pushBeaconButtonsCmd instanceof CmdPushBeaconButtons1? 22.0: 16.0;
 
                     robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                     robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);

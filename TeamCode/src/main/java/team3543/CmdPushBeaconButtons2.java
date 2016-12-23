@@ -41,9 +41,9 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
         PUSH_BUTTON2,
         RETRACT,
         NEXT_BEACON,
-        GOTO_CORNER,
-        TURN_TO_CORNER,
-        PARK_CORNER,
+        GOTO_VORTEX,
+        TURN_TO_VORTEX,
+        PARK_VORTEX,
         DONE
     }   //enum State
 
@@ -53,8 +53,9 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
 
     private Robot robot;
     private FtcAuto.Alliance alliance;
-    private int remainingBeaconButtons;
+    private int beaconButtons;
     private FtcAuto.ParkOption parkOption;
+    private int remainingBeaconButtons;
     private TrcEvent event;
     private TrcTimer timer;
     private TrcStateMachine<State> sm;
@@ -66,8 +67,9 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
     {
         this.robot = robot;
         this.alliance = alliance;
-        this.remainingBeaconButtons = beaconButtons;
+        this.beaconButtons = beaconButtons;
         this.parkOption = parkOption;
+        remainingBeaconButtons = beaconButtons;
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine<>(moduleName);
@@ -270,36 +272,43 @@ public class CmdPushBeaconButtons2 implements TrcRobot.RobotCommand
                         // We are going somewhere. let's get off the wall so we can turn.
                         // We don't have enough time to go to the center vortex, so always head for the corner vortex.
                         //
-                        xDistance = 16.0;//32.0;
+                        xDistance = 36.0;
                         yDistance = 0.0;
 
                         robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                         robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
-                        sm.waitForSingleEvent(event, State.PARK_CORNER);//GOTO_CORNER);
+                        sm.waitForSingleEvent(event, State.GOTO_VORTEX);
                     }
                     break;
 
-                case GOTO_CORNER:
+                case GOTO_VORTEX:
                     xDistance = 0.0;
-                    yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -24.0: 24.0;
+                    yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -36.0: 36.0;
 
                     robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                     robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
-                    sm.waitForSingleEvent(event, State.TURN_TO_CORNER);
+                    sm.waitForSingleEvent(event, State.TURN_TO_VORTEX);
                     break;
 
-                case TURN_TO_CORNER:
+                case TURN_TO_VORTEX:
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 135.0;
 
                     robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                     robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
-                    sm.waitForSingleEvent(event, State.PARK_CORNER);
+                    sm.waitForSingleEvent(event, State.PARK_VORTEX);
                     break;
 
-                case PARK_CORNER:
+                case PARK_VORTEX:
                     xDistance = 0.0;
-                    yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -36.0: 36.0;
+                    if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
+                    {
+                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? 36.0: -36.0;
+                    }
+                    else
+                    {
+                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? -36.0: 36.0;
+                    }
 
                     robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                     robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);

@@ -48,17 +48,19 @@ public class CmdNearStart implements TrcRobot.RobotCommand
     private FtcAuto.Alliance alliance;
     private double delay;
     private int numParticles;
+    private boolean shortRun;
     private TrcEvent event;
     private TrcTimer timer;
     private TrcStateMachine<State> sm;
     private boolean particleLoaded = true;
 
-    public CmdNearStart(Robot robot, FtcAuto.Alliance alliance, double delay, int numParticles)
+    public CmdNearStart(Robot robot, FtcAuto.Alliance alliance, double delay, int numParticles, boolean shortRun)
     {
         this.robot = robot;
         this.alliance = alliance;
         this.delay = delay;
         this.numParticles = numParticles;
+        this.shortRun = shortRun;
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine<>(moduleName);
@@ -142,7 +144,7 @@ public class CmdNearStart implements TrcRobot.RobotCommand
 
                 case KNOCK_OUT_CAPBALL:
                     xDistance = 0.0;
-                    yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 52.0: 52.0;
+                    yDistance = shortRun? 42.0: 60.0;
 
                     robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
                     robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);

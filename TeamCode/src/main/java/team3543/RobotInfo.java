@@ -49,10 +49,11 @@ public class RobotInfo
     //
     // INCHES_PER_COUNT: 0.01667
     // 12/06/2016: 0.045, 0.0, 0.0045 (No speed control)
+    // 12/22/2016: 0.046, 0.0, 0.0046 (No speed control)
     //
-    public static final double ENCODER_Y_KP                     = 0.045;
+    public static final double ENCODER_Y_KP                     = 0.046;
     public static final double ENCODER_Y_KI                     = 0.0;
-    public static final double ENCODER_Y_KD                     = 0.0045;
+    public static final double ENCODER_Y_KD                     = 0.0046;
     public static final double ENCODER_Y_KF                     = 0.0;
     public static final double ENCODER_Y_TOLERANCE              = 2.0;
     public static final double ENCODER_Y_SETTLING               = 0.2;
@@ -116,7 +117,7 @@ public class RobotInfo
     public static final double SHOOTER_BALLGATE_OPEN_TIME       = 0.7;
     public static final double SHOOTER_PAUSE_TIME               = 0.1;
     public static final double SHOOTER_DEGREES_PER_COUNT        = (360.0/1680.0);
-    public static final double SHOOTER_PULLBACK_TARGET          = 220.0;    //in degrees
+    public static final double SHOOTER_PULLBACK_TARGET          = 180.0;    //in degrees
 
     //
     // Ball gate subsystem.

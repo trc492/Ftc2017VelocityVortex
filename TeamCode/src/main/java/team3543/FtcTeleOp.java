@@ -51,6 +51,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
     protected FtcGamepad driverGamepad;
     protected FtcGamepad operatorGamepad;
 
+    private double drivePowerScale = 1.0;
     private boolean invertedDrive = false;
     private DriveMode driveMode = DriveMode.MECANUM_MODE;
     private ConveyorMode conveyorMode = ConveyorMode.CONVEYOR_OFF;
@@ -109,17 +110,17 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
         switch(driveMode)
         {
             case TANK_MODE:
-                double leftPower = driverGamepad.getLeftStickY(true);
-                double rightPower = driverGamepad.getRightStickY(true);
+                double leftPower = driverGamepad.getLeftStickY(true)*drivePowerScale;
+                double rightPower = driverGamepad.getRightStickY(true)*drivePowerScale;
                 robot.driveBase.tankDrive(leftPower, rightPower, invertedDrive);
                 dashboard.displayPrintf(1, "Tank:left=%.2f,right=%.2f,inverted=%s",
                         leftPower, rightPower, Boolean.toString(invertedDrive));
                 break;
 
             case MECANUM_MODE:
-                double x = driverGamepad.getLeftStickX(true);
-                double y = driverGamepad.getRightStickY(true);
-                double rot = driverGamepad.getRightTrigger(true) - driverGamepad.getLeftTrigger(true);
+                double x = driverGamepad.getLeftStickX(true)*drivePowerScale;
+                double y = driverGamepad.getRightStickY(true)*drivePowerScale;
+                double rot = (driverGamepad.getRightTrigger(true) - driverGamepad.getLeftTrigger(true))*drivePowerScale;
                 robot.driveBase.mecanumDrive_Cartesian(x, y, rot, invertedDrive);
                 dashboard.displayPrintf(1, "Mecanum:x=%.2f,y=%.2f,rot=%.2f,inverted=%s",
                         x, y, rot, Boolean.toString(invertedDrive));
@@ -156,6 +157,10 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                     break;
 
                 case FtcGamepad.GAMEPAD_Y:
+                    break;
+
+                case FtcGamepad.GAMEPAD_LBUMPER:
+                    drivePowerScale = pressed? 0.5: 1.0;
                     break;
 
                 case FtcGamepad.GAMEPAD_RBUMPER:

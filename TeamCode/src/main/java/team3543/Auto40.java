@@ -74,7 +74,11 @@ public class Auto40 implements TrcRobot.AutoStrategy
         //
         // Print debug info.
         //
-        robot.dashboard.displayPrintf(1, "State: %s", sm.isReady()? (sm.getState()).toString(): "Disabled");
+        State state = sm.getState();
+        if (state != State.START)
+        {
+            robot.dashboard.displayPrintf(1, "State: %s", state != null? state.toString(): "Disabled");
+        }
 
         if (robot.pidDrive.isEnabled())
         {
@@ -85,7 +89,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
 
         if (sm.isReady())
         {
-            State state = sm.getState();
+            state = sm.getState();
             State nextState;
             double xDistance, yDistance;
 

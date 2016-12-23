@@ -47,7 +47,7 @@ public class AutoDriveStraight implements TrcRobot.AutoStrategy
     private double distance;
     private TrcEvent event;
     private TrcTimer timer;
-    private TrcStateMachine sm;
+    private TrcStateMachine<State> sm;
 
     public AutoDriveStraight(Robot robot, double delay, double distance)
     {
@@ -56,7 +56,7 @@ public class AutoDriveStraight implements TrcRobot.AutoStrategy
         this.distance = distance;
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
-        sm = new TrcStateMachine(moduleName);
+        sm = new TrcStateMachine<>(moduleName);
         sm.start(State.DO_DELAY);
     }   //AutoDriveStraight
 
@@ -66,11 +66,12 @@ public class AutoDriveStraight implements TrcRobot.AutoStrategy
         //
         // Print debug info.
         //
-        robot.dashboard.displayPrintf(1, "State: %s", sm.isReady()? (sm.getState()).toString(): "Disabled");
+        State state = sm.getState();
+        robot.dashboard.displayPrintf(1, "State: %s", state != null? state.toString(): "Disabled");
 
         if (sm.isReady())
         {
-            State state = (State)sm.getState();
+            state = sm.getState();
 
             robot.traceStateInfo(elapsedTime, state.toString());
             switch (state)

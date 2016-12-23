@@ -101,7 +101,11 @@ public class Auto100 implements TrcRobot.AutoStrategy
         //
         // Print debug info.
         //
-        robot.dashboard.displayPrintf(1, "State: %s", sm.isReady()? (sm.getState()).toString(): "Disabled");
+        State state = sm.getState();
+        if (state != State.NEAR_START)
+        {
+            robot.dashboard.displayPrintf(1, "State: %s", state != null? state.toString(): "Disabled");
+        }
 
         if (Robot.USE_LINE_DETECTOR)
         {
@@ -134,7 +138,7 @@ public class Auto100 implements TrcRobot.AutoStrategy
 
         if (sm.isReady())
         {
-            State state = sm.getState();
+            state = sm.getState();
             double xDistance, yDistance;
             int redValue, greenValue, blueValue;
             boolean isRed, isBlue;

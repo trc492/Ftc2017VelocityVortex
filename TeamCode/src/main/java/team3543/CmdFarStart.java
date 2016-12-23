@@ -78,11 +78,12 @@ public class CmdFarStart implements TrcRobot.RobotCommand
         //
         // Print debug info.
         //
-        robot.dashboard.displayPrintf(1, "State: %s", sm.isReady()? (sm.getState()).toString(): "Disabled");
+        State state = sm.getState();
+        robot.dashboard.displayPrintf(1, "State: %s", state != null? sm.getState().toString(): "Disabled");
 
         if (sm.isReady())
         {
-            State state = sm.getState();
+            state = sm.getState();
             double xDistance, yDistance;
 
             robot.traceStateInfo(elapsedTime, state.toString());

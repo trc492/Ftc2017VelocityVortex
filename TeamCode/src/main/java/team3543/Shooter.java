@@ -49,7 +49,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
     private TrcPidMotor pidMotor;
     private FtcTouchSensor touchSensor;
     private FtcServo ballGate;
-    private TrcStateMachine sm;
+    private TrcStateMachine<ShooterState> sm;
     private TrcTimer timer;
     private TrcEvent event;
     private TrcEvent completionEvent = null;
@@ -73,7 +73,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         ballGate = new FtcServo("ballGateServo");
         ballGate.setPosition(RobotInfo.BALLGATE_DOWN_POSITION);
 
-        sm = new TrcStateMachine(instanceName);
+        sm = new TrcStateMachine<>(instanceName);
         timer = new TrcTimer(instanceName);
         event = new TrcEvent(instanceName);
     }
@@ -201,7 +201,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
 
         if (sm.isReady())
         {
-            ShooterState state = (ShooterState)sm.getState();
+            ShooterState state = sm.getState();
 
             switch (state)
             {

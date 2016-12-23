@@ -64,7 +64,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
     private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
     private Robot robot;
-    private HalDashboard dashboard;
 
     private TrcRobot.AutoStrategy autoStrategy = null;
     private Alliance alliance = Alliance.RED_ALLIANCE;
@@ -86,7 +85,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         // Initializing robot objects.
         //
         robot = new Robot(TrcRobot.RunMode.AUTO_MODE);
-        dashboard = robot.dashboard;
         //
         // Choice menus.
         //
@@ -134,7 +132,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         robot.battery.setTaskEnabled(true);
         Date date = new Date();
         tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", date.toString());
-        dashboard.clearDisplay();
+        robot.dashboard.clearDisplay();
     }   //startMode
 
     @Override
@@ -232,11 +230,11 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Show choices.
         //
-        dashboard.displayPrintf(1, "-- Auto Strategy: %s --", strategyMenu.getCurrentChoiceText());
-        dashboard.displayPrintf(2, "Alliance=%s,Delay=%.0f sec", alliance.toString(), delay);
-        dashboard.displayPrintf(3, "Auto100: NumParticles=%d,BeaconButtons=%d", numParticles, beaconButtons);
-        dashboard.displayPrintf(4, "Auto40: ParkOption=%s", parkOption.toString());
-        dashboard.displayPrintf(5, "Drive: distance=%.0f ft", driveDistance);
+        robot.dashboard.displayPrintf(1, "-- Auto Strategy: %s --", strategyMenu.getCurrentChoiceText());
+        robot.dashboard.displayPrintf(2, "Alliance=%s,Delay=%.0f sec", alliance.toString(), delay);
+        robot.dashboard.displayPrintf(3, "Auto100: NumParticles=%d,BeaconButtons=%d", numParticles, beaconButtons);
+        robot.dashboard.displayPrintf(4, "Auto40: ParkOption=%s", parkOption.toString());
+        robot.dashboard.displayPrintf(5, "Drive: distance=%.0f ft", driveDistance);
     }   //doMenus
 
 }   //class FtcAuto

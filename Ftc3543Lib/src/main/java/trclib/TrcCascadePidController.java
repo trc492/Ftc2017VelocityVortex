@@ -22,22 +22,22 @@
 
 package trclib;
 
-public class TrcCascadeController extends TrcPidController implements TrcPidController.PidInput
+public class TrcCascadePidController extends TrcPidController implements TrcPidController.PidInput
 {
-    private static final String moduleName = "TrcCascadeController";
+    private static final String moduleName = "TrcCascadePidController";
     private static final boolean debugEnabled = false;
     private TrcDbgTrace dbgTrace = null;
 
     public interface CascadeInput
     {
-        double getPrimaryInput(TrcCascadeController cascadeCtrl);
-        double getSecondaryInput(TrcCascadeController cascadeCtrl);
+        double getPrimaryInput(TrcCascadePidController cascadeCtrl);
+        double getSecondaryInput(TrcCascadePidController cascadeCtrl);
     }   //interface CascadeInput
 
     public TrcPidController secondaryCtrl;
     private CascadeInput cascadeInput;
 
-    public TrcCascadeController(
+    public TrcCascadePidController(
             final String instanceName,
             double       primaryKp,
             double       primaryKi,
@@ -48,6 +48,7 @@ public class TrcCascadeController extends TrcPidController implements TrcPidCont
             double       secondaryKp,
             double       secondaryKi,
             double       secondaryKd,
+            double       secondaryKf,
             double       secondaryTolerance,
             double       secondarySettlingTime,
             CascadeInput cascadeInput)
@@ -64,10 +65,10 @@ public class TrcCascadeController extends TrcPidController implements TrcPidCont
         }
 
         secondaryCtrl = new TrcPidController(instanceName + ".secondary",
-                                             secondaryKp, secondaryKi, secondaryKd, 0.0,
+                                             secondaryKp, secondaryKi, secondaryKd, secondaryKf,
                                              secondaryTolerance, secondarySettlingTime, this);
         this.cascadeInput = cascadeInput;
-    }   //TrcCascadeController
+    }   //TrcCascadePidController
 
     @Override
     public void reset()
@@ -128,4 +129,4 @@ public class TrcCascadeController extends TrcPidController implements TrcPidCont
         return input;
     }   //getInput
 
-}   //class TrcCascadeController
+}   //class TrcCascadePidController

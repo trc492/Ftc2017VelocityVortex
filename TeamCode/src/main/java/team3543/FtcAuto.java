@@ -30,7 +30,6 @@ import ftclib.FtcChoiceMenu;
 import ftclib.FtcMenu;
 import ftclib.FtcOpMode;
 import ftclib.FtcValueMenu;
-import hallib.HalDashboard;
 import trclib.TrcDbgTrace;
 import trclib.TrcRobot;
 

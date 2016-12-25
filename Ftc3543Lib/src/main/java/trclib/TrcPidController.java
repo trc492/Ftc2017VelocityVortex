@@ -490,7 +490,10 @@ public class TrcPidController
 
         if (noOscillation)
         {
-            if (prevError <= 0.0 || Math.abs(prevError) <= tolerance)
+            //
+            // Don't allow oscillation, so if we are within tolerance or we past target, just quit.
+            //
+            if (prevError <= tolerance)
             {
                 onTarget = true;
             }

@@ -23,15 +23,13 @@
 package trclib;
 
 /**
- * This class contains platform independent utility methods.
- * All methods in this class are static. It is not necessary
- * to instantiate this class to call its methods.
+ * This class contains platform independent utility methods. All methods in this class are static. It is not
+ * necessary to instantiate this class to call its methods.
  */
 public class TrcUtil
 {
     /**
-     * This method clips the given value to the range limited
-     * by the given low and high limits.
+     * This method clips the given value to the range limited by the given low and high limits.
      *
      * @param value specifies the value to be clipped
      * @param lowLimit specifies the low limit of the range.
@@ -44,8 +42,7 @@ public class TrcUtil
     }   //limit
 
     /**
-     * This method clips the given value to the range limited
-     * by the given low and high limits.
+     * This method clips the given value to the range limited by the given low and high limits.
      *
      * @param value specifies the value to be clipped
      * @param lowLimit specifies the low limit of the range.
@@ -109,10 +106,10 @@ public class TrcUtil
     }   //scaleRange
 
     /**
-     * This method checks if the given value is within the deadband range.
-     * If so, it returns 0.0 else it returns the unchanged value.
+     * This method checks if the given value is within the deadband range. If so, it returns 0.0 else it returns
+     * the unchanged value.
      *
-     * @param value specifies the value to be chacked.
+     * @param value specifies the value to be checked.
      * @param deadband specifies the deadband zone.
      * @return the value 0.0 if within deadband, unaltered otherwise.
      */
@@ -127,7 +124,7 @@ public class TrcUtil
      * @param low specifies the low byte.
      * @param high specifies the high byte.
      *
-     * @return the converted interger.
+     * @return the converted integer.
      */
     public static int bytesToInt(byte low, byte high)
     {
@@ -139,7 +136,7 @@ public class TrcUtil
      *
      * @param data specifies the byte data.
      *
-     * @return the convertyed interger.
+     * @return the converted integer.
      */
     public static int bytesToInt(byte data)
     {

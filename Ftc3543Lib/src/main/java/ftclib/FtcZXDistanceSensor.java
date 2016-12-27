@@ -36,6 +36,9 @@ public class FtcZXDistanceSensor extends FtcI2cDevice implements TrcSensorDataSo
 {
     private static final String moduleName = "FtcZXDistanceSensor";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     public static final int DEF_I2CADDRESS          = 0x20;
@@ -116,8 +119,7 @@ public class FtcZXDistanceSensor extends FtcI2cDevice implements TrcSensorDataSo
     private static final int DRE_HOVER              = (1 << 3);
     private static final int DRE_HVG                = (1 << 4);
     private static final int DRE_EDGE               = (1 << 5);
-    private static final int DRE_ALL                = (DRE_RNG | DRE_CRD | DRE_SWP |
-                                                       DRE_HOVER | DRE_HVG | DRE_EDGE);
+    private static final int DRE_ALL                = (DRE_RNG | DRE_CRD | DRE_SWP | DRE_HOVER | DRE_HVG | DRE_EDGE);
 
     //
     // Register 0x02 - DRCFG (Data Ready Config):
@@ -289,11 +291,7 @@ public class FtcZXDistanceSensor extends FtcI2cDevice implements TrcSensorDataSo
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + instanceName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         byte[] data;

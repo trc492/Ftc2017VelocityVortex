@@ -46,6 +46,9 @@ public abstract class FtcMenu
 {
     protected static final String moduleName = "FtcMenu";
     protected static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     protected TrcDbgTrace dbgTrace = null;
 
     /**
@@ -143,11 +146,7 @@ public abstract class FtcMenu
     {
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + menuTitle,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + menuTitle, tracingEnabled, traceLevel, msgLevel);
         }
 
         if (menuButtons == null || menuTitle == null)

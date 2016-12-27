@@ -42,6 +42,9 @@ public class FtcMRGyro extends TrcGyro
 {
     private static final String moduleName = "FtcMRGyro";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     private ModernRoboticsI2cGyro gyro;
@@ -66,14 +69,11 @@ public class FtcMRGyro extends TrcGyro
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName,
-                                       false,
-                                       TrcDbgTrace.TraceLevel.API,
-                                       TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get(instanceName);
-        sensorState = new FtcI2cDeviceState(gyro);
+        sensorState = new FtcI2cDeviceState(instanceName, gyro);
     }   //FtcMRGyro
 
     /**

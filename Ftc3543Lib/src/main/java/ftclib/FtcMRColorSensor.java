@@ -24,7 +24,6 @@ package ftclib;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cDevice;
 
 import hallib.HalUtil;
 import trclib.TrcAnalogInput;
@@ -39,6 +38,8 @@ public class FtcMRColorSensor extends TrcAnalogInput
     private static final String moduleName = "FtcMRColorSensor";
     private static final boolean debugEnabled = false;
     private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     public ModernRoboticsI2cColorSensor sensor;
@@ -56,12 +57,11 @@ public class FtcMRColorSensor extends TrcAnalogInput
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled,
-                                       TrcDbgTrace.TraceLevel.API, TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         sensor = hardwareMap.get(ModernRoboticsI2cColorSensor.class, instanceName);
-        sensorState = new FtcI2cDeviceState(sensor);
+        sensorState = new FtcI2cDeviceState(instanceName, sensor);
     }   //FtcMRColorSensor
 
     /**

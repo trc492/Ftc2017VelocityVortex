@@ -36,6 +36,13 @@ import trclib.TrcTaskMgr;
  */
 public class FtcGamepad implements TrcTaskMgr.Task
 {
+    private static final String moduleName = "FtcGamepad";
+    private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
+    private TrcDbgTrace dbgTrace = null;
+
     public static final int GAMEPAD_A           = ((int)1 << 0);
     public static final int GAMEPAD_B           = ((int)1 << 1);
     public static final int GAMEPAD_X           = ((int)1 << 2);
@@ -67,10 +74,6 @@ public class FtcGamepad implements TrcTaskMgr.Task
         public void gamepadButtonEvent(FtcGamepad gamepad, int button, boolean pressed);
     }   //interface ButonHandler
 
-    private static final String moduleName = "FtcGamepad";
-    private static final boolean debugEnabled = false;
-    private TrcDbgTrace dbgTrace = null;
-
     private String instanceName;
     private Gamepad gamepad;
     private ButtonHandler buttonHandler;
@@ -89,11 +92,7 @@ public class FtcGamepad implements TrcTaskMgr.Task
     {
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + instanceName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         if (instanceName == null || gamepad == null)

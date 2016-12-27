@@ -26,13 +26,14 @@ public class TrcDigitalTrigger implements TrcTaskMgr.Task
 {
     private static final String moduleName = "TrcDigitalTrigger";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     public interface TriggerHandler
     {
-        public void DigitalTriggerEvent(
-                TrcDigitalTrigger digitalTrigger,
-                boolean active);
+        void DigitalTriggerEvent(TrcDigitalTrigger digitalTrigger, boolean active);
     }   //interface TriggerHandler
 
     private String instanceName;
@@ -40,18 +41,11 @@ public class TrcDigitalTrigger implements TrcTaskMgr.Task
     private TriggerHandler eventHandler;
     private boolean prevState = false;
 
-    public TrcDigitalTrigger(
-            final String instanceName,
-            TrcDigitalInput digitalInput,
-            TriggerHandler eventHandler)
+    public TrcDigitalTrigger(final String instanceName, TrcDigitalInput digitalInput, TriggerHandler eventHandler)
     {
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + instanceName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         if (digitalInput == null || eventHandler == null)

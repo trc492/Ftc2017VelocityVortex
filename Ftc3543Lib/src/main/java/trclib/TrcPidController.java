@@ -29,6 +29,9 @@ public class TrcPidController
 {
     private static final String moduleName = "TrcPidController";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     public interface PidInput
@@ -81,11 +84,7 @@ public class TrcPidController
     {
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + instanceName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         dashboard = HalDashboard.getInstance();
@@ -412,10 +411,15 @@ public class TrcPidController
         }
 
         double input = pidInput.getInput(this);
-        setPoint = target;
         if (!absSetPoint)
         {
-            setPoint += input;
+            setPoint = input + target;
+            prevError = target;
+        }
+        else
+        {
+            setPoint = target;
+            prevError = setPoint - input;
         }
 
         if (maxInput > minInput)
@@ -430,7 +434,6 @@ public class TrcPidController
             }
         }
 
-        prevError = setPoint - input;
         prevTime = HalUtil.getCurrentTime();
         if (inverted)
         {

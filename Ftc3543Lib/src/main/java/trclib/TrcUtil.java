@@ -40,11 +40,7 @@ public class TrcUtil
      */
     public static int limit(int value, int lowLimit, int highLimit)
     {
-        return (value < lowLimit)?
-                    lowLimit:
-               (value > highLimit)?
-                    highLimit:
-                    value;
+        return (value < lowLimit)? lowLimit: (value > highLimit)? highLimit: value;
     }   //limit
 
     /**
@@ -58,11 +54,7 @@ public class TrcUtil
      */
     public static double limit(double value, double lowLimit, double highLimit)
     {
-        return (value < lowLimit)?
-                    lowLimit:
-               (value > highLimit)?
-                    highLimit:
-                    value;
+        return (value < lowLimit)? lowLimit: (value > highLimit)? highLimit: value;
     }   //limit
 
     /**
@@ -113,7 +105,7 @@ public class TrcUtil
     {
         return lowDstRange +
                 (value - lowSrcRange)*(highDstRange - lowDstRange)/
-                        (highSrcRange - lowSrcRange);
+                (highSrcRange - lowSrcRange);
     }   //scaleRange
 
     /**

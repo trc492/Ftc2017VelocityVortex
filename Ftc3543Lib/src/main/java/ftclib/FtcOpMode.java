@@ -39,6 +39,8 @@ public abstract class FtcOpMode extends LinearOpMode implements TrcRobot.RobotMo
     private static final String moduleName = "FtcOpMode";
     private static final boolean debugEnabled = false;
     private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     private static TrcDbgTrace globalTracer = null;
@@ -72,8 +74,7 @@ public abstract class FtcOpMode extends LinearOpMode implements TrcRobot.RobotMo
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName, tracingEnabled, TrcDbgTrace.TraceLevel.API, TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName, tracingEnabled, traceLevel, msgLevel);
         }
 
         instance = this;

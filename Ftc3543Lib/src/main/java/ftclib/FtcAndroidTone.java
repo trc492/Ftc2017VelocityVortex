@@ -37,6 +37,9 @@ public class FtcAndroidTone extends TrcTone implements AudioTrack.OnPlaybackPosi
 {
     private static final String moduleName = "FtcAndroidTone";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     private static final Waveform DEF_WAVEFORM = Waveform.TriangleWave;
@@ -64,11 +67,7 @@ public class FtcAndroidTone extends TrcTone implements AudioTrack.OnPlaybackPosi
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + instanceName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         if (sampleRate <= 0)

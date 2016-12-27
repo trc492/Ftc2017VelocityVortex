@@ -37,6 +37,9 @@ public class FtcAdaFruitColorSensor extends FtcI2cDevice implements TrcSensorDat
 {
     private static final String moduleName = "FtcAdaFruitColorSensor";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     public static final int DEF_I2CADDRESS          = (0x29 << 1);
@@ -119,11 +122,7 @@ public class FtcAdaFruitColorSensor extends FtcI2cDevice implements TrcSensorDat
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + instanceName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         setSensorEnabled(true);

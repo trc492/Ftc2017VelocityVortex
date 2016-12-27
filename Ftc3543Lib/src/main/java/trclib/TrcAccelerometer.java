@@ -35,6 +35,13 @@ package trclib;
  */
 public abstract class TrcAccelerometer extends TrcSensor implements TrcSensorDataSource
 {
+    private static final String moduleName = "TrcAccelerometer";
+    private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
+    private TrcDbgTrace dbgTrace = null;
+
     //
     // Accelerometer data types.
     //
@@ -78,10 +85,6 @@ public abstract class TrcAccelerometer extends TrcSensor implements TrcSensorDat
     public static final int ACCEL_INTEGRATE             = (1 << 3);
     public static final int ACCEL_DOUBLE_INTEGRATE      = (1 << 4);
 
-    private static final String moduleName = "TrcAccelerometer";
-    private static final boolean debugEnabled = false;
-    private TrcDbgTrace dbgTrace = null;
-
     private final String instanceName;
     private TrcDataIntegrator dataIntegrator = null;
     private int xIndex = -1;
@@ -112,10 +115,7 @@ public abstract class TrcAccelerometer extends TrcSensor implements TrcSensorDat
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName,
-                                       false,
-                                       TrcDbgTrace.TraceLevel.API,
-                                       TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         //

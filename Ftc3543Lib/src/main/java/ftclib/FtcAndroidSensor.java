@@ -40,6 +40,9 @@ public class FtcAndroidSensor extends TrcSensor implements SensorEventListener
 {
     private static final String moduleName = "FtcAndroidSensor";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     private SensorManager sensorManager;
@@ -65,10 +68,7 @@ public class FtcAndroidSensor extends TrcSensor implements SensorEventListener
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName,
-                                       false,
-                                       TrcDbgTrace.TraceLevel.API,
-                                       TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);

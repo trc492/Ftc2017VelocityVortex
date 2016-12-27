@@ -39,6 +39,9 @@ public abstract class TrcI2cDevice implements TrcTaskMgr.Task
 {
     private static final String moduleName = "TrcI2cDevice";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     /**
@@ -95,8 +98,7 @@ public abstract class TrcI2cDevice implements TrcTaskMgr.Task
          * @param timedout specifies true if the operation was timed out, false otherwise.
          * @return true if the request should be repeated, false otherwise.
          */
-        public boolean readCompletion(
-                int regAddress, int length, double timestamp, byte[] data, boolean timedout);
+        public boolean readCompletion(int regAddress, int length, double timestamp, byte[] data, boolean timedout);
 
         /**
          * This method is called when the write operation has been completed.
@@ -191,11 +193,7 @@ public abstract class TrcI2cDevice implements TrcTaskMgr.Task
     {
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + instanceName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         this.instanceName = instanceName;

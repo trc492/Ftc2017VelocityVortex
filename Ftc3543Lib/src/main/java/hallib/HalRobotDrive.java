@@ -32,6 +32,13 @@ import trclib.TrcUtil;
  */
 public class HalRobotDrive
 {
+    private static final String moduleName = "HalRobotDrive";
+    private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
+    private TrcDbgTrace dbgTrace = null;
+
     public static class MotorType
     {
         public final int value;
@@ -55,10 +62,6 @@ public class HalRobotDrive
             this.value = value;
         }   //MotorType
     }   //class MotorType
-
-    private static final String moduleName = "HalRobotDrive";
-    private static final boolean debugEnabled = false;
-    private TrcDbgTrace dbgTrace = null;
 
     public static double kDefaultSensitivity = 0.5;
     public static double kDefaultMaxOutput = 1.0;
@@ -97,11 +100,7 @@ public class HalRobotDrive
     {
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName, tracingEnabled, traceLevel, msgLevel);
         }
 
         sensitivity = kDefaultSensitivity;

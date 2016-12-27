@@ -37,6 +37,9 @@ public class FtcMRI2cColorSensor extends FtcMRI2cDevice implements TrcSensorData
 {
     private static final String moduleName = "FtcMRI2cColorSensor";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     public static final int DEF_I2CADDRESS          = 0x3c;
@@ -101,11 +104,7 @@ public class FtcMRI2cColorSensor extends FtcMRI2cDevice implements TrcSensorData
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(
-                    moduleName + "." + instanceName,
-                    false,
-                    TrcDbgTrace.TraceLevel.API,
-                    TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         readerId = addReader(instanceName, READ_START, READ_LENGTH);

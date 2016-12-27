@@ -37,9 +37,15 @@ import hallib.HalGyro;
  * if the heading data it provides wrap-around, it can set the UNWRAP_HEADING
  * options to enable the unwrapper to unwrap the heading data.
  */
-public abstract class TrcGyro extends TrcSensor implements HalGyro,
-                                                           TrcSensorDataSource
+public abstract class TrcGyro extends TrcSensor implements HalGyro, TrcSensorDataSource
 {
+    private static final String moduleName = "TrcGyro";
+    private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
+    private TrcDbgTrace dbgTrace = null;
+
     //
     // Gyro data types.
     //
@@ -82,10 +88,6 @@ public abstract class TrcGyro extends TrcSensor implements HalGyro,
     public static final int GYRO_INTEGRATE              = (1 << 3);
     public static final int GYRO_UNWRAP_HEADING         = (1 << 4);
 
-    private static final String moduleName = "TrcGyro";
-    private static final boolean debugEnabled = false;
-    private TrcDbgTrace dbgTrace = null;
-
     private final String instanceName;
     private TrcDataIntegrator dataIntegrator = null;
     private TrcDataUnwrapper dataUnwrapper = null;
@@ -117,10 +119,7 @@ public abstract class TrcGyro extends TrcSensor implements HalGyro,
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName,
-                                       false,
-                                       TrcDbgTrace.TraceLevel.API,
-                                       TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         //

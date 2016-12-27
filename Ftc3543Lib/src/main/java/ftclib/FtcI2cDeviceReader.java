@@ -26,6 +26,8 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceReader;
 
+import trclib.TrcDbgTrace;
+
 /**
  * This class extends I2cDeviceReader so we can add methods to retrieve different parameters of the reader.
  */
@@ -39,6 +41,15 @@ public class FtcI2cDeviceReader extends I2cDeviceReader
     private byte[] data = null;
     private double timestamp = 0.0;
 
+    /**
+     * Constructor: Creates an instance of the object.
+     *
+     * @param instanceName specifies the instance name.
+     * @param device specifies the I2C device this reader is created for.
+     * @param i2cAddr specifies the I2C address of the device.
+     * @param memStart specifies the start address of the register window to read from.
+     * @param memLen specifies the length of the register window to read from.
+     */
     public FtcI2cDeviceReader(String instanceName, I2cDevice device, I2cAddr i2cAddr, int memStart, int memLen)
     {
         super(device, i2cAddr, memStart, memLen);

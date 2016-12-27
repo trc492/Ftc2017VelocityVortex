@@ -26,6 +26,9 @@ public class TrcCascadePidController extends TrcPidController implements TrcPidC
 {
     private static final String moduleName = "TrcCascadePidController";
     private static final boolean debugEnabled = false;
+    private static final boolean tracingEnabled = false;
+    private static final TrcDbgTrace.TraceLevel traceLevel = TrcDbgTrace.TraceLevel.API;
+    private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
     public interface CascadeInput
@@ -60,8 +63,7 @@ public class TrcCascadePidController extends TrcPidController implements TrcPidC
 
         if (debugEnabled)
         {
-            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, false,
-                                       TrcDbgTrace.TraceLevel.API, TrcDbgTrace.MsgLevel.INFO);
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
         }
 
         secondaryCtrl = new TrcPidController(instanceName + ".secondary",

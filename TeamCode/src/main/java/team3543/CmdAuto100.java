@@ -23,14 +23,13 @@
 package team3543;
 
 import ftclib.FtcOpMode;
-import trclib.TrcAnalogInput;
 import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
-public class Auto100 implements TrcRobot.AutoStrategy
+public class CmdAuto100 implements TrcRobot.RobotCommand
 {
     private enum State
     {
@@ -52,7 +51,7 @@ public class Auto100 implements TrcRobot.AutoStrategy
         DONE
     }   //enum State
 
-    private static final String moduleName = "Auto100";
+    private static final String moduleName = "CmdAuto100";
 
     private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
@@ -70,7 +69,7 @@ public class Auto100 implements TrcRobot.AutoStrategy
     private boolean leftPusherExtended = false;
     private boolean rightPusherExtended = false;
 
-    public Auto100(
+    public CmdAuto100(
             Robot robot,
             FtcAuto.Alliance alliance,
             double delay,
@@ -93,11 +92,12 @@ public class Auto100 implements TrcRobot.AutoStrategy
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine<>(moduleName);
         sm.start(State.NEAR_START);
-    }   //Auto100
+    }   //CmdAuto100
 
     @Override
-    public void autoPeriodic(double elapsedTime)
+    public boolean cmdPeriodic(double elapsedTime)
     {
+        boolean done = false;
         //
         // Print debug info.
         //
@@ -112,8 +112,7 @@ public class Auto100 implements TrcRobot.AutoStrategy
             if (Robot.USE_ODS_LINE_DETECTOR)
             {
                 robot.dashboard.displayPrintf(2, "LineDetect: light=%.3f",
-                                              (Double)robot.odsLineDetector.getRawData(
-                                                      0, TrcAnalogInput.DataType.INPUT_DATA).value);
+                                              robot.odsLineDetector.sensor.getRawLightDetected());
             }
             else
             {
@@ -200,10 +199,10 @@ public class Auto100 implements TrcRobot.AutoStrategy
                 case ALIGN_WALL3:
                     robot.driveBase.mecanumDrive_Cartesian(0.0, 0.0, 0.0);
 
-                    if (Robot.USE_COLOR_SENSOR)
-                    {
-                        robot.beaconColorSensor.setDeviceEnabled(true);
-                    }
+//                    if (Robot.USE_COLOR_SENSOR)
+//                    {
+//                        robot.beaconColorSensor.setDeviceEnabled(true);
+//                    }
 
                     timer.set(0.1, event);
                     sm.waitForSingleEvent(event, State.FIND_LINE);
@@ -226,7 +225,14 @@ public class Auto100 implements TrcRobot.AutoStrategy
 
                     if (Robot.USE_LINE_DETECTOR)
                     {
-                        robot.lineTrigger.setEnabled(true);
+                        if (Robot.USE_ODS_LINE_DETECTOR)
+                        {
+                            robot.lineTrigger.setEnabled(true);
+                        }
+//                        else
+//                        {
+//                            robot.colorTrigger.setEnabled(true);
+//                        }
                     }
 
                     robot.encoderYPidCtrl.setOutputRange(-0.12, 0.12);
@@ -240,7 +246,14 @@ public class Auto100 implements TrcRobot.AutoStrategy
 
                     if (Robot.USE_LINE_DETECTOR)
                     {
-                        robot.lineTrigger.setEnabled(false);
+                        if (Robot.USE_ODS_LINE_DETECTOR)
+                        {
+                            robot.lineTrigger.setEnabled(false);
+                        }
+//                        else
+//                        {
+//                            robot.colorTrigger.setEnabled(false);
+//                        }
                     }
 
                     if (Robot.USE_COLOR_SENSOR)
@@ -267,7 +280,7 @@ public class Auto100 implements TrcRobot.AutoStrategy
                         //
                         // It takes sometime for the button pusher to extend, set a timer to wait for it.
                         //
-                        robot.beaconColorSensor.setDeviceEnabled(false);
+//                        robot.beaconColorSensor.setDeviceEnabled(false);
                         robot.leftButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_EXTEND_POSITION);
                         leftPusherExtended = true;
                         timer.set(1.5, event);
@@ -315,7 +328,7 @@ public class Auto100 implements TrcRobot.AutoStrategy
                         alliance == FtcAuto.Alliance.RED_ALLIANCE && isRed ||
                         alliance == FtcAuto.Alliance.BLUE_ALLIANCE && isBlue)
                     {
-                        robot.beaconColorSensor.setDeviceEnabled(false);
+//                        robot.beaconColorSensor.setDeviceEnabled(false);
                         sm.setState(State.RETRACT);
                     }
                     break;
@@ -431,10 +444,13 @@ public class Auto100 implements TrcRobot.AutoStrategy
                     //
                     // We are done.
                     //
+                    done = true;
                     sm.stop();
                     break;
             }
         }
-    }   //autoPeriodic
 
-}   //class Auto100
+        return done;
+    }   //cmdPeriodic
+
+}   //class CmdAuto100

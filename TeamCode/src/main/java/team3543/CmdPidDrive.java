@@ -22,52 +22,57 @@
 
 package team3543;
 
-import ftclib.FtcOpMode;
-import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
-public class AutoDriveStraight implements TrcRobot.AutoStrategy
+public class CmdPidDrive implements TrcRobot.RobotCommand
 {
     private enum State
     {
         DO_DELAY,
-        DRIVE_DISTANCE,
+        DO_PID_DRIVE,
         DONE
     }   //enum State
 
-    private static final String moduleName = "AutoDriveStraight";
-
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
+    private static final String moduleName = "CmdPidDrive";
 
     private Robot robot;
     private double delay;
-    private double distance;
+    private double xDistance;
+    private double yDistance;
+    private double heading;
     private TrcEvent event;
     private TrcTimer timer;
     private TrcStateMachine<State> sm;
 
-    public AutoDriveStraight(Robot robot, double delay, double distance)
+    public CmdPidDrive(Robot robot, double delay, double xDistance, double yDistance, double heading)
     {
         this.robot = robot;
         this.delay = delay;
-        this.distance = distance;
+        this.xDistance = xDistance;
+        this.yDistance = yDistance;
+        this.heading = heading;
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine<>(moduleName);
         sm.start(State.DO_DELAY);
-    }   //AutoDriveStraight
+    }   //CmdPidDrive
+
+    //
+    // Implements the TrcRobot.RobotCommand interface.
+    //
 
     @Override
-    public void autoPeriodic(double elapsedTime)
+    public boolean cmdPeriodic(double elapsedTime)
     {
+        boolean done = false;
         //
         // Print debug info.
         //
         State state = sm.getState();
-        robot.dashboard.displayPrintf(1, "State: %s", state != null? state.toString(): "Disabled");
+        robot.dashboard.displayPrintf(1, "State: %s", state != null? sm.getState().toString(): "Disabled");
 
         if (sm.isReady())
         {
@@ -79,20 +84,20 @@ public class AutoDriveStraight implements TrcRobot.AutoStrategy
                 case DO_DELAY:
                     if (delay == 0.0)
                     {
-                        sm.setState(State.DRIVE_DISTANCE);
+                        sm.setState(State.DO_PID_DRIVE);
                     }
                     else
                     {
                         timer.set(delay, event);
-                        sm.waitForSingleEvent(event, State.DRIVE_DISTANCE);
+                        sm.waitForSingleEvent(event, State.DO_PID_DRIVE);
                     }
                     break;
 
-                case DRIVE_DISTANCE:
+                case DO_PID_DRIVE:
                     //
-                    // Drive the set distance.
+                    // Drive the set distance and heading.
                     //
-                    robot.pidDrive.setTarget(distance*12.0, 0.0, false, event);
+                    robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, heading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 
@@ -101,10 +106,13 @@ public class AutoDriveStraight implements TrcRobot.AutoStrategy
                     //
                     // We are done.
                     //
+                    done = true;
                     sm.stop();
                     break;
             }
         }
-    }
 
-}   //class AutoDriveStraight
+        return done;
+    }   //cmdPeriodic
+
+}   //class CmdPidDrive

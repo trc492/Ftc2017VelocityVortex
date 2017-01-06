@@ -26,7 +26,7 @@ import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 
-public class Auto40 implements TrcRobot.AutoStrategy
+public class CmdAuto40 implements TrcRobot.RobotCommand
 {
     private enum State
     {
@@ -39,7 +39,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
         DONE
     }   //enum State
 
-    private static final String moduleName = "Auto40";
+    private static final String moduleName = "CmdAuto40";
 
     private Robot robot;
     private FtcAuto.Alliance alliance;
@@ -49,7 +49,7 @@ public class Auto40 implements TrcRobot.AutoStrategy
     private TrcEvent event;
     private TrcStateMachine<State> sm;
 
-    public Auto40(
+    public CmdAuto40(
             Robot robot,
             FtcAuto.Alliance alliance,
             double delay,
@@ -66,11 +66,12 @@ public class Auto40 implements TrcRobot.AutoStrategy
         event = new TrcEvent(moduleName);
         sm = new TrcStateMachine<>(moduleName);
         sm.start(State.START);
-    }   //Auto40
+    }   //CmdAuto40
 
     @Override
-    public void autoPeriodic(double elapsedTime)
+    public boolean cmdPeriodic(double elapsedTime)
     {
+        boolean done = false;
         //
         // Print debug info.
         //
@@ -186,10 +187,13 @@ public class Auto40 implements TrcRobot.AutoStrategy
                     //
                     // We are done.
                     //
+                    done = true;
                     sm.stop();
                     break;
             }
         }
-    }   //autoPeriodic
 
-}   //class Auto40
+        return done;
+    }   //cmdPeriodic
+
+}   //class CmdAuto40

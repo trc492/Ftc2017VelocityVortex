@@ -44,7 +44,7 @@ public class FtcOpticalDistanceSensor extends TrcAnalogInput
     private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
-    private OpticalDistanceSensor sensor;
+    public OpticalDistanceSensor sensor;
 
     /**
      * Constructor: Creates an instance of the object.

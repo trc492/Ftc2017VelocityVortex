@@ -29,7 +29,6 @@ import ftclib.FtcGamepad;
 import ftclib.FtcMenu;
 import ftclib.FtcOpMode;
 import ftclib.FtcValueMenu;
-import trclib.TrcAnalogInput;
 import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcStateMachine;
@@ -48,10 +47,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     {
         SENSORS_TEST,
         MOTORS_TEST,
-        Y_TIMED_DRIVE,
         X_TIMED_DRIVE,
-        Y_DISTANCE_DRIVE,
+        Y_TIMED_DRIVE,
         X_DISTANCE_DRIVE,
+        Y_DISTANCE_DRIVE,
         RANGE_DRIVE,
         GYRO_TURN
     }   //enum Test
@@ -77,6 +76,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     private double rangeDistance = 0.0;
     private double turnDegrees = 0.0;
 
+    private CmdTimedDrive timedDriveCommand = null;
+    private CmdPidDrive pidDriveCommand = null;
+
     private int motorIndex = 0;
     private double ballGatePos = RobotInfo.BALLGATE_DOWN_POSITION;
     private double buttonPusherPos = 0.0;
@@ -99,6 +101,30 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         // Choice menus.
         //
         doMenus();
+
+        switch (test)
+        {
+            case X_TIMED_DRIVE:
+                timedDriveCommand = new CmdTimedDrive(robot, 0.0, driveTime, 1.0, 0.0, 0.0);
+                break;
+
+            case Y_TIMED_DRIVE:
+                timedDriveCommand = new CmdTimedDrive(robot, 0.0, driveTime, 0.0, 0.2, 0.0);
+                break;
+
+            case X_DISTANCE_DRIVE:
+                pidDriveCommand = new CmdPidDrive(robot, 0.0, driveDistance, 0.0, 0.0);
+                break;
+
+            case Y_DISTANCE_DRIVE:
+                pidDriveCommand = new CmdPidDrive(robot, 0.0, 0.0, driveDistance, 0.0);
+                break;
+
+            case GYRO_TURN:
+                pidDriveCommand = new CmdPidDrive(robot, 0.0, 0.0, 0.0, turnDegrees);
+                break;
+        }
+
         sm.start(State.START);
     }   //initRobot
 
@@ -114,12 +140,12 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         {
             if (Robot.USE_COLOR_SENSOR)
             {
-                robot.beaconColorSensor.setEnabled(true);
+                robot.beaconColorSensor.setDeviceEnabled(true);
             }
 
             if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
             {
-                robot.lineDetectionSensor.setEnabled(true);
+                robot.lineDetectionSensor.setDeviceEnabled(true);
             }
         }
     }   //startMode
@@ -132,12 +158,12 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         {
             if (Robot.USE_COLOR_SENSOR)
             {
-                robot.beaconColorSensor.setEnabled(false);
+                robot.beaconColorSensor.setDeviceEnabled(false);
             }
 
             if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
             {
-                robot.lineDetectionSensor.setEnabled(false);
+                robot.lineDetectionSensor.setDeviceEnabled(false);
             }
         }
     }   //stopMode
@@ -173,20 +199,56 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 doMotorsTest();
                 break;
 
-            case Y_TIMED_DRIVE:
-                doTimedDrive(0.0, 0.2, 0.0, driveTime);
-                break;
-
             case X_TIMED_DRIVE:
-                doTimedDrive(1.0, 0.0, 0.0, driveTime);
-                break;
-
-            case Y_DISTANCE_DRIVE:
-                doPidDrive(0.0, driveDistance, 0.0);
+            case Y_TIMED_DRIVE:
+                double lfEnc = robot.leftFrontWheel.getPosition();
+                double rfEnc = robot.rightFrontWheel.getPosition();
+                double lrEnc = robot.leftRearWheel.getPosition();
+                double rrEnc = robot.rightRearWheel.getPosition();
+                dashboard.displayPrintf(9, "Timed Drive: %.0f sec", time);
+                dashboard.displayPrintf(10, "Enc:lf=%.0f,rf=%.0f", lfEnc, rfEnc);
+                dashboard.displayPrintf(11, "Enc:lr=%.0f,rr=%.0f", lrEnc, rrEnc);
+                dashboard.displayPrintf(12, "average=%f", (lfEnc + rfEnc + lrEnc + rrEnc)/4.0);
+                dashboard.displayPrintf(13, "xPos=%.1f,yPos=%.1f,heading=%.1f",
+                                        robot.driveBase.getXPosition(),
+                                        robot.driveBase.getYPosition(),
+                                        robot.driveBase.getHeading());
+                timedDriveCommand.cmdPeriodic(elapsedTime);
                 break;
 
             case X_DISTANCE_DRIVE:
-                doPidDrive(driveDistance, 0.0, 0.0);
+            case Y_DISTANCE_DRIVE:
+            case GYRO_TURN:
+                dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
+                                        robot.getInput(robot.encoderXPidCtrl),
+                                        robot.getInput(robot.encoderYPidCtrl),
+                                        robot.getInput(robot.gyroPidCtrl));
+                robot.encoderXPidCtrl.displayPidInfo(10);
+                robot.encoderYPidCtrl.displayPidInfo(12);
+                robot.gyroPidCtrl.displayPidInfo(14);
+                if (debugXPid || debugYPid || debugGyroPid || debugRangePid)
+                {
+                    tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
+                                     robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+                }
+                if (debugXPid || test == Test.X_DISTANCE_DRIVE && driveDistance != 0.0)
+                {
+                    robot.encoderXPidCtrl.printPidInfo(tracer);
+                }
+                else if (debugYPid || test == Test.Y_DISTANCE_DRIVE && driveDistance != 0.0)
+                {
+                    robot.encoderYPidCtrl.printPidInfo(tracer);
+                }
+                else if (debugGyroPid || test == Test.GYRO_TURN && turnDegrees != 0.0)
+                {
+                    robot.gyroPidCtrl.printPidInfo(tracer);
+                }
+                if (debugRangePid)
+                {
+                    robot.rangePidCtrl.printPidInfo(tracer);
+                }
+
+                pidDriveCommand.cmdPeriodic(elapsedTime);
                 break;
 
             case RANGE_DRIVE:
@@ -194,10 +256,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 {
                     doRangeDrive(rangeDistance);
                 }
-                break;
-
-            case GYRO_TURN:
-                doPidDrive(0.0, 0.0, turnDegrees);
                 break;
         }
     }   //runContinuous
@@ -243,10 +301,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         testMenu.addChoice("Sensors test", Test.SENSORS_TEST);
         testMenu.addChoice("Motors test", Test.MOTORS_TEST);
-        testMenu.addChoice("Y Timed drive", Test.Y_TIMED_DRIVE, driveTimeMenu);
         testMenu.addChoice("X Timed drive", Test.X_TIMED_DRIVE, driveTimeMenu);
-        testMenu.addChoice("Y Distance drive", Test.Y_DISTANCE_DRIVE, driveDistanceMenu);
+        testMenu.addChoice("Y Timed drive", Test.Y_TIMED_DRIVE, driveTimeMenu);
         testMenu.addChoice("X Distance drive", Test.X_DISTANCE_DRIVE, driveDistanceMenu);
+        testMenu.addChoice("Y Distance drive", Test.Y_DISTANCE_DRIVE, driveDistanceMenu);
         testMenu.addChoice("Range drive", Test.RANGE_DRIVE, rangeDistanceMenu);
         testMenu.addChoice("Degrees turn", Test.GYRO_TURN, turnDegreesMenu);
 
@@ -282,8 +340,8 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         dashboard.displayPrintf(6, LABEL_WIDTH, "ServoPos: ", "BallGate=%.2f,Pusher=%.2f",
                                 ballGatePos, buttonPusherPos);
         dashboard.displayPrintf(9, LABEL_WIDTH, "Gyro: ", "Rate=%.3f,Heading=%.1f",
-                                (Double)robot.gyro.getZRotationRate().value,
-                                (Double)robot.gyro.getZHeading().value);
+                                robot.gyro.getZRotationRate().value,
+                                robot.gyro.getZHeading().value);
 
         if (Robot.USE_COLOR_SENSOR)
         {
@@ -298,8 +356,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
             if (Robot.USE_ODS_LINE_DETECTOR)
             {
                 dashboard.displayPrintf(11, LABEL_WIDTH, "Line: ", "light=%.3f",
-                                        (Double) robot.odsLineDetector.getRawData(
-                                                0, TrcAnalogInput.DataType.INPUT_DATA).value);
+                                        robot.odsLineDetector.sensor.getRawLightDetected());
             }
             else
             {
@@ -390,132 +447,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     }   //doMotorsTest
 
     /**
-     * This method runs the Drive Base with the given power for the given amount of time. This test is designed
-     * to calibrate the encoder scaling factors. For example, if you drive the robot forward for 4 seconds, this
-     * test will print out the average encoder count of all four wheels. Measure how far the robot has gone and
-     * the encoder scaling factor can be calculated: INCHES_PER_COUNT = MeasuredDistanceInInches/AverageEncoderCount.
-     * Note that to prevent any wheel slipping, use lower power values and runs longer time so the calculation will
-     * be more accurate.
-     *
-     * @param xPower specifies motor power to move in the X direction.
-     * @param yPower specifies motor power to move in the Y direction.
-     * @param turnPower specifies motor power to turn.
-     * @param time specifies how long in seconds should the robot run.
-     */
-    private void doTimedDrive(double xPower, double yPower, double turnPower, double time)
-    {
-        double lfEnc = robot.leftFrontWheel.getPosition();
-        double rfEnc = robot.rightFrontWheel.getPosition();
-        double lrEnc = robot.leftRearWheel.getPosition();
-        double rrEnc = robot.rightRearWheel.getPosition();
-        dashboard.displayPrintf(9, "Timed Drive: %.0f sec", time);
-        dashboard.displayPrintf(10, "Enc:lf=%.0f,rf=%.0f", lfEnc, rfEnc);
-        dashboard.displayPrintf(11, "Enc:lr=%.0f,rr=%.0f", lrEnc, rrEnc);
-        dashboard.displayPrintf(12, "average=%f", (lfEnc + rfEnc + lrEnc + rrEnc)/4.0);
-        dashboard.displayPrintf(13, "xPos=%.1f,yPos=%.1f,heading=%.1f",
-                robot.driveBase.getXPosition(),
-                robot.driveBase.getYPosition(),
-                robot.driveBase.getHeading());
-
-        if (sm.isReady())
-        {
-            State state = sm.getState();
-            switch (state)
-            {
-                case START:
-                    //
-                    // Drive the robot with the specified power and set a timer for the given time.
-                    //
-                    robot.driveBase.mecanumDrive_Cartesian(xPower, yPower, turnPower);
-                    timer.set(time, event);
-                    sm.waitForSingleEvent(event, State.DONE);
-                    break;
-
-                case DONE:
-                default:
-                    //
-                    // We are done, stop the robot.
-                    //
-                    robot.driveBase.stop();
-                    sm.stop();
-                    break;
-            }
-        }
-    }   //doTimedDrive
-
-    /**
-     * This method drives the robot to the specified target distance. This test is designed for tuning PID constants.
-     * This test can only be run after the proper encoder scaling factors have been determined. Run this test with
-     * a specific distance (e.g. 96 inches). At the end of the run, check the dashboard display to see how far the
-     * robot has actually gone and the corresponding error. Tuned the PID constants to make the error to go near zero
-     * (error should be less than tolerance).
-     *
-     * @param xDistance specifies the target distance in inches in the X direction.
-     * @param yDistance specifies the target distance in inches in the Y direction.
-     * @param rotation specifies the rotation target in degrees.
-     */
-    private void doPidDrive(double xDistance, double yDistance, double rotation)
-    {
-        final String funcName = "doPidDrive";
-
-        dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
-                robot.getInput(robot.encoderXPidCtrl),
-                robot.getInput(robot.encoderYPidCtrl),
-                robot.getInput(robot.gyroPidCtrl));
-        robot.encoderXPidCtrl.displayPidInfo(10);
-        robot.encoderYPidCtrl.displayPidInfo(12);
-        robot.gyroPidCtrl.displayPidInfo(14);
-        if (debugXPid || debugYPid || debugGyroPid || debugRangePid)
-        {
-            tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
-                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
-        }
-        if (debugXPid || xDistance != 0.0)
-        {
-            robot.encoderXPidCtrl.printPidInfo(tracer);
-        }
-        if (debugYPid || yDistance != 0.0)
-        {
-            robot.encoderYPidCtrl.printPidInfo(tracer);
-        }
-        if (debugGyroPid || rotation != 0.0)
-        {
-            robot.gyroPidCtrl.printPidInfo(tracer);
-        }
-        if (debugRangePid)
-        {
-            robot.rangePidCtrl.printPidInfo(tracer);
-        }
-
-        if (sm.isReady())
-        {
-            State state = sm.getState();
-            switch (state)
-            {
-                case START:
-                    //
-                    // Drive the given distance or degrees.
-                    //
-                    robot.battery.setTaskEnabled(true);
-                    robot.pidDrive.setStallTimeout(0.0);
-                    robot.setTurnPID(xDistance*12.0, yDistance*12.0, rotation);
-                    robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, rotation, false, event);
-                    sm.waitForSingleEvent(event, State.DONE);
-                    break;
-
-                case DONE:
-                default:
-                    //
-                    // We are done.
-                    //
-                    robot.battery.setTaskEnabled(false);
-                    sm.stop();
-                    break;
-            }
-        }
-    }   //doPidDrive
-
-    /**
      * This method drives the robot to the specified distance to the wall using the Range Sensor. This test is
      * designed for tuning PID constants for the Range Sensor. Run this test with a specific distance to the wall
      * (e.g. 5 inches). At the end of the run, check the dashboard display to see how far the robot is from the wall
@@ -526,8 +457,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
      */
     private void doRangeDrive(double rangeDistance)
     {
-        final String funcName = "doRangeDrive";
-
         dashboard.displayPrintf(9, "xPos=%.1f,yPos=%.1f,heading=%.1f",
                                 robot.getInput(robot.rangePidCtrl),
                                 robot.getInput(robot.encoderYPidCtrl),

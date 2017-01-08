@@ -160,8 +160,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -90.0: 90.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.GOTO_WALL);
                     break;
 
@@ -169,8 +168,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = shortRun? 22.0: 16.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PARALLEL_WALL);
                     break;
 
@@ -178,8 +176,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.ALIGN_WALL1);
                     break;
 
@@ -236,8 +233,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     }
 
                     robot.encoderYPidCtrl.setOutputRange(-0.12, 0.12);
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PUSH_BUTTON1);
                     break;
 
@@ -367,8 +363,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                             yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -40.0: 40.0;
                         }
 
-                        robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                        robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                        robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                         remainingBeaconButtons--;
                         sm.waitForSingleEvent(event, State.ALIGN_WALL1);
                     }
@@ -385,8 +380,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         xDistance = usePath1? 24.0: 36.0;
                         yDistance = 0.0;
 
-                        robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                        robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                        robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                         sm.waitForSingleEvent(event, State.GOTO_VORTEX);
                     }
                     break;
@@ -409,8 +403,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -36.0 : 36.0;
                     }
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.TURN_TO_VORTEX);
                     break;
 
@@ -418,8 +411,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 135.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PARK_VORTEX);
                     break;
 
@@ -434,8 +426,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? -36.0: 36.0;
                     }
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 

@@ -129,8 +129,7 @@ public class CmdNearStart implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = 32.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.TURN_TO_CAPBALL);
                     break;
 
@@ -138,8 +137,7 @@ public class CmdNearStart implements TrcRobot.RobotCommand
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -30.0: 30.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.KNOCK_OUT_CAPBALL);
                     break;
 
@@ -147,8 +145,7 @@ public class CmdNearStart implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = shortRun? 42.0: 60.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 

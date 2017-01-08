@@ -488,7 +488,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     // Drive the to the given wall distance.
                     //
                     robot.battery.setEnabled(true);
-                    robot.setTurnPID(rangeDistance, 0.0, 0.0);
                     robot.rangePidDrive.setTarget(rangeDistance, 0.0, 0.0, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;

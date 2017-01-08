@@ -93,8 +93,7 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 6.0: 8.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.TURN_TO_CENTER_VORTEX);
                     break;
 
@@ -102,8 +101,7 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -45.0: 43.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.GET_CLOSER);
                     break;
 
@@ -111,8 +109,7 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = 6.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.SHOOT_PARTICLES);
                     break;
 
@@ -156,8 +153,7 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -54.0: 50.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.KNOCK_OUT_CAPBALL);
                     break;
 
@@ -165,8 +161,7 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 80.0: 80.0;
 
-                    robot.setTurnPID(xDistance, yDistance, robot.targetHeading);
-                    robot.pidDrive.setTarget(xDistance, yDistance, robot.targetHeading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 

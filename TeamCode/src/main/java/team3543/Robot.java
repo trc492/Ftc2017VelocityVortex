@@ -44,6 +44,7 @@ import hallib.HalDashboard;
 import trclib.TrcAnalogTrigger;
 import trclib.TrcDbgTrace;
 import trclib.TrcDriveBase;
+import trclib.TrcEvent;
 import trclib.TrcGyro;
 import trclib.TrcPidController;
 import trclib.TrcPidDrive;
@@ -345,38 +346,68 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         }
     }   //AnalogTriggerEvent
 
-    public void setTurnPID(double xDistance, double yDistance, double heading)
+    private void setDrivePID(double xDistance, double yDistance, double heading)
     {
         double degrees = Math.abs(heading - driveBase.getHeading());
+        xDistance = Math.abs(xDistance);
+        yDistance = Math.abs(yDistance);
 
-        if (xDistance != 0.0 || yDistance != 0)
-        {
-            gyroPidCtrl.setPID(RobotInfo.GYRO_KP, RobotInfo.GYRO_KI, RobotInfo.GYRO_KD, 0.0);
-        }
-        else if (degrees < RobotInfo.SMALL_TURN_THRESHOLD)
+        if (xDistance != 0.0 && xDistance < RobotInfo.SMALL_X_THRESHOLD)
         {
             //
-            // We are turning a small angle, use stronger PID.
+            // Small X movement, use stronger X PID to overcome friction.
             //
-            gyroPidCtrl.setPID(RobotInfo.GYRO_SMALL_TURN_KP, RobotInfo.GYRO_SMALL_TURN_KI,
-                               RobotInfo.GYRO_SMALL_TURN_KD, 0.0);
-        }
-        else if (degrees < RobotInfo.LARGE_TURN_THRESHOLD)
-        {
-            //
-            // We are turning a medium angle, use normal PID.
-            //
-            gyroPidCtrl.setPID(RobotInfo.GYRO_KP, RobotInfo.GYRO_KI, RobotInfo.GYRO_KD, 0.0);
+            encoderXPidCtrl.setPID(
+                    RobotInfo.SMALL_ENCODER_X_KP, RobotInfo.SMALL_ENCODER_X_KI, RobotInfo.SMALL_ENCODER_X_KD, 0.0);
         }
         else
         {
             //
-            // We are turning a large angle, use weaker PID.
+            // Use normal X PID.
             //
-            gyroPidCtrl.setPID(RobotInfo.GYRO_LARGE_TURN_KP, RobotInfo.GYRO_LARGE_TURN_KI,
-                               RobotInfo.GYRO_LARGE_TURN_KD, 0.0);
+            encoderXPidCtrl.setPID(RobotInfo.ENCODER_X_KP, RobotInfo.ENCODER_X_KI, RobotInfo.ENCODER_X_KD, 0.0);
         }
-    }   //setTurnPID
+
+        if (yDistance != 0.0 && yDistance < RobotInfo.SMALL_Y_THRESHOLD)
+        {
+            //
+            // Small Y movement, use stronger Y PID to overcome friction.
+            //
+            encoderYPidCtrl.setPID(
+                    RobotInfo.SMALL_ENCODER_Y_KP, RobotInfo.SMALL_ENCODER_Y_KI, RobotInfo.SMALL_ENCODER_Y_KD, 0.0);
+        }
+        else
+        {
+            //
+            // Use normal Y PID.
+            //
+            encoderYPidCtrl.setPID(RobotInfo.ENCODER_Y_KP, RobotInfo.ENCODER_Y_KI, RobotInfo.ENCODER_Y_KD, 0.0);
+        }
+
+        if (degrees != 0.0 || degrees < RobotInfo.SMALL_TURN_THRESHOLD)
+        {
+            //
+            // Small turn, use stronger turn PID to overcome friction.
+            //
+            gyroPidCtrl.setPID(
+                    RobotInfo.GYRO_SMALL_TURN_KP, RobotInfo.GYRO_SMALL_TURN_KI, RobotInfo.GYRO_SMALL_TURN_KD, 0.0);
+
+        }
+        else
+        {
+            //
+            // Use normal Y PID.
+            //
+            gyroPidCtrl.setPID(RobotInfo.GYRO_KP, RobotInfo.GYRO_KI, RobotInfo.GYRO_KD, 0.0);
+        }
+    }   //setDrivePID
+
+    public void setPIDDriveTarget(
+            double xDistance, double yDistance, double heading, boolean holdTarget, TrcEvent event)
+    {
+        setDrivePID(xDistance, yDistance, heading);
+        pidDrive.setTarget(xDistance, yDistance, heading, holdTarget, event);
+    }   //setPIDDriveTarget
 
     public void traceStateInfo(double elapsedTime, String stateName)
     {

@@ -46,6 +46,11 @@ public class RobotInfo
     public static final double ENCODER_X_TOLERANCE              = 2.0;
     public static final double ENCODER_X_SETTLING               = 0.2;
     public static final double ENCODER_X_INCHES_PER_COUNT       = 0.0132166817227156;
+
+    public static final double SMALL_X_THRESHOLD                = 12.0;
+    public static final double SMALL_ENCODER_X_KP               = 0.2;
+    public static final double SMALL_ENCODER_X_KI               = 0.0;
+    public static final double SMALL_ENCODER_X_KD               = 0.0;
     //
     // INCHES_PER_COUNT: 0.01667
     // 12/06/2016: 0.045, 0.0, 0.0045 (No speed control)
@@ -58,6 +63,11 @@ public class RobotInfo
     public static final double ENCODER_Y_TOLERANCE              = 2.0;
     public static final double ENCODER_Y_SETTLING               = 0.2;
     public static final double ENOCDER_Y_INCHES_PER_COUNT       = 0.01667;
+
+    public static final double SMALL_Y_THRESHOLD                = 12.0;
+    public static final double SMALL_ENCODER_Y_KP               = 0.046;
+    public static final double SMALL_ENCODER_Y_KI               = 0.0;
+    public static final double SMALL_ENCODER_Y_KD               = 0.0046;
     //
     // Accurate PID but slow (with speed control ON): 0.02, 0.0, 0.0028
     // Faster PID but may oscillate (with speed control ON): 0.022, 0.0, 0.0046 (clipRange to half power for mid-range)
@@ -80,10 +90,6 @@ public class RobotInfo
     public static final double GYRO_SMALL_TURN_KI               = 0.0;
     public static final double GYRO_SMALL_TURN_KD               = 0.0;
 
-    public static final double LARGE_TURN_THRESHOLD             = 80.0;
-    public static final double GYRO_LARGE_TURN_KP               = GYRO_KP;
-    public static final double GYRO_LARGE_TURN_KI               = 0.0;
-    public static final double GYRO_LARGE_TURN_KD               = GYRO_KD;
     //
     // 12/07/2016: 0.4, 0.0, 0.04 (No speed control)
     //

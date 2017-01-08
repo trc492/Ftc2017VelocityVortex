@@ -23,8 +23,8 @@
 package trclib;
 
 /**
- * This class implements a song player that can parse a notated song in a string buffer
- * and play the notes on a Tone device.
+ * This class implements a song player that can parse a notated song in a string buffer and play the notes on a Tone
+ * device.
  */
 public class TrcSongPlayer implements TrcTaskMgr.Task
 {
@@ -35,7 +35,7 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
     private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
-    private String instanceName;
+    private final String instanceName;
     private TrcTone tone;
     private TrcSong song = null;
     private double barDuration = 0.0;
@@ -48,7 +48,7 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
      * @param instanceName specifies the instance name.
      * @param tone specifies the Tone player.
      */
-    public TrcSongPlayer(String instanceName, TrcTone tone)
+    public TrcSongPlayer(final String instanceName, TrcTone tone)
     {
         if (debugEnabled)
         {
@@ -58,6 +58,16 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
         this.instanceName = instanceName;
         this.tone = tone;
     }   //TrcSongPlayer
+
+    /**
+     * This method returns the instance name.
+     *
+     * @return instance name.
+     */
+    public String toString()
+    {
+        return instanceName;
+    }   //toString
 
     /**
      * This method enables/disables the player task.
@@ -168,9 +178,9 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
         if (debugEnabled)
         {
             dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API,
-                    "song=%s,barDur=%.2f,repeat=%s,pause=%s,event=%s",
-                    song.toString(), barDuration, Boolean.toString(repeat), Boolean.toString(pause),
-                    event == null? "null": event.toString());
+                                "song=%s,barDur=%.2f,repeat=%s,pause=%s,event=%s",
+                                song.toString(), barDuration, Boolean.toString(repeat), Boolean.toString(pause),
+                                event == null? "null": event.toString());
         }
 
         this.song = song;
@@ -243,7 +253,7 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
         if (debugEnabled)
         {
             dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API,
-                    "note=%s,barDur=%.3f,vol=%.1f", note, barDuration, volume);
+                                "note=%s,barDur=%.3f,vol=%.1f", note, barDuration, volume);
         }
 
         int dotIndex = note.indexOf('.');
@@ -502,8 +512,8 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
     }   //parseDynamics
 
     /**
-     * This method parses and performs the notation action. It throws an IllegalArgumentException if it is not
-     * a recognized notation.
+     * This method parses and performs the notation action. It throws an IllegalArgumentException if it is not a
+     * recognized notation.
      *
      * @param notation specifies the notation string.
      */
@@ -529,8 +539,7 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
     }   //startTask
 
     /**
-     * This method is called when the competition mode is about to end. It stops the
-     * player if sound is playing.
+     * This method is called when the competition mode is about to end. It stops the player if sound is playing.
      *
      * @param runMode specifies the competition mode that is about to
      */
@@ -541,9 +550,7 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.TASK,
-                    "mode=%s", runMode.toString());
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.TASK, "mode=%s", runMode.toString());
         }
 
         stop();
@@ -581,9 +588,7 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.TASK,
-                    "mode=%s", runMode.toString());
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.TASK, "mode=%s", runMode.toString());
         }
 
         //
@@ -598,8 +603,7 @@ public class TrcSongPlayer implements TrcTaskMgr.Task
                 if (note == null && repeat)
                 {
                     //
-                    // There is no more note in the song. If we are in repeat mode, rewind the song
-                    // and play it again.
+                    // There is no more note in the song. If we are in repeat mode, rewind the song and play it again.
                     //
                     song.rewind();
                     note = song.getNextNote();

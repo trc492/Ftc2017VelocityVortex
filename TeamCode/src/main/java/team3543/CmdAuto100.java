@@ -128,7 +128,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                                           robot.beaconColorSensor.sensor.argb());
         }
 
-        if (robot.pidDrive.isEnabled())
+        if (robot.pidDrive.isActive())
         {
             robot.encoderXPidCtrl.displayPidInfo(4);
             robot.encoderYPidCtrl.displayPidInfo(6);
@@ -227,12 +227,12 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     {
                         if (Robot.USE_ODS_LINE_DETECTOR)
                         {
-                            robot.lineTrigger.setEnabled(true);
+                            robot.odsTrigger.setEnabled(true);
                         }
-//                        else
-//                        {
-//                            robot.colorTrigger.setEnabled(true);
-//                        }
+                        else
+                        {
+                            robot.colorTrigger.setEnabled(true);
+                        }
                     }
 
                     robot.encoderYPidCtrl.setOutputRange(-0.12, 0.12);
@@ -248,12 +248,12 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     {
                         if (Robot.USE_ODS_LINE_DETECTOR)
                         {
-                            robot.lineTrigger.setEnabled(false);
+                            robot.odsTrigger.setEnabled(false);
                         }
-//                        else
-//                        {
-//                            robot.colorTrigger.setEnabled(false);
-//                        }
+                        else
+                        {
+                            robot.colorTrigger.setEnabled(false);
+                        }
                     }
 
                     if (Robot.USE_COLOR_SENSOR)

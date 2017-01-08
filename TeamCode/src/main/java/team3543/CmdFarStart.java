@@ -182,6 +182,6 @@ public class CmdFarStart implements TrcRobot.RobotCommand
         }
 
         return done;
-    }   //autoPeriodic
+    }   //cmdPeriodic
 
 }   //class CmdFarStart

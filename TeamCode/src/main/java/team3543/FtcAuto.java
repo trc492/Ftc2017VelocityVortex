@@ -135,7 +135,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     public void startMode()
     {
         robot.startMode(TrcRobot.RunMode.AUTO_MODE);
-        robot.battery.setTaskEnabled(true);
+        robot.battery.setEnabled(true);
         Date date = new Date();
         tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", date.toString());
         robot.dashboard.clearDisplay();
@@ -145,7 +145,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     public void stopMode()
     {
         robot.stopMode(TrcRobot.RunMode.AUTO_MODE);
-        robot.battery.setTaskEnabled(false);
+        robot.battery.setEnabled(false);
     }   //stopMode
 
     @Override

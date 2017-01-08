@@ -41,9 +41,9 @@ public abstract class TrcTone
      */
     public enum Waveform
     {
-        SineWave,
-        SquareWave,
-        TriangleWave
+        SINE_WAVE,
+        SQUARE_WAVE,
+        TRIANGLE_WAVE
     }   //enum Waveform
 
     //
@@ -80,7 +80,7 @@ public abstract class TrcTone
      * @param instanceName specifies the instance name.
      * @param defWaveform specifies the default waveform type.
      */
-    public TrcTone(String instanceName, Waveform defWaveform)
+    public TrcTone(final String instanceName, Waveform defWaveform)
     {
         if (debugEnabled)
         {
@@ -114,7 +114,8 @@ public abstract class TrcTone
     }   //playTone
 
     /**
-     * This method generates the wave data for a sine wave with the specified frequency and volume.
+     * This method generates the wave data for a sine wave with the specified frequency and volume. It is intended
+     * to be called by the platform dependent wave player that extends this class.
      *
      * @param buffer specifies the buffer to hold the generated waveform data.
      * @param sampleRate specifies the sampling rate of tbe waveform.
@@ -123,6 +124,15 @@ public abstract class TrcTone
      */
     protected void genSineWave(short[] buffer, int sampleRate, double frequency, double volume)
     {
+        final String funcName = "genSineWave";
+
+        if (debugEnabled)
+        {
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.FUNC,
+                                "sampleRate=%d,freq=%.0f,vol=%.2f", sampleRate, frequency, volume);
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.FUNC);
+        }
+
         for (int i = 0; i < buffer.length; i++)
         {
             buffer[i] = (short)(Math.sin(2*Math.PI*i/(sampleRate/frequency))*Short.MAX_VALUE*volume);
@@ -130,7 +140,8 @@ public abstract class TrcTone
     }   //genSineWave
 
     /**
-     * This method generates the wave data for a square wave with the specified frequency and volume.
+     * This method generates the wave data for a square wave with the specified frequency and volume. It is intended
+     * to be called by the platform dependent wave player that extends this class.
      *
      * @param buffer specifies the buffer to hold the generated waveform data.
      * @param sampleRate specifies the sampling rate of tbe waveform.
@@ -139,6 +150,15 @@ public abstract class TrcTone
      */
     protected void genSquareWave(short[] buffer, int sampleRate, double frequency, double volume)
     {
+        final String funcName = "genSquareWave";
+
+        if (debugEnabled)
+        {
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.FUNC,
+                                "sampleRate=%d,freq=%.0f,vol=%.2f", sampleRate, frequency, volume);
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.FUNC);
+        }
+
         for (int i = 0; i < buffer.length; i++)
         {
             double data = ((i/(sampleRate/frequency))%1.0 >= 0.5)? Short.MIN_VALUE: Short.MAX_VALUE;
@@ -147,7 +167,8 @@ public abstract class TrcTone
     }   //genSquareWave
 
     /**
-     * This method generates the wave data for a triangle wave with the specified frequency and volume.
+     * This method generates the wave data for a triangle wave with the specified frequency and volume. It is
+     * intended to be called by the platform dependent wave player that extends this class.
      *
      * @param buffer specifies the buffer to hold the generated waveform data.
      * @param sampleRate specifies the sampling rate of tbe waveform.
@@ -156,6 +177,15 @@ public abstract class TrcTone
      */
     protected void genTriangleWave(short[] buffer, int sampleRate, double frequency, double volume)
     {
+        final String funcName = "genTriangleWave";
+
+        if (debugEnabled)
+        {
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.FUNC,
+                                "sampleRate=%d,freq=%.0f,vol=%.2f", sampleRate, frequency, volume);
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.FUNC);
+        }
+
         for (int i = 0; i < buffer.length; i++)
         {
             double phase = (i/(sampleRate/frequency))%1.0;
@@ -168,8 +198,6 @@ public abstract class TrcTone
         }
     }   //genTriangleWave
 
-    /**
-     */
     /**
      * This method applies the sound envelope to the sound data.
      *
@@ -189,9 +217,9 @@ public abstract class TrcTone
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.FUNC,
-                    "attack=%.3f,decay=%.3f,sustain=%.3f,release=%.3f", attack, decay, sustain, release);
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.FUNC,
+                                "sampleRate=%d,attack=%.3f,decay=%.3f,sustain=%.3f,release=%.3f",
+                                sampleRate, attack, decay, sustain, release);
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.FUNC);
         }
         //

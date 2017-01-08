@@ -23,9 +23,9 @@
 package trclib;
 
 /**
- * This class implements a Boolean state object. As the name implies, this object can have
- * a state of either true or false. By default, the object is created with a false state
- * but an overloaded constructor can specify the state when it's created.
+ * This class implements a Boolean state object. As the name implies, this object can have a state of either true
+ * or false. By default, the object is created with a false state but an overloaded constructor can specify the
+ * state when it's created.
  */
 public class TrcBooleanState
 {
@@ -37,16 +37,6 @@ public class TrcBooleanState
     private TrcDbgTrace dbgTrace = null;
 
     private boolean state;
-
-    /**
-     * Constructor: Create an instance of the object.
-     *
-     * @param instanceName specifies the instance name of the object.
-     */
-    public TrcBooleanState(final String instanceName)
-    {
-        this(instanceName, false);
-    }   //TrcBooleanState
 
     /**
      * Constructor: Create an instance of the object.
@@ -65,6 +55,16 @@ public class TrcBooleanState
     }   //TrcBooleanState
 
     /**
+     * Constructor: Create an instance of the object.
+     *
+     * @param instanceName specifies the instance name of the object.
+     */
+    public TrcBooleanState(final String instanceName)
+    {
+        this(instanceName, false);
+    }   //TrcBooleanState
+
+    /**
      * This method returns the state of the object.
      *
      * @return state of the object.
@@ -76,9 +76,7 @@ public class TrcBooleanState
         if (debugEnabled)
         {
             dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
-            dbgTrace.traceExit(
-                    funcName, TrcDbgTrace.TraceLevel.API,
-                    "=%s", Boolean.toString(state));
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API, "=%s", Boolean.toString(state));
         }
 
         return state;
@@ -87,7 +85,7 @@ public class TrcBooleanState
     /**
      * This method sets the state of the object.
      *
-     * @state specifies the state to set the object to.
+     * @param state specifies the state to set the object to.
      */
     public void setState(boolean state)
     {
@@ -95,9 +93,7 @@ public class TrcBooleanState
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.API,
-                    "state=%s", Boolean.toString(state));
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API, "state=%s", Boolean.toString(state));
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API);
         }
 
@@ -122,11 +118,9 @@ public class TrcBooleanState
 
         if (debugEnabled)
         {
-            dbgTrace.traceExit(
-                    funcName, TrcDbgTrace.TraceLevel.API,
-                    "=%s", Boolean.toString(state));
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API, "=%s", Boolean.toString(state));
         }
         return state;
     }   //toggleState
 
-}   //class TrcToggle
+}   //class TrcBooleanState

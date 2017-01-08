@@ -81,7 +81,7 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
             robot.dashboard.displayPrintf(1, "State: %s", state != null? state.toString(): "Disabled");
         }
 
-        if (robot.pidDrive.isEnabled())
+        if (robot.pidDrive.isActive())
         {
             robot.encoderXPidCtrl.displayPidInfo(2);
             robot.encoderYPidCtrl.displayPidInfo(4);

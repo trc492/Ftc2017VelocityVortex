@@ -136,36 +136,36 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     public void startMode()
     {
         super.startMode();
-        if (test == Test.SENSORS_TEST)
-        {
-            if (Robot.USE_COLOR_SENSOR)
-            {
-                robot.beaconColorSensor.setDeviceEnabled(true);
-            }
-
-            if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
-            {
-                robot.lineDetectionSensor.setDeviceEnabled(true);
-            }
-        }
+//        if (test == Test.SENSORS_TEST)
+//        {
+//            if (Robot.USE_COLOR_SENSOR)
+//            {
+//                robot.beaconColorSensor.setDeviceEnabled(true);
+//            }
+//
+//            if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
+//            {
+//                robot.lineDetectionSensor.setDeviceEnabled(true);
+//            }
+//        }
     }   //startMode
 
     @Override
     public void stopMode()
     {
         super.stopMode();
-        if (test == Test.SENSORS_TEST)
-        {
-            if (Robot.USE_COLOR_SENSOR)
-            {
-                robot.beaconColorSensor.setDeviceEnabled(false);
-            }
-
-            if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
-            {
-                robot.lineDetectionSensor.setDeviceEnabled(false);
-            }
-        }
+//        if (test == Test.SENSORS_TEST)
+//        {
+//            if (Robot.USE_COLOR_SENSOR)
+//            {
+//                robot.beaconColorSensor.setDeviceEnabled(false);
+//            }
+//
+//            if (Robot.USE_LINE_DETECTOR && !Robot.USE_ODS_LINE_DETECTOR)
+//            {
+//                robot.lineDetectionSensor.setDeviceEnabled(false);
+//            }
+//        }
     }   //stopMode
 
     //
@@ -487,7 +487,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     //
                     // Drive the to the given wall distance.
                     //
-                    robot.battery.setTaskEnabled(true);
+                    robot.battery.setEnabled(true);
                     robot.setTurnPID(rangeDistance, 0.0, 0.0);
                     robot.rangePidDrive.setTarget(rangeDistance, 0.0, 0.0, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
@@ -498,7 +498,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     //
                     // We are done.
                     //
-                    robot.battery.setTaskEnabled(false);
+                    robot.battery.setEnabled(false);
                     sm.stop();
                     break;
             }

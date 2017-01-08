@@ -94,8 +94,8 @@ public class FtcI2cDevice
     }   //FtcI2cDevice
 
     /**
-     * This method sets the I2C address of the device. This is typically called by the subclass to update
-     * the I2C address after changing it.
+     * This method sets the I2C address of the device. This is typically called by the subclass to update the I2C
+     * address after changing it.
      *
      * @param newAddress specifies the new I2C address.
      * @param addressIs7Bit specifies true if the I2C address is a 7-bit address, false if it is 8-bit.
@@ -147,8 +147,8 @@ public class FtcI2cDevice
     }   //isDeviceEnabled
 
     /**
-     * This method is called to enable/disable the I2C device so that it will not unnecessarily bog down the I2C
-     * bus bandwidth if it is not needed.
+     * This method is called to enable/disable the I2C device so that it will not unnecessarily bog down the I2C bus
+     * bandwidth if it is not needed.
      *
      * @param enabled specifies true to enable device, false otherwise.
      */
@@ -191,8 +191,8 @@ public class FtcI2cDevice
     }   //addReader
 
     /**
-     * This method is doing a synchronous read from the device with the specified starting address and length
-     * of the register block.
+     * This method is doing a synchronous read from the device with the specified starting address and length of the
+     * register block.
      *
      * @param startAddress specifies the starting register to read from.
      * @param length specifies the length of the register block to read.
@@ -213,8 +213,8 @@ public class FtcI2cDevice
     }   //syncRead
 
     /**
-     * This method is doing a synchronous write to the device with the specified starting address and data
-     * of the register block.
+     * This method is doing a synchronous write to the device with the specified starting address and data of the
+     * register block.
      *
      * @param startAddress specifies the starting register to read from.
      * @param data specifies the data to write to the device.
@@ -225,8 +225,8 @@ public class FtcI2cDevice
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.API, "start=0x%02x,data=%s", startAddress, Arrays.toString(data));
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API,
+                                "start=0x%02x,data=%s", startAddress, Arrays.toString(data));
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API);
         }
 
@@ -234,8 +234,8 @@ public class FtcI2cDevice
     }   //syncWrite
 
     /**
-     * This method is doing an asynchronous write to the device with the specified starting address and data
-     * of the register block.
+     * This method is doing an asynchronous write to the device with the specified starting address and data of the
+     * register block.
      *
      * @param startAddress specifies the starting register to read from.
      * @param data specifies the data to write to the device.
@@ -246,8 +246,8 @@ public class FtcI2cDevice
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.API, "start=0x%02x,data=%s", startAddress, Arrays.toString(data));
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API,
+                                "start=0x%02x,data=%s", startAddress, Arrays.toString(data));
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API);
         }
 

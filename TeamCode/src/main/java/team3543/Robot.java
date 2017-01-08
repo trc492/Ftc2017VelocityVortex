@@ -93,7 +93,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public TrcPidDrive pidDrive = null;
     public TrcPidDrive rangePidDrive = null;
 
-    public TrcAnalogTrigger lineTrigger = null;
+    public TrcAnalogTrigger<FtcOpticalDistanceSensor.DataType> odsTrigger = null;
+    public TrcAnalogTrigger<FtcMRColorSensor.DataType> colorTrigger = null;
     public double targetHeading = 0.0;
     //
     // Other subsystems.
@@ -134,7 +135,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         {
             beaconColorSensor = new FtcMRColorSensor("colorSensor");
             beaconColorSensor.sensor.enableLed(false);
-            beaconColorSensor.setEnabled(false);
+//            beaconColorSensor.setDeviceEnabled(false);
         }
 
         if (USE_LINE_DETECTOR)
@@ -148,7 +149,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 lineDetectionSensor = new FtcMRColorSensor("lineDetectionSensor");
                 lineDetectionSensor.sensor.setI2cAddress(I2cAddr.create8bit(0x40));
                 lineDetectionSensor.sensor.enableLed(true);
-                lineDetectionSensor.setEnabled(false);
+//                lineDetectionSensor.setDeviceEnabled(false);
             }
         }
 
@@ -226,11 +227,14 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
             if (USE_ODS_LINE_DETECTOR)
             {
-                lineTrigger = new TrcAnalogTrigger("lineTrigger", odsLineDetector, 0, lightZones, this);
+                odsTrigger = new TrcAnalogTrigger<>(
+                        "odsTrigger", odsLineDetector, 0, FtcOpticalDistanceSensor.DataType.RAW_LIGHT_DETECTED,
+                        lightZones, this);
             }
             else
             {
-                lineTrigger = new TrcAnalogTrigger("lineTrigger", lineDetectionSensor, 0, lightZones, this);
+                colorTrigger = new TrcAnalogTrigger<>(
+                        "colorTrigger", lineDetectionSensor, 0, FtcMRColorSensor.DataType.WHITE, lightZones, this);
             }
         }
 
@@ -329,7 +333,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public void AnalogTriggerEvent(TrcAnalogTrigger analogTrigger, int zoneIndex, double zoneValue)
     {
         tracer.traceInfo(moduleName, "%s: Entering zone %d (%.2f).", analogTrigger.toString(), zoneIndex, zoneValue);
-        if (analogTrigger == lineTrigger && pidDrive.isEnabled())
+        if ((analogTrigger == odsTrigger || analogTrigger == colorTrigger) && pidDrive.isActive())
         {
             if (zoneIndex > 0)
             {
@@ -384,8 +388,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     }   //traceStateInfo
 
     public double selectParameter(
-            boolean startNear, FtcAuto.Alliance alliance,
-            double nearRed, double nearBlue, double farRed, double farBlue)
+            boolean startNear, FtcAuto.Alliance alliance, double nearRed, double nearBlue,
+            double farRed, double farBlue)
     {
         if (startNear)
         {

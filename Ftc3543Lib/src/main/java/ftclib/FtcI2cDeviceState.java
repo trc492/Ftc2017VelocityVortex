@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Titan Robotics Club (http://www.titanrobotics.com)
+ * Copyright (c) 2016 Titan Robotics Club (http://www.titanrobotics.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +24,7 @@ package ftclib;
 
 import com.qualcomm.robotcore.hardware.I2cController;
 import com.qualcomm.robotcore.hardware.I2cControllerPortDevice;
+import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 
 import trclib.TrcDbgTrace;
 
@@ -45,10 +46,27 @@ public class FtcI2cDeviceState
     private static final TrcDbgTrace.MsgLevel msgLevel = TrcDbgTrace.MsgLevel.INFO;
     private TrcDbgTrace dbgTrace = null;
 
+    private I2cDeviceSynch syncDevice = null;
     private I2cController i2cController = null;
     private int port = 0;
     private I2cController.I2cPortReadyCallback deviceCallback = null;
     private boolean deviceEnabled = true;
+
+    /**
+     * Constructor: Creates an instance of the object.
+     *
+     * @param instanceName specifies the instance name.
+     * @param syncDevice specifies the new kind of I2c device to be enabled/disabled.
+     */
+    public FtcI2cDeviceState(String instanceName, I2cDeviceSynch syncDevice)
+    {
+        if (debugEnabled)
+        {
+            dbgTrace = new TrcDbgTrace(moduleName + "." + instanceName, tracingEnabled, traceLevel, msgLevel);
+        }
+
+        this.syncDevice = syncDevice;
+    }   //FtcI2cDeviceState
 
     /**
      * Constructor: Creates an instance of the object.
@@ -105,11 +123,25 @@ public class FtcI2cDeviceState
         {
             if (enabled)
             {
-                i2cController.registerForI2cPortReadyCallback(deviceCallback, port);
+                if (syncDevice != null)
+                {
+                    syncDevice.engage();
+                }
+                else
+                {
+                    i2cController.registerForI2cPortReadyCallback(deviceCallback, port);
+                }
             }
             else
             {
-                i2cController.deregisterForPortReadyCallback(port);
+                if (syncDevice != null)
+                {
+                    syncDevice.disengage();
+                }
+                else
+                {
+                    i2cController.deregisterForPortReadyCallback(port);
+                }
             }
             deviceEnabled = enabled;
         }

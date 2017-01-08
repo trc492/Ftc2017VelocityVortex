@@ -29,17 +29,58 @@ package trclib;
 public class TrcUtil
 {
     /**
-     * This method clips the given value to the range limited by the given low and high limits.
+     * This method returns the current time in seconds with nano-second precision.
      *
-     * @param value specifies the value to be clipped
-     * @param lowLimit specifies the low limit of the range.
-     * @param highLimit specifies the high limit of the range.
-     * @return the result of the clipped value.
+     * @return current time in seconds.
      */
-    public static int limit(int value, int lowLimit, int highLimit)
+    public static double getCurrentTime()
     {
-        return (value < lowLimit)? lowLimit: (value > highLimit)? highLimit: value;
-    }   //limit
+        return System.nanoTime()/1000000000.0;
+    }   //getCurrentTime
+
+    /**
+     * This method returns the current time in msec.
+     *
+     * @return current time in msec.
+     */
+    public static long getCurrentTimeMillis()
+    {
+        return System.currentTimeMillis();
+    }   //getCurrentTimeMillis
+
+    /**
+     * This method returns the current time in nano second.
+     *
+     * @return current time in nano second.
+     */
+    public static long getCurrentTimeNanos()
+    {
+        return System.nanoTime();
+    }   //getCurrentTimeNanos
+
+    /**
+     * This method puts the current thread to sleep for the given time in msec. It handles InterruptException where
+     * it recalculates the remaining time and calls sleep again repeatedly until the specified sleep time has past.
+     *
+     * @param milliTime specifies sleep time in msec.
+     */
+    public static void sleep(long milliTime)
+    {
+        long wakeupTime = System.currentTimeMillis() + milliTime;
+
+        while (milliTime > 0)
+        {
+            try
+            {
+                Thread.sleep(milliTime);
+                break;
+            }
+            catch (InterruptedException e)
+            {
+                milliTime = wakeupTime - System.currentTimeMillis();
+            }
+        }
+    }   //sleep
 
     /**
      * This method clips the given value to the range limited by the given low and high limits.
@@ -49,10 +90,24 @@ public class TrcUtil
      * @param highLimit specifies the high limit of the range.
      * @return the result of the clipped value.
      */
-    public static double limit(double value, double lowLimit, double highLimit)
+    public static int clipRange(int value, int lowLimit, int highLimit)
     {
         return (value < lowLimit)? lowLimit: (value > highLimit)? highLimit: value;
-    }   //limit
+    }   //clipRange
+
+
+    /**
+     * This method clips the given value to the range limited by the given low and high limits.
+     *
+     * @param value specifies the value to be clipped
+     * @param lowLimit specifies the low limit of the range.
+     * @param highLimit specifies the high limit of the range.
+     * @return the result of the clipped value.
+     */
+    public static double clipRange(double value, double lowLimit, double highLimit)
+    {
+        return (value < lowLimit)? lowLimit: (value > highLimit)? highLimit: value;
+    }   //clipRange
 
     /**
      * This method clips the given value to the range between -1.0 and 1.0.
@@ -60,10 +115,10 @@ public class TrcUtil
      * @param value specifies the value to be clipped
      * @return the result of the clipped value.
      */
-    public static double limit(double value)
+    public static double clipRange(double value)
     {
-        return limit(value, -1.0, 1.0);
-    }   //limit
+        return clipRange(value, -1.0, 1.0);
+    }   //clipRange
 
     /**
      * This method scales the given value from the source range to the target range.
@@ -75,14 +130,9 @@ public class TrcUtil
      * @param highDstRange specifies the high limit of the target range
      * @return the result of the scaled value.
      */
-    public static int scaleRange(
-            int value,
-            int lowSrcRange, int highSrcRange,
-            int lowDstRange, int highDstRange)
+    public static int scaleRange(int value, int lowSrcRange, int highSrcRange, int lowDstRange, int highDstRange)
     {
-        return lowDstRange +
-               (value - lowSrcRange)*(highDstRange - lowDstRange)/
-               (highSrcRange - lowSrcRange);
+        return lowDstRange + (value - lowSrcRange)*(highDstRange - lowDstRange)/(highSrcRange - lowSrcRange);
     }   //scaleRange
 
     /**
@@ -96,13 +146,9 @@ public class TrcUtil
      * @return the result of the scaled value.
      */
     public static double scaleRange(
-            double value,
-            double lowSrcRange, double highSrcRange,
-            double lowDstRange, double highDstRange)
+            double value, double lowSrcRange, double highSrcRange, double lowDstRange, double highDstRange)
     {
-        return lowDstRange +
-                (value - lowSrcRange)*(highDstRange - lowDstRange)/
-                (highSrcRange - lowSrcRange);
+        return lowDstRange + (value - lowSrcRange)*(highDstRange - lowDstRange)/(highSrcRange - lowSrcRange);
     }   //scaleRange
 
     /**

@@ -114,7 +114,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                 double rightPower = driverGamepad.getRightStickY(true)*drivePowerScale;
                 robot.driveBase.tankDrive(leftPower, rightPower, invertedDrive);
                 dashboard.displayPrintf(1, "Tank:left=%.2f,right=%.2f,inverted=%s",
-                        leftPower, rightPower, Boolean.toString(invertedDrive));
+                                        leftPower, rightPower, Boolean.toString(invertedDrive));
                 break;
 
             case MECANUM_MODE:
@@ -123,11 +123,12 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
                 double rot = (driverGamepad.getRightTrigger(true) - driverGamepad.getLeftTrigger(true))*drivePowerScale;
                 robot.driveBase.mecanumDrive_Cartesian(x, y, rot, invertedDrive);
                 dashboard.displayPrintf(1, "Mecanum:x=%.2f,y=%.2f,rot=%.2f,inverted=%s",
-                        x, y, rot, Boolean.toString(invertedDrive));
+                                        x, y, rot, Boolean.toString(invertedDrive));
                 break;
         }
         dashboard.displayPrintf(2, "xPos=%.2f,yPos=%.2f,heading=%.2f",
-                robot.driveBase.getXPosition(), robot.driveBase.getYPosition(), robot.driveBase.getHeading());
+                                robot.driveBase.getXPosition(), robot.driveBase.getYPosition(),
+                                robot.driveBase.getHeading());
     }   //runPeriodic
 
     //
@@ -137,8 +138,7 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
     @Override
     public void gamepadButtonEvent(FtcGamepad gamepad, int button, boolean pressed)
     {
-        dashboard.displayPrintf(7, "%s: %04x->%s",
-                gamepad.toString(), button, pressed? "Pressed": "Released");
+        dashboard.displayPrintf(7, "%s: %04x->%s", gamepad.toString(), button, pressed? "Pressed": "Released");
         if (gamepad == driverGamepad)
         {
             switch (button)

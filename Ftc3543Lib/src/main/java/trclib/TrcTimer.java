@@ -22,12 +22,9 @@
 
 package trclib;
 
-import hallib.HalUtil;
-
 /**
- * This class implements a timer that will generate an event
- * when the time has expired. This is useful for doing delays
- * in autonomous.
+ * This class implements a timer that will generate an event when the time has expired. This is useful for doing
+ * delays in autonomous.
  */
 public class TrcTimer implements TrcTaskMgr.Task
 {
@@ -76,8 +73,8 @@ public class TrcTimer implements TrcTaskMgr.Task
     }   //toString
 
     /**
-     * This methods sets the expire time relative to the current time.
-     * When the time expires, it will signal the given event.
+     * This methods sets the expire time relative to the current time. When the time expires, it will signal the
+     * given event.
      *
      * @param time specifies the expire time in seconds relative to the current time.
      * @param event specifies the event to signal when time has expired.
@@ -88,21 +85,19 @@ public class TrcTimer implements TrcTaskMgr.Task
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.API,
-                    "time=%f,event=%s",
-                    time, event != null? event.toString(): "null");
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API,
+                                "time=%f,event=%s", time, event != null? event.toString(): "null");
         }
 
         expired = false;
         canceled = false;
-        expiredTime = HalUtil.getCurrentTime() + time;
+        expiredTime = TrcUtil.getCurrentTime() + time;
         if (event != null)
         {
             event.clear();
         }
         notifyEvent = event;
-        setEnabled(true);
+        setTaskEnabled(true);
 
         if (debugEnabled)
         {
@@ -122,8 +117,7 @@ public class TrcTimer implements TrcTaskMgr.Task
         if (debugEnabled)
         {
             dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
-            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API,
-                               "=%s", Boolean.toString(expired));
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API, "=%s", Boolean.toString(expired));
         }
 
         return expired;
@@ -141,16 +135,14 @@ public class TrcTimer implements TrcTaskMgr.Task
         if (debugEnabled)
         {
             dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
-            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API,
-                               "=%s", Boolean.toString(canceled));
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API, "=%s", Boolean.toString(canceled));
         }
 
         return canceled;
     }   //isCanceled
 
     /**
-     * This method cancels the timer if it's set but has not expired.
-     * If the timer is canceled, the event is signaled.
+     * This method cancels the timer if it's set but has not expired. If the timer is canceled, the event is signaled.
      */
     public void cancel()
     {
@@ -163,7 +155,7 @@ public class TrcTimer implements TrcTaskMgr.Task
 
         if (enabled)
         {
-            setEnabled(false);
+            setTaskEnabled(false);
             expiredTime = 0.0;
             expired = false;
             notifyEvent.cancel();
@@ -181,21 +173,18 @@ public class TrcTimer implements TrcTaskMgr.Task
      *
      * @param enabled specifies if the timer task is enabled.
      */
-    private void setEnabled(boolean enabled)
+    private void setTaskEnabled(boolean enabled)
     {
-        final String funcName = "setEnabled";
+        final String funcName = "setTaskEnabled";
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.FUNC,
-                    "enabled=%s", Boolean.toString(enabled));
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.FUNC, "enabled=%s", Boolean.toString(enabled));
         }
 
         if (enabled)
         {
-            TrcTaskMgr.getInstance().registerTask(
-                    instanceName, this, TrcTaskMgr.TaskType.PRECONTINUOUS_TASK);
+            TrcTaskMgr.getInstance().registerTask(instanceName, this, TrcTaskMgr.TaskType.PRECONTINUOUS_TASK);
         }
         else
         {
@@ -207,7 +196,7 @@ public class TrcTimer implements TrcTaskMgr.Task
         {
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.FUNC);
         }
-    }   //setEnabled
+    }   //setTaskEnabled
 
     //
     // Implements TrcTaskMgr.Task
@@ -234,9 +223,8 @@ public class TrcTimer implements TrcTaskMgr.Task
     }   //postPeriodicTask
 
     /**
-     * This method runs periodically at the fastest rate and checks if the timer
-     * has expired. After the timer expired, the task is disabled and if there is
-     * an event object, it will be signaled.
+     * This method runs periodically at the fastest rate and checks if the timer has expired. After the timer expired,
+     * the task is disabled and if there is an event object, it will be signaled.
      *
      * @param runMode specifies the current robot run mode.
      */
@@ -247,21 +235,17 @@ public class TrcTimer implements TrcTaskMgr.Task
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(
-                    funcName, TrcDbgTrace.TraceLevel.TASK,
-                    "mode=%s", runMode.toString());
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.TASK, "mode=%s", runMode.toString());
         }
 
-        if (enabled && !expired && HalUtil.getCurrentTime() >= expiredTime)
+        if (enabled && !expired && TrcUtil.getCurrentTime() >= expiredTime)
         {
-            setEnabled(false);
+            setTaskEnabled(false);
 
             if (debugEnabled)
             {
-                dbgTrace.traceInfo(
-                        funcName,
-                        "Time expired, notifying %s.",
-                        notifyEvent != null? notifyEvent.toString(): "null");
+                dbgTrace.traceInfo(funcName, "Time expired, notifying %s.",
+                                   notifyEvent != null? notifyEvent.toString(): "null");
             }
 
             if (notifyEvent != null)

@@ -22,17 +22,35 @@
 
 package trclib;
 
+/**
+ * This class implements a platform independent Digital Input device.
+ */
 public abstract class TrcDigitalInput
 {
+    /**
+     * This method is provided by the platform dependent digital input device to check the state of the device.
+     *
+     * @return true if the digital input is active, false otherwise.
+     */
     public abstract boolean isActive();
 
     private String instanceName;
 
+    /**
+     * Constructor: Create an instance of the object.
+     *
+     * @param instanceName specifies the instance name.
+     */
     public TrcDigitalInput(String instanceName)
     {
         this.instanceName = instanceName;
     }   //TrcDigitalInput
 
+    /**
+     * This method returns the instance name.
+     *
+     * @return instance name.
+     */
     public String toString()
     {
         return instanceName;

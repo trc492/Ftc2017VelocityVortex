@@ -25,16 +25,15 @@ package ftclib;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import hallib.HalUtil;
 import trclib.TrcDbgTrace;
 import trclib.TrcFilter;
 import trclib.TrcGyro;
+import trclib.TrcUtil;
 
 /**
- * This class implements the HiTechnic gyro extending TrcGyro.
- * It provides implementation of the abstract methods in TrcGyro.
- * It supports only the z axis. It provides rotation rate data
- * but not heading and it does not support built-in calibration.
+ * This class implements the HiTechnic gyro extending TrcGyro. It provides implementation of the abstract methods
+ * in TrcGyro. It supports only the z axis. It provides rotation rate data but not heading and it does not support
+ * built-in calibration.
  */
 public class FtcHiTechnicGyro extends TrcGyro
 {
@@ -52,10 +51,9 @@ public class FtcHiTechnicGyro extends TrcGyro
      *
      * @param hardwareMap specifies the global hardware map.
      * @param instanceName specifies the instance name.
-     * @param filters specifies an array of filters to use for filtering
-     *                sensor noise, one for each axis. Since we only have
-     *                1 axis, the array should have 1 element. If no
-     *                filters are used, it can be set to null.
+     * @param filters specifies an array of filters to use for filtering sensor noise, one for each axis. Since we
+     *                only have 1 axis, the array should have 1 element. If no filters are used, it can be set to
+     *                null.
      */
     public FtcHiTechnicGyro(HardwareMap hardwareMap, String instanceName, TrcFilter[] filters)
     {
@@ -73,10 +71,9 @@ public class FtcHiTechnicGyro extends TrcGyro
      * Constructor: Creates an instance of the object.
      *
      * @param instanceName specifies the instance name.
-     * @param filters specifies an array of filters to use for filtering
-     *                sensor noise, one for each axis. Since we only have
-     *                1 axis, the array should have 1 element. If no
-     *                filters are used, it can be set to null.
+     * @param filters specifies an array of filters to use for filtering sensor noise, one for each axis. Since we
+     *                only have 1 axis, the array should have 1 element. If no filters are used, it can be set to
+     *                null.
      */
     public FtcHiTechnicGyro(String instanceName, TrcFilter[] filters)
     {
@@ -106,14 +103,13 @@ public class FtcHiTechnicGyro extends TrcGyro
     //
 
     /**
-     * This method returns the raw data of the specified type for the x-axis
-     * which is not supported.
+     * This method returns the raw data of the specified type for the x-axis which is not supported.
      *
      * @param dataType specifies the data type.
      * @return throws UnsupportedOperation exception.
      */
     @Override
-    public SensorData getRawXData(DataType dataType)
+    public SensorData<Double> getRawXData(DataType dataType)
     {
         final String funcName = "getRawXData";
 
@@ -127,14 +123,13 @@ public class FtcHiTechnicGyro extends TrcGyro
     }   //getRawXData
 
     /**
-     * This method returns the raw data of the specified type for the y-axis
-     * which is not supported.
+     * This method returns the raw data of the specified type for the y-axis which is not supported.
      *
      * @param dataType specifies the data type.
      * @return throws UnsupportedOperation exception.
      */
     @Override
-    public SensorData getRawYData(DataType dataType)
+    public SensorData<Double> getRawYData(DataType dataType)
     {
         final String funcName = "getRawYData";
 
@@ -154,7 +149,7 @@ public class FtcHiTechnicGyro extends TrcGyro
      * @return raw data of the specified type for the z-axis.
      */
     @Override
-    public SensorData getRawZData(DataType dataType)
+    public SensorData<Double> getRawZData(DataType dataType)
     {
         final String funcName = "getRawZData";
         double value = 0.0;
@@ -166,7 +161,7 @@ public class FtcHiTechnicGyro extends TrcGyro
         {
             value = gyro.rawZ();
         }
-        SensorData data = new SensorData(HalUtil.getCurrentTime(), value);
+        SensorData<Double> data = new SensorData<>(TrcUtil.getCurrentTime(), value);
 
         if (debugEnabled)
         {

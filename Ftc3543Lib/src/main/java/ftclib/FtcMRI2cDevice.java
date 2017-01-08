@@ -28,8 +28,8 @@ import trclib.TrcDbgTrace;
 import trclib.TrcUtil;
 
 /**
- * This class implements the common features of all Modern Robotics I2C devices. Typically,
- * this class will be extended by specific Modern Robotics I2C devices.
+ * This class implements the common features of all Modern Robotics I2C devices. Typically, this class will be
+ * extended by specific Modern Robotics I2C devices.
  */
 public class FtcMRI2cDevice extends FtcI2cDevice
 {

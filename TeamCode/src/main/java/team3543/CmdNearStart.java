@@ -165,6 +165,6 @@ public class CmdNearStart implements TrcRobot.RobotCommand
         }
 
         return done;
-    }   //autoPeriodic
+    }   //cmdPeriodic
 
 }   //class CmdNearStart

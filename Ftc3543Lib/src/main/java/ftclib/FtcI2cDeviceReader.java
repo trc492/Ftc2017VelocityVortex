@@ -26,8 +26,6 @@ import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.I2cDevice;
 import com.qualcomm.robotcore.hardware.I2cDeviceReader;
 
-import trclib.TrcDbgTrace;
-
 /**
  * This class extends I2cDeviceReader so we can add methods to retrieve different parameters of the reader.
  */
@@ -112,9 +110,9 @@ public class FtcI2cDeviceReader extends I2cDeviceReader
     }   //getMemLength
 
     /**
-     * This method checks if it is in the same time slice loop as before. If so, it will just returned the
-     * data cached from last time. Otherwise, it will retrieve a new data buffer from the device and update
-     * the cache with it.
+     * This method checks if it is in the same time slice loop as before. If so, it will just returned the data
+     * cached from last time. Otherwise, it will retrieve a new data buffer from the device and update the cache
+     * with it.
      *
      * @return device data.
      */

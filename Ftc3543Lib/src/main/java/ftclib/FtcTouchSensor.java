@@ -29,9 +29,8 @@ import trclib.TrcDigitalInput;
 import trclib.TrcDbgTrace;
 
 /**
- * This class implements a platform dependent touch sensor extending
- * TrcDigitalInput. It provides implementation of the abstract methods
- * in TrcDigitalInput.
+ * This class implements a platform dependent touch sensor extending TrcDigitalInput. It provides implementation of
+ * the abstract methods in TrcDigitalInput.
  */
 public class FtcTouchSensor extends TrcDigitalInput
 {
@@ -90,8 +89,7 @@ public class FtcTouchSensor extends TrcDigitalInput
         if (debugEnabled)
         {
             dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
-            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API,
-                               "=%s", Boolean.toString(active));
+            dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API, "=%s", Boolean.toString(active));
         }
 
         return active;

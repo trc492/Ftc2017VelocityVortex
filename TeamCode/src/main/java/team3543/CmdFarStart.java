@@ -109,7 +109,7 @@ public class CmdFarStart implements TrcRobot.RobotCommand
 
                 case GET_CLOSER:
                     xDistance = 0.0;
-                    yDistance = 6.0;
+                    yDistance = 12.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.SHOOT_PARTICLES);

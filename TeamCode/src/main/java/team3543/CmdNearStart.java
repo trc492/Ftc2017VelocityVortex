@@ -129,7 +129,7 @@ public class CmdNearStart implements TrcRobot.RobotCommand
 
                 case MOVE_OUT:
                     xDistance = 0.0;
-                    yDistance = 32.0;
+                    yDistance = 35.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.TURN_TO_CAPBALL);

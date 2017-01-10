@@ -375,7 +375,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         // We are going somewhere. let's get off the wall so we can turn.
                         // We don't have enough time to go to the center vortex, so always head for the corner vortex.
                         //
-                        xDistance = usePath1? 24.0: 36.0;
+                        xDistance = usePath1? 24.0: 40.0;
                         yDistance = 0.0;
 
                         robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
@@ -398,7 +398,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     }
                     else
                     {
-                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -36.0 : 36.0;
+                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -48.0 : 36.0;
                     }
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);

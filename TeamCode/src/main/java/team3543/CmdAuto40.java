@@ -121,7 +121,7 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
                                 //NEAR
                                 -32.0, -17.0,
                                 //FAR
-                                -24.0, -20.0);
+                                -36.0, -20.0);
                     }
                     else
                     {

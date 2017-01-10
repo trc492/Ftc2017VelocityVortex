@@ -22,6 +22,8 @@
 
 package team3543;
 
+import ftclib.FtcOpMode;
+import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
@@ -29,6 +31,11 @@ import trclib.TrcTimer;
 
 public class CmdPidDrive implements TrcRobot.RobotCommand
 {
+    private static final boolean debugXPid = false;
+    private static final boolean debugYPid = false;
+    private static final boolean debugTurnPid = false;
+    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
+
     private enum State
     {
         DO_DELAY,
@@ -67,7 +74,7 @@ public class CmdPidDrive implements TrcRobot.RobotCommand
     @Override
     public boolean cmdPeriodic(double elapsedTime)
     {
-        boolean done = false;
+        boolean done = !sm.isEnabled();
         //
         // Print debug info.
         //
@@ -78,7 +85,6 @@ public class CmdPidDrive implements TrcRobot.RobotCommand
         {
             state = sm.getState();
 
-            robot.traceStateInfo(elapsedTime, state.toString());
             switch (state)
             {
                 case DO_DELAY:
@@ -97,7 +103,7 @@ public class CmdPidDrive implements TrcRobot.RobotCommand
                     //
                     // Drive the set distance and heading.
                     //
-                    robot.pidDrive.setTarget(xDistance*12.0, yDistance*12.0, heading, false, event);
+                    robot.setPIDDriveTarget(xDistance, yDistance, heading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
                     break;
 
@@ -109,6 +115,28 @@ public class CmdPidDrive implements TrcRobot.RobotCommand
                     done = true;
                     sm.stop();
                     break;
+            }
+            robot.traceStateInfo(elapsedTime, state.toString());
+        }
+
+        if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
+        {
+            tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
+                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+
+            if (debugXPid && xDistance != 0.0)
+            {
+                robot.encoderXPidCtrl.printPidInfo(tracer);
+            }
+
+            if (debugYPid && yDistance != 0.0)
+            {
+                robot.encoderYPidCtrl.printPidInfo(tracer);
+            }
+
+            if (debugTurnPid)
+            {
+                robot.gyroPidCtrl.printPidInfo(tracer);
             }
         }
 

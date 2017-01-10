@@ -78,6 +78,7 @@ public class TrcPidController
     private double totalError = 0.0;
     private double settlingStartTime = 0.0;
     private double setPoint = 0.0;
+    private double setPointSign = 1.0;
     private double input = 0.0;
     private double output = 0.0;
 
@@ -565,6 +566,7 @@ public class TrcPidController
             setPoint = target;
             prevError = setPoint - input;
         }
+        setPointSign = Math.signum(prevError);
 
         //
         // If there is a valid target range, limit the set point to this range.
@@ -630,6 +632,7 @@ public class TrcPidController
         prevTime = 0.0;
         totalError = 0.0;
         setPoint = 0.0;
+        setPointSign = 1.0;
         output = 0.0;
     }   //reset
 
@@ -656,7 +659,7 @@ public class TrcPidController
             //
             // Don't allow oscillation, so if we are within tolerance or we pass target, just quit.
             //
-            if (prevError <= tolerance)
+            if (prevError*setPointSign <= tolerance)
             {
                 onTarget = true;
             }

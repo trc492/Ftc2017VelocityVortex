@@ -31,6 +31,11 @@ import trclib.TrcTimer;
 
 public class CmdAuto100 implements TrcRobot.RobotCommand
 {
+    private static final boolean debugXPid = false;
+    private static final boolean debugYPid = false;
+    private static final boolean debugTurnPid = false;
+    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
+
     private enum State
     {
         NEAR_START,
@@ -52,8 +57,6 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
     }   //enum State
 
     private static final String moduleName = "CmdAuto100";
-
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private Robot robot;
     private FtcAuto.Alliance alliance;
@@ -97,7 +100,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
     @Override
     public boolean cmdPeriodic(double elapsedTime)
     {
-        boolean done = false;
+        boolean done = !sm.isEnabled();
         //
         // Print debug info.
         //
@@ -141,11 +144,6 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
             double xDistance, yDistance;
             int redValue, greenValue, blueValue;
             boolean isRed, isBlue;
-
-            if (state != State.NEAR_START)
-            {
-                robot.traceStateInfo(elapsedTime, state.toString());
-            }
 
             switch (state)
             {
@@ -438,6 +436,32 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     done = true;
                     sm.stop();
                     break;
+            }
+
+            if (state != State.NEAR_START)
+            {
+                robot.traceStateInfo(elapsedTime, state.toString());
+            }
+        }
+
+        if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
+        {
+            tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
+                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+
+            if (debugXPid)
+            {
+                robot.encoderXPidCtrl.printPidInfo(tracer);
+            }
+
+            if (debugYPid)
+            {
+                robot.encoderYPidCtrl.printPidInfo(tracer);
+            }
+
+            if (debugTurnPid)
+            {
+                robot.gyroPidCtrl.printPidInfo(tracer);
             }
         }
 

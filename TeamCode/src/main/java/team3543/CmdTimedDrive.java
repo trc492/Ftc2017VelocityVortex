@@ -70,7 +70,7 @@ public class CmdTimedDrive implements TrcRobot.RobotCommand
     @Override
     public boolean cmdPeriodic(double elapsedTime)
     {
-        boolean done = false;
+        boolean done = !sm.isEnabled();
         //
         // Print debug info.
         //
@@ -81,7 +81,6 @@ public class CmdTimedDrive implements TrcRobot.RobotCommand
         {
             state = sm.getState();
 
-            robot.traceStateInfo(elapsedTime, state.toString());
             switch (state)
             {
                 case DO_DELAY:
@@ -115,6 +114,7 @@ public class CmdTimedDrive implements TrcRobot.RobotCommand
                     sm.stop();
                     break;
             }
+            robot.traceStateInfo(elapsedTime, state.toString());
         }
 
         return done;

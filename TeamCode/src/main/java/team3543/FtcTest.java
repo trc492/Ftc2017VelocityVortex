@@ -37,10 +37,6 @@ import trclib.TrcTimer;
 @TeleOp(name="Test", group="3543Test")
 public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepad.ButtonHandler
 {
-    private static final boolean debugXPid = false;
-    private static final boolean debugYPid = false;
-    private static final boolean debugGyroPid = false;
-    private static final boolean debugRangePid = true;
     private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private enum Test
@@ -113,11 +109,11 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 break;
 
             case X_DISTANCE_DRIVE:
-                pidDriveCommand = new CmdPidDrive(robot, 0.0, driveDistance, 0.0, 0.0);
+                pidDriveCommand = new CmdPidDrive(robot, 0.0, driveDistance*12.0, 0.0, 0.0);
                 break;
 
             case Y_DISTANCE_DRIVE:
-                pidDriveCommand = new CmdPidDrive(robot, 0.0, 0.0, driveDistance, 0.0);
+                pidDriveCommand = new CmdPidDrive(robot, 0.0, 0.0, driveDistance*12.0, 0.0);
                 break;
 
             case GYRO_TURN:
@@ -226,29 +222,22 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 robot.encoderXPidCtrl.displayPidInfo(10);
                 robot.encoderYPidCtrl.displayPidInfo(12);
                 robot.gyroPidCtrl.displayPidInfo(14);
-                if (debugXPid || debugYPid || debugGyroPid || debugRangePid)
-                {
-                    tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
-                                     robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
-                }
-                if (debugXPid || test == Test.X_DISTANCE_DRIVE && driveDistance != 0.0)
-                {
-                    robot.encoderXPidCtrl.printPidInfo(tracer);
-                }
-                else if (debugYPid || test == Test.Y_DISTANCE_DRIVE && driveDistance != 0.0)
-                {
-                    robot.encoderYPidCtrl.printPidInfo(tracer);
-                }
-                else if (debugGyroPid || test == Test.GYRO_TURN && turnDegrees != 0.0)
-                {
-                    robot.gyroPidCtrl.printPidInfo(tracer);
-                }
-                if (debugRangePid)
-                {
-                    robot.rangePidCtrl.printPidInfo(tracer);
-                }
 
-                pidDriveCommand.cmdPeriodic(elapsedTime);
+                if (!pidDriveCommand.cmdPeriodic(elapsedTime))
+                {
+                    if (test == Test.X_DISTANCE_DRIVE)
+                    {
+                        robot.encoderXPidCtrl.printPidInfo(tracer);
+                    }
+                    else if (test == Test.Y_DISTANCE_DRIVE)
+                    {
+                        robot.encoderYPidCtrl.printPidInfo(tracer);
+                    }
+                    else if (test == Test.GYRO_TURN)
+                    {
+                        robot.gyroPidCtrl.printPidInfo(tracer);
+                    }
+                }
                 break;
 
             case RANGE_DRIVE:
@@ -464,19 +453,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         robot.rangePidCtrl.displayPidInfo(10);
         robot.encoderYPidCtrl.displayPidInfo(12);
         robot.gyroPidCtrl.displayPidInfo(14);
-        if (debugGyroPid || debugRangePid)
-        {
-            tracer.traceInfo("Battery", "Voltage=%5.2f (%5.2f)",
-                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
-        }
-        if (debugGyroPid)
-        {
-            robot.gyroPidCtrl.printPidInfo(tracer);
-        }
-        if (debugRangePid)
-        {
-            robot.rangePidCtrl.printPidInfo(tracer);
-        }
 
         if (sm.isReady())
         {
@@ -501,6 +477,11 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     sm.stop();
                     break;
             }
+        }
+
+        if (robot.rangePidDrive.isActive())
+        {
+            robot.rangePidCtrl.printPidInfo(tracer);
         }
     }   //doRangeDrive
 

@@ -351,14 +351,17 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         double degrees = Math.abs(heading - driveBase.getHeading());
         xDistance = Math.abs(xDistance);
         yDistance = Math.abs(yDistance);
-
+        //
+        // No oscillation if turn-only.
+        //
+        gyroPidCtrl.setNoOscillation(degrees != 0.0 && xDistance == 0.0 && yDistance == 0.0);
         if (xDistance != 0.0 && xDistance < RobotInfo.SMALL_X_THRESHOLD)
         {
             //
             // Small X movement, use stronger X PID to overcome friction.
             //
             encoderXPidCtrl.setPID(
-                    RobotInfo.SMALL_ENCODER_X_KP, RobotInfo.SMALL_ENCODER_X_KI, RobotInfo.SMALL_ENCODER_X_KD, 0.0);
+                    RobotInfo.ENCODER_SMALL_X_KP, RobotInfo.ENCODER_SMALL_X_KI, RobotInfo.ENCODER_SMALL_X_KD, 0.0);
         }
         else
         {
@@ -374,7 +377,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             // Small Y movement, use stronger Y PID to overcome friction.
             //
             encoderYPidCtrl.setPID(
-                    RobotInfo.SMALL_ENCODER_Y_KP, RobotInfo.SMALL_ENCODER_Y_KI, RobotInfo.SMALL_ENCODER_Y_KD, 0.0);
+                    RobotInfo.ENCODER_SMALL_Y_KP, RobotInfo.ENCODER_SMALL_Y_KI, RobotInfo.ENCODER_SMALL_Y_KD, 0.0);
         }
         else
         {
@@ -384,14 +387,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             encoderYPidCtrl.setPID(RobotInfo.ENCODER_Y_KP, RobotInfo.ENCODER_Y_KI, RobotInfo.ENCODER_Y_KD, 0.0);
         }
 
-        if (degrees != 0.0 || degrees < RobotInfo.SMALL_TURN_THRESHOLD)
+        if (degrees != 0.0 && degrees < RobotInfo.SMALL_TURN_THRESHOLD)
         {
             //
             // Small turn, use stronger turn PID to overcome friction.
             //
             gyroPidCtrl.setPID(
                     RobotInfo.GYRO_SMALL_TURN_KP, RobotInfo.GYRO_SMALL_TURN_KI, RobotInfo.GYRO_SMALL_TURN_KD, 0.0);
-
         }
         else
         {

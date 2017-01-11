@@ -153,7 +153,7 @@ public class CmdFarStart implements TrcRobot.RobotCommand
 
                 case TURN_TO_CAPBALL:
                     xDistance = yDistance = 0.0;
-                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -54.0: 50.0;
+                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -54.0: 48.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.KNOCK_OUT_CAPBALL);

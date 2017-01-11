@@ -354,7 +354,9 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         // No oscillation if turn-only.
         //
-        gyroPidCtrl.setNoOscillation(degrees != 0.0 && xDistance == 0.0 && yDistance == 0.0);
+        boolean noOscillation = degrees != 0.0 && xDistance == 0.0 && yDistance == 0.0;
+        gyroPidCtrl.setNoOscillation(noOscillation);
+        tracer.traceInfo("setDrivePID", "NoOscillation=%s", Boolean.toString(noOscillation));
         if (xDistance != 0.0 && xDistance < RobotInfo.SMALL_X_THRESHOLD)
         {
             //

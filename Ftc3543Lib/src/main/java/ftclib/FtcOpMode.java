@@ -22,7 +22,11 @@
 
 package ftclib;
 
+import android.speech.tts.TextToSpeech;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import java.util.Locale;
 
 import hallib.HalDashboard;
 import trclib.TrcDbgTrace;
@@ -45,6 +49,7 @@ public abstract class FtcOpMode extends LinearOpMode implements TrcRobot.RobotMo
     private static TrcDbgTrace globalTracer = null;
     private static String opModeName = null;
     private HalDashboard dashboard = null;
+    private TextToSpeech textToSpeech = null;
 
     /**
      * This method is called to initialize the robot. In FTC, this is called when the "Init" button on the Driver
@@ -113,6 +118,43 @@ public abstract class FtcOpMode extends LinearOpMode implements TrcRobot.RobotMo
 
         return globalTracer;
     }   //getGlobalTracer
+
+    /**
+     * This method returns a TextToSpeech object. If it doesn't exist yet, one is created.
+     *
+     * @param locale specifies the language locale.
+     * @return TextToSpeech object.
+     */
+    public TextToSpeech getTextToSpeech(final Locale locale)
+    {
+        if (textToSpeech == null)
+        {
+            textToSpeech = new TextToSpeech(hardwareMap.appContext,
+                                            new TextToSpeech.OnInitListener()
+                                            {
+                                                @Override
+                                                public void onInit(int status)
+                                                {
+                                                    if (status != TextToSpeech.ERROR)
+                                                    {
+                                                        textToSpeech.setLanguage(locale);
+                                                    }
+                                                }
+                                            });
+        }
+
+        return textToSpeech;
+    }   //getTextToSpeech
+
+    /**
+     * This method returns a TextToSpeech object with US locale.
+     *
+     * @return TextToSpeech object.
+     */
+    public TextToSpeech getTextToSpeech()
+    {
+        return getTextToSpeech(Locale.US);
+    }   //getTextToSpeech
 
     /**
      * This method sets the global tracer configuration. The OpMode trace object was created with default

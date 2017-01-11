@@ -77,7 +77,7 @@ public class FtcAndroidSensor extends TrcSensor implements SensorEventListener
         if (sensor == null)
         {
             throw new UnsupportedOperationException(
-                    String.format((Locale)null, "There is no sensor of type %d in the system.", sensorType));
+                    String.format(Locale.US, "There is no sensor of type %d in the system.", sensorType));
         }
 
         this.numAxes = numAxes;

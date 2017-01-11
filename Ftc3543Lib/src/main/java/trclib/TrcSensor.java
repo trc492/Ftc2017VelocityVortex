@@ -143,7 +143,7 @@ public abstract class TrcSensor<D>
         if (filters.length != numAxes)
         {
             throw new IllegalArgumentException(
-                    String.format((Locale)null, "filters must be an array of %d elements.", numAxes));
+                    String.format(Locale.US, "filters must be an array of %d elements.", numAxes));
         }
 
         this.instanceName = instanceName;

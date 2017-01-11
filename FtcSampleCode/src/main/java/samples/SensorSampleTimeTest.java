@@ -81,7 +81,7 @@ public class SensorSampleTimeTest extends LinearOpMode
                 {
                     maxLoopInterval = loopInterval;
                 }
-                runRobot(String.format((Locale)null, "[%4d:%7.3f] LoopInterval=%7.3f, ",
+                runRobot(String.format(Locale.US, "[%4d:%7.3f] LoopInterval=%7.3f, ",
                                        loopCount, (currTime - startTime)/1000000.0, loopInterval/1000000.0));
             }
 

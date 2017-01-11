@@ -22,6 +22,7 @@
 
 package team3543;
 
+import android.speech.tts.TextToSpeech;
 import android.widget.TextView;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -52,6 +53,7 @@ import trclib.TrcRobot;
 
 public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.TriggerHandler
 {
+    public static final boolean USE_SPEECH = true;
     public static final boolean USE_RANGE_SENSOR = true;
     public static final boolean USE_LINE_DETECTOR = true;
     public static final boolean USE_ODS_LINE_DETECTOR = true;
@@ -67,6 +69,10 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public HalDashboard dashboard;
     public FtcRobotControllerActivity activity;
     public TrcDbgTrace tracer;
+    //
+    // Text To Speech.
+    //
+    private TextToSpeech textToSpeech = null;
     //
     // Sensors.
     //
@@ -118,6 +124,18 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         hardwareMap.logDevices();
         dashboard.setTextView((TextView)activity.findViewById(FtcSampleCode.R.id.textOpMode));
         tracer = FtcOpMode.getGlobalTracer();
+        //
+        // Text To Speech.
+        //
+        if (USE_SPEECH)
+        {
+            textToSpeech = FtcOpMode.getInstance().getTextToSpeech();
+        }
+
+        if (textToSpeech != null)
+        {
+            textToSpeech.speak("Initializing, please do not touch robot.", TextToSpeech.QUEUE_FLUSH, null);
+        }
         //
         // Initialize sensors.
         //
@@ -261,6 +279,11 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         ballPickUp.setInverted(true);
 
         conveyor = new FtcDcMotor("conveyorMotor");
+
+        if (textToSpeech != null)
+        {
+            textToSpeech.speak("Initialization complete!", TextToSpeech.QUEUE_FLUSH, null);
+        }
     }   //Robot
 
     public void startMode(TrcRobot.RunMode runMode)
@@ -282,6 +305,12 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)
         {
             lineDetectionSensor.sensor.enableLed(false);
+        }
+
+        if (textToSpeech != null)
+        {
+            textToSpeech.stop();
+            textToSpeech.shutdown();
         }
     }   //stopMode
 

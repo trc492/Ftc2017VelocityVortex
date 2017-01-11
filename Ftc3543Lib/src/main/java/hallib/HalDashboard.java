@@ -91,7 +91,7 @@ public class HalDashboard
         telemetry.setAutoClear(false);
         for (int i = 0; i < display.length; i++)
         {
-            display[i] = telemetry.addData(String.format((Locale)null, displayKeyFormat, i), "");
+            display[i] = telemetry.addData(String.format(Locale.US, displayKeyFormat, i), "");
         }
         telemetry.update();
     }   //HalDashboard

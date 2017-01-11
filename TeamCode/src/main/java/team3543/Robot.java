@@ -72,7 +72,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     //
     // Text To Speech.
     //
-    private TextToSpeech textToSpeech = null;
+    public TextToSpeech textToSpeech = null;
     //
     // Sensors.
     //

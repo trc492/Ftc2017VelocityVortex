@@ -113,7 +113,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 break;
 
             case DISTANCE_DRIVE:
-                autoCommand = new CmdPidDrive(robot, delay, 0.0, driveDistance, 0.0);
+                autoCommand = new CmdPidDrive(robot, delay, 0.0, driveDistance*12.0, 0.0);
                 break;
 
             case TIMED_DRIVE:

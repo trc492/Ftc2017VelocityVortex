@@ -50,6 +50,7 @@ import trclib.TrcGyro;
 import trclib.TrcPidController;
 import trclib.TrcPidDrive;
 import trclib.TrcRobot;
+import trclib.TrcUtil;
 
 public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.TriggerHandler
 {
@@ -134,7 +135,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         if (textToSpeech != null)
         {
-            textToSpeech.speak("Initializing, please do not touch robot.", TextToSpeech.QUEUE_FLUSH, null);
+            textToSpeech.speak("Initializing.", TextToSpeech.QUEUE_FLUSH, null);
         }
         //
         // Initialize sensors.
@@ -280,6 +281,11 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         conveyor = new FtcDcMotor("conveyorMotor");
 
+        while (gyro.isCalibrating())
+        {
+            TrcUtil.sleep(10);
+        }
+
         if (textToSpeech != null)
         {
             textToSpeech.speak("Initialization complete!", TextToSpeech.QUEUE_FLUSH, null);
@@ -370,6 +376,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 //
                 // Encountering white line, abort PID drive.
                 //
+                tracer.traceInfo(moduleName, "%s: Found white line.", analogTrigger.toString());
                 pidDrive.cancel();
             }
         }

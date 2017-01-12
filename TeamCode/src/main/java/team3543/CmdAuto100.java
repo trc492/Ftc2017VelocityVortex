@@ -88,7 +88,8 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
         this.usePath1 = usePath1;
 
         remainingBeaconButtons = beaconButtons;
-        shortRun = alliance == FtcAuto.Alliance.RED_ALLIANCE && usePath1;
+        shortRun = alliance == FtcAuto.Alliance.RED_ALLIANCE && (usePath1 || beaconButtons == 1) ||
+                   alliance == FtcAuto.Alliance.BLUE_ALLIANCE && !usePath1 && beaconButtons == 1;
         nearStartCmd = new CmdNearStart(robot, alliance, delay, numParticles, shortRun);
 
         event = new TrcEvent(moduleName);
@@ -375,7 +376,14 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         // We are going somewhere. let's get off the wall so we can turn.
                         // We don't have enough time to go to the center vortex, so always head for the corner vortex.
                         //
-                        xDistance = usePath1? 24.0: 40.0;
+                        if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
+                        {
+                            xDistance = usePath1 && beaconButtons == 2? 24.0: 36.0;
+                        }
+                        else
+                        {
+                            xDistance = 36.0;
+                        }
                         yDistance = 0.0;
 
                         robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
@@ -389,16 +397,16 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     {
                         if (beaconButtons == 2)
                         {
-                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -72.0 : 20.0;
+                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -72.0 : 0.0;
                         }
                         else
                         {
-                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -40.0 : 84.0;
+                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -40.0 : 60.0;
                         }
                     }
                     else
                     {
-                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -48.0 : 36.0;
+                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -40.0 : 0.0;
                     }
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);

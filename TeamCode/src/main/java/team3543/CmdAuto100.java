@@ -455,8 +455,21 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     {
                         if (beaconButtons == 2)
                         {
-                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -84.0 : 0.0;
-                            nextState = State.DONE;
+                            if (alliance == FtcAuto.Alliance.BLUE_ALLIANCE)
+                            {
+                                yDistance = 0.0;
+                            }
+                            else if (parkOption == FtcAuto.ParkOption.PARK_CENTER)
+                            {
+                                yDistance = 0.0;
+                                robot.targetHeading = -45.0;
+                                nextState = State.PARK_VORTEX;
+                            }
+                            else
+                            {
+                                yDistance = -84.0;
+                                nextState = State.DONE;
+                            }
                         }
                         else
                         {
@@ -488,13 +501,17 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // Go forward or backward to the selected vortex.
                     //
                     xDistance = 0.0;
-                    if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
+                    if (alliance == FtcAuto.Alliance.BLUE_ALLIANCE)
                     {
-                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? 36.0: -36.0;
+                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? -36.0: 36.0;
+                    }
+                    else if (usePath1 && beaconButtons == 2 && parkOption == FtcAuto.ParkOption.PARK_CENTER)
+                    {
+                        yDistance = -48.0;
                     }
                     else
                     {
-                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? -36.0: 36.0;
+                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? 36.0: -36.0;
                     }
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);

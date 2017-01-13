@@ -104,6 +104,12 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
             switch (state)
             {
                 case START:
+                    //
+                    // The robot starts at either near the corner vortex or far from it. startCmd points to either
+                    // CmdNearStart or CmdFarStart which are common segments shared by several autonomous strategies.
+                    // This state will run that segment until its completion when it returns true, then we move on to
+                    // the next state. startCmd would shoot a specified number of particles and displace the Cap Ball.
+                    //
                     if (startCmd.cmdPeriodic(elapsedTime))
                     {
                         sm.setState(State.BACKUP);
@@ -111,6 +117,9 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
                     break;
 
                 case BACKUP:
+                    //
+                    // Back up the robot until it is close to the selected vortex to park.
+                    //
                     nextState = parkOption == FtcAuto.ParkOption.PARK_CENTER? State.TURN_TO_CENTER:
                                 parkOption == FtcAuto.ParkOption.PARK_CORNER? State.TURN_TO_CORNER: State.DONE;
                     xDistance = 0.0;
@@ -138,6 +147,9 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
                     break;
 
                 case TURN_TO_CENTER:
+                    //
+                    // Turn to face the center vortex.
+                    //
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = robot.selectParameter(
                             startNear, alliance,
@@ -151,6 +163,9 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
                     break;
 
                 case PARK_CENTER:
+                    //
+                    // Go and park at the center vortex.
+                    //
                     xDistance = 0.0;
                     yDistance = robot.selectParameter(
                             startNear, alliance,
@@ -164,6 +179,9 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
                     break;
 
                 case TURN_TO_CORNER:
+                    //
+                    // Turn to face the corner vortex.
+                    //
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 135.0;
 
@@ -172,6 +190,9 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
                     break;
 
                 case PARK_CORNER:
+                    //
+                    // Go and park at the corner vortex.
+                    //
                     xDistance = 0.0;
                     yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -42.0: 42.0;
 

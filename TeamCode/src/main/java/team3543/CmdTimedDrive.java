@@ -84,6 +84,9 @@ public class CmdTimedDrive implements TrcRobot.RobotCommand
             switch (state)
             {
                 case DO_DELAY:
+                    //
+                    // Do delay if any.
+                    //
                     if (delay == 0.0)
                     {
                         sm.setState(State.DRIVE_BY_TIME);
@@ -97,7 +100,7 @@ public class CmdTimedDrive implements TrcRobot.RobotCommand
 
                 case DRIVE_BY_TIME:
                     //
-                    // Drive the set distance.
+                    // Drive the robot with the given power for a set amount of time.
                     //
                     robot.driveBase.mecanumDrive_Cartesian(xDrivePower, yDrivePower, turnPower);
                     timer.set(driveTime, event);

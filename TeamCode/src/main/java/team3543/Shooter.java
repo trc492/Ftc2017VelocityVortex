@@ -62,12 +62,14 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         shooterMotor = new FtcDcMotor("shooterMotor");
         shooterMotor.setInverted(true);
         shooterMotor.setBrakeModeEnabled(true);
+
         pidCtrl = new TrcPidController(
                 instanceName,
                 RobotInfo.SHOOTER_KP, RobotInfo.SHOOTER_KI, RobotInfo.SHOOTER_KD, RobotInfo.SHOOTER_KF,
                 RobotInfo.SHOOTER_TOLERANCE, RobotInfo.SHOOTER_SETTLING, this);
         pidMotor = new TrcPidMotor(instanceName, shooterMotor, pidCtrl);
         pidMotor.setPositionScale(RobotInfo.SHOOTER_DEGREES_PER_COUNT);
+
         touchSensor = new FtcTouchSensor("shooterTouchSensor");
 
         ballGate = new FtcServo("ballGateServo");
@@ -206,14 +208,24 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
             switch (state)
             {
                 case LOAD_PARTICLE:
+                    //
+                    // Flip the ball gate up to load a particle onto the shooter.
+                    //
                     ballGate.setPosition(RobotInfo.BALLGATE_UP_POSITION);
                     timer.set(RobotInfo.SHOOTER_BALLGATE_OPEN_TIME, event);
                     sm.waitForSingleEvent(event, ShooterState.ARM_AND_FIRE);
                     break;
 
                 case ARM_AND_FIRE:
+                    //
+                    // Flip the ball gate down and start turning the motor for the firing sequence.
+                    //
                     ballGate.setPosition(RobotInfo.BALLGATE_DOWN_POSITION);
                     shooterMotor.setPower(RobotInfo.SHOOTER_POWER);
+                    //
+                    // Check the touch sensor to see if the shooter has reached the firing point. If so, stop the
+                    // motor for a brief moment.
+                    //
                     if (touchSensor.isActive())
                     {
                         shooterMotor.setPower(0.0);
@@ -224,12 +236,19 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
                     break;
 
                 case PULL_BACK:
+                    //
+                    // Pull back the shooter a little bit to prepare the next firing cycle. Set a timeout to prevent
+                    // the shooter from being stuck not making target.
+                    //
                     pidMotor.setTarget(RobotInfo.SHOOTER_PULLBACK_TARGET, event, 0.5);
                     sm.waitForSingleEvent(event, continuousModeOn? ShooterState.LOAD_PARTICLE: ShooterState.DONE);
                     break;
 
                 default:
                 case DONE:
+                    //
+                    // The firing cycle is done, notify whoever needs to know.
+                    //
                     if (completionEvent != null)
                     {
                         completionEvent.set(true);

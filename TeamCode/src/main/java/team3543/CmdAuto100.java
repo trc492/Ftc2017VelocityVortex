@@ -149,6 +149,12 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
             switch (state)
             {
                 case NEAR_START:
+                    //
+                    // The robot starts at near the corner vortex. nearStartCmd is a common segment shared by
+                    // several autonomous strategies. This state will run that segment until its completion when
+                    // it returns true, then we move on to the next state. nearStartCmd would shoot a specified
+                    // number of particles and displace the Cap Ball.
+                    //
                     if (nearStartCmd.cmdPeriodic(elapsedTime))
                     {
                         sm.setState(State.TURN_TO_WALL);
@@ -156,6 +162,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case TURN_TO_WALL:
+                    //
+                    // After displacing the Cap Ball, turn the robot towards the wall.
+                    //
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -90.0: 90.0;
 
@@ -164,6 +173,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case GOTO_WALL:
+                    //
+                    // Go forward to the wall.
+                    //
                     xDistance = 0.0;
                     yDistance = shortRun? 22.0: 16.0;
 
@@ -172,6 +184,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case PARALLEL_WALL:
+                    //
+                    // Turn the robot to parallel the wall.
+                    //
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 0.0: 180.0;
 
@@ -180,12 +195,21 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case ALIGN_WALL1:
+                    //
+                    // Strafe left with full power to hit the wall. If the robot was misaligned with the wall, this
+                    // will align it again. We use the range sensor as a stopping condition. In addition, we also
+                    // set a timeout time to make sure we will move on even if the range sensor has malfunctioned.
+                    //
                     robot.driveBase.mecanumDrive_Cartesian(-1.0, 0.0, 0.0);
                     timer.set(1.0, event);
                     sm.setState(State.ALIGN_WALL2);
                     break;
 
                 case ALIGN_WALL2:
+                    //
+                    // Continue to strafe left until either the range sensor said we are less than 3.5-inch away
+                    // from the wall or the timeout has expired.
+                    //
                     if (robot.getInput(robot.rangePidCtrl) < 3.5 || event.isSignaled())
                     {
                         sm.setState(State.ALIGN_WALL3);
@@ -193,6 +217,10 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case ALIGN_WALL3:
+                    //
+                    // We are done aligning with the wall. Stop the robot and delay just a little to allow the gyro
+                    // to settle.
+                    //
                     robot.driveBase.mecanumDrive_Cartesian(0.0, 0.0, 0.0);
 
 //                    if (Robot.USE_COLOR_SENSOR)
@@ -205,6 +233,11 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case FIND_LINE:
+                    //
+                    // We should be aligned with the wall, maintain the current heading when running along the wall
+                    // looking for the white line. Limit the robot to only 12% power so we won't miss the line or
+                    // overshoot too much when detecting the line.
+                    //
                     xDistance = 0.0;
                     if (usePath1)
                     {
@@ -237,6 +270,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case PUSH_BUTTON1:
+                    //
+                    // We found the line. Let's check the beacon color and press the appropriate button.
+                    //
                     robot.encoderYPidCtrl.setOutputRange(-1.0, 1.0);
 
                     if (Robot.USE_LINE_DETECTOR)
@@ -284,6 +320,14 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     else if (alliance == FtcAuto.Alliance.RED_ALLIANCE && isBlue ||
                              alliance == FtcAuto.Alliance.BLUE_ALLIANCE && isRed)
                     {
+                        //
+                        // Since the color sensor was detecting a different color than our alliance color, we don't
+                        // have to set a timer and blindly wait. We could just wait for the color change. Once the
+                        // color has changed to our alliance color, we could abort the button pusher and move onto
+                        // the next state. That will save some time. However, we are still setting the timeout for
+                        // safety measure. In case the color doesn't change, 1.5-second is all we can afford to
+                        // waste.
+                        //
                         robot.rightButtonPusher.setPosition(RobotInfo.BUTTON_PUSHER_EXTEND_POSITION);
                         rightPusherExtended = true;
                         timer.set(1.5, event);
@@ -303,8 +347,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
 
                 case PUSH_BUTTON2:
                     //
-                    // Keep checking the color of the beacon. If it has changed to our color or time has expired,
-                    // move on to the next state.
+                    // We will only come to this state if the color sensor detecting a color different from our
+                    // alliance color. We keep checking the color of the beacon. If it has changed to our color
+                    // or time has expired, move on to the next state.
                     //
                     if (Robot.USE_COLOR_SENSOR)
                     {
@@ -330,8 +375,8 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
 
                 case RETRACT:
                     //
-                    // We need to retract the pusher a little bit before start moving so it doesn't get
-                    // caught on by the beacon.
+                    // We need to retract the pusher a little bit before start moving so it doesn't get caught on
+                    // by the beacon.
                     //
                     if (leftPusherExtended)
                     {
@@ -350,8 +395,14 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case NEXT_BEACON:
+                    //
+                    // Determine if we are done pushing beacon buttons or if we have another beacon button to push.
+                    //
                     if (remainingBeaconButtons == 2)
                     {
+                        //
+                        // We have another button to push, go to the next beacon.
+                        //
                         xDistance = 0.0;
                         if (usePath1)
                         {
@@ -368,13 +419,15 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     }
                     else if (parkOption == FtcAuto.ParkOption.DO_NOTHING)
                     {
+                        //
+                        // We are done pushing beacon buttons and the ParkOption is none, so we are done.
+                        //
                         sm.setState(State.DONE);
                     }
                     else
                     {
                         //
-                        // We are going somewhere. let's get off the wall so we can turn.
-                        // We don't have enough time to go to the center vortex, so always head for the corner vortex.
+                        // We are going to park somewhere. let's get off the wall so we can run to our parking place.
                         //
                         if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
                         {
@@ -392,6 +445,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case GOTO_VORTEX:
+                    //
+                    // Go towards the vortexes.
+                    //
                     xDistance = 0.0;
                     if (usePath1)
                     {
@@ -414,6 +470,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case TURN_TO_VORTEX:
+                    //
+                    // Turn the robot to face the vortexes to either the front or the back of the robot.
+                    //
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 135.0;
 
@@ -422,6 +481,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
 
                 case PARK_VORTEX:
+                    //
+                    // Go forward or backward to the selected vortex.
+                    //
                     xDistance = 0.0;
                     if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
                     {

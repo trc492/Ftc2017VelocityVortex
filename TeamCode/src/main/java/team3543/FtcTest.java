@@ -86,15 +86,18 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     @Override
     public void initRobot()
     {
+        //
+        // FtcTest inherits from FtcTeleOp so it can do everything that FtcTeleOp can do and more.
+        //
         super.initRobot();
         //
-        // Miscellaneous.
+        // Initialize additional objects.
         //
         event = new TrcEvent("TestEvent");
         timer = new TrcTimer("TestTimer");
         sm = new TrcStateMachine<>("TestSM");
         //
-        // Choice menus.
+        // Test menus.
         //
         doMenus();
 
@@ -128,10 +131,10 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     // Overrides TrcRobot.RobotMode methods.
     //
 
-    @Override
-    public void startMode()
-    {
-        super.startMode();
+//    @Override
+//    public void startMode()
+//    {
+//        super.startMode();
 //        if (test == Test.SENSORS_TEST)
 //        {
 //            if (Robot.USE_COLOR_SENSOR)
@@ -144,12 +147,12 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 //                robot.lineDetectionSensor.setDeviceEnabled(true);
 //            }
 //        }
-    }   //startMode
-
-    @Override
-    public void stopMode()
-    {
-        super.stopMode();
+//    }   //startMode
+//
+//    @Override
+//    public void stopMode()
+//    {
+//        super.stopMode();
 //        if (test == Test.SENSORS_TEST)
 //        {
 //            if (Robot.USE_COLOR_SENSOR)
@@ -162,7 +165,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 //                robot.lineDetectionSensor.setDeviceEnabled(false);
 //            }
 //        }
-    }   //stopMode
+//    }   //stopMode
 
     //
     // Must override TeleOp so it doesn't fight with us.
@@ -279,6 +282,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
     private void doMenus()
     {
+        //
+        // Create menus.
+        //
         FtcChoiceMenu<Test> testMenu = new FtcChoiceMenu<>("Tests:", null, this);
         FtcValueMenu driveTimeMenu = new FtcValueMenu("Drive time:", testMenu, this, 1.0, 10.0, 1.0, 4.0, " %.0f sec");
         FtcValueMenu driveDistanceMenu = new FtcValueMenu(
@@ -287,7 +293,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 "Range distance:", testMenu, this, 0.5, 12.0, 0.5, 6.0, " %.0f in");
         FtcValueMenu turnDegreesMenu = new FtcValueMenu(
                 "Turn degrees:", testMenu, this, -360.0, 360.0, 5.0, 45.0, " %.0f deg");
-
+        //
+        // Populate menus.
+        //
         testMenu.addChoice("Sensors test", Test.SENSORS_TEST);
         testMenu.addChoice("Motors test", Test.MOTORS_TEST);
         testMenu.addChoice("X Timed drive", Test.X_TIMED_DRIVE, driveTimeMenu);
@@ -296,15 +304,21 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         testMenu.addChoice("Y Distance drive", Test.Y_DISTANCE_DRIVE, driveDistanceMenu);
         testMenu.addChoice("Range drive", Test.RANGE_DRIVE, rangeDistanceMenu);
         testMenu.addChoice("Degrees turn", Test.GYRO_TURN, turnDegreesMenu);
-
+        //
+        // Traverse menus.
+        //
         FtcMenu.walkMenuTree(testMenu);
-
+        //
+        // Fetch choices.
+        //
         test = testMenu.getCurrentChoiceObject();
         driveTime = driveTimeMenu.getCurrentValue();
         driveDistance = driveDistanceMenu.getCurrentValue();
         rangeDistance = rangeDistanceMenu.getCurrentValue();
         turnDegrees = turnDegreesMenu.getCurrentValue();
-
+        //
+        // Show choices.
+        //
         dashboard.displayPrintf(0, "Test: %s", testMenu.getCurrentChoiceText());
     }   //doMenus
 
@@ -388,6 +402,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     switch (motorIndex)
                     {
                         case 0:
+                            //
+                            // Run the left front wheel.
+                            //
                             robot.leftFrontWheel.setPower(0.5);
                             robot.rightFrontWheel.setPower(0.0);
                             robot.leftRearWheel.setPower(0.0);
@@ -395,6 +412,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                             break;
 
                         case 1:
+                            //
+                            // Run the right front wheel.
+                            //
                             robot.leftFrontWheel.setPower(0.0);
                             robot.rightFrontWheel.setPower(0.5);
                             robot.leftRearWheel.setPower(0.0);
@@ -402,6 +422,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                             break;
 
                         case 2:
+                            //
+                            // Run the left rear wheel.
+                            //
                             robot.leftFrontWheel.setPower(0.0);
                             robot.rightFrontWheel.setPower(0.0);
                             robot.leftRearWheel.setPower(0.5);
@@ -409,6 +432,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                             break;
 
                         case 3:
+                            //
+                            // Run the right rear wheel.
+                            //
                             robot.leftFrontWheel.setPower(0.0);
                             robot.rightFrontWheel.setPower(0.0);
                             robot.leftRearWheel.setPower(0.0);
@@ -423,7 +449,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 case DONE:
                 default:
                     //
-                    // We are done.
+                    // We are done, stop all wheels.
                     //
                     robot.leftFrontWheel.setPower(0.0);
                     robot.rightFrontWheel.setPower(0.0);
@@ -438,7 +464,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     /**
      * This method drives the robot to the specified distance to the wall using the Range Sensor. This test is
      * designed for tuning PID constants for the Range Sensor. Run this test with a specific distance to the wall
-     * (e.g. 5 inches). At the end of the run, check the dashboard display to see how far the robot is from the wall
+     * (e.g. 6 inches). At the end of the run, check the dashboard display to see how far the robot is from the wall
      * and the corresponding error. Tuned the PID constants to make the error to go near zero (error should be less
      * than tolerance).
      *
@@ -493,15 +519,19 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     public void gamepadButtonEvent(FtcGamepad gamepad, int button, boolean pressed)
     {
         boolean processed = false;
-
-        dashboard.displayPrintf(7, "%s: %04x->%s",
-                gamepad.toString(), button, pressed? "Pressed": "Released");
-
+        //
+        // In addition to or instead of the gamepad controls handled by FtcTeleOp, we can add to or override the
+        // FtcTeleOp gamepad actions.
+        //
+        dashboard.displayPrintf(7, "%s: %04x->%s", gamepad.toString(), button, pressed? "Pressed": "Released");
         if (gamepad == driverGamepad)
         {
             switch (button)
             {
                 case FtcGamepad.GAMEPAD_DPAD_UP:
+                    //
+                    // This is to calibrate the ball gate servo up position.
+                    //
                     if (pressed)
                     {
                         ballGatePos += 0.01;
@@ -512,6 +542,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_DOWN:
+                    //
+                    // This is to calibrate the ball gate servo down position.
+                    //
                     if (pressed)
                     {
                         ballGatePos -= 0.01;
@@ -522,6 +555,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_LEFT:
+                    //
+                    // This is to calibrate the button pusher servo retract position.
+                    //
                     if (pressed)
                     {
                         buttonPusherPos -= 0.05;
@@ -533,6 +569,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     break;
 
                 case FtcGamepad.GAMEPAD_DPAD_RIGHT:
+                    //
+                    // This is to calibrate the button pusher servo extend position.
+                    //
                     if (pressed)
                     {
                         buttonPusherPos += 0.05;
@@ -544,48 +583,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                     break;
             }
         }
-        else if (gamepad == operatorGamepad)
-        {
-            switch (button)
-            {
-                case FtcGamepad.GAMEPAD_A:
-                    break;
-
-                case FtcGamepad.GAMEPAD_Y:
-                    break;
-
-                case FtcGamepad.GAMEPAD_X:
-                    break;
-
-                case FtcGamepad.GAMEPAD_B:
-                    break;
-
-                case FtcGamepad.GAMEPAD_LBUMPER:
-                    break;
-
-                case FtcGamepad.GAMEPAD_RBUMPER:
-                    break;
-
-                case FtcGamepad.GAMEPAD_BACK:
-                    break;
-
-                case FtcGamepad.GAMEPAD_START:
-                    break;
-
-                case FtcGamepad.GAMEPAD_DPAD_UP:
-                    break;
-
-                case FtcGamepad.GAMEPAD_DPAD_DOWN:
-                    break;
-
-                case FtcGamepad.GAMEPAD_DPAD_LEFT:
-                    break;
-
-                case FtcGamepad.GAMEPAD_DPAD_RIGHT:
-                    break;
-            }
-        }
-
+        //
+        // If the control was not processed by this method, pass it back to FtcTeleOp.
+        //
         if (!processed)
         {
             super.gamepadButtonEvent(gamepad, button, pressed);

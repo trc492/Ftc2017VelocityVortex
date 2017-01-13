@@ -92,6 +92,9 @@ public class CmdFarStart implements TrcRobot.RobotCommand
             switch (state)
             {
                 case MOVE_OUT:
+                    //
+                    // Move out a little away from the wall so we can turn.
+                    //
                     xDistance = 0.0;
                     yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 6.0: 8.0;
 
@@ -100,6 +103,9 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     break;
 
                 case TURN_TO_CENTER_VORTEX:
+                    //
+                    // Turn to aim at the center vortex.
+                    //
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -45.0: 43.0;
 
@@ -108,6 +114,9 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     break;
 
                 case GET_CLOSER:
+                    //
+                    // We are a little too far to shoot, get a little closer.
+                    //
                     xDistance = 0.0;
                     yDistance = 12.0;
 
@@ -116,6 +125,9 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     break;
 
                 case SHOOT_PARTICLES:
+                    //
+                    // Shoot the selected number of particles.
+                    //
                     tracer.traceInfo(state.toString(), "NumParticles=%d", numParticles);
                     //
                     // Fire a particle if any.
@@ -124,21 +136,27 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     {
                         if (particleLoaded)
                         {
+                            //
+                            // The first particle is preloaded in the shooter so no need to load to save time.
+                            //
                             robot.shooter.fireOneShot(event);
                             particleLoaded = false;
                         }
                         else
                         {
+                            //
+                            // Need to load the second particle before shooting.
+                            //
                             robot.shooter.loadAndFireOneShot(event);
                         }
                         numParticles--;
                         sm.waitForSingleEvent(event, State.SHOOT_PARTICLES);
                     }
-                    //
-                    // Do delay if any.
-                    //
                     else
                     {
+                        //
+                        // Do delay if any.
+                        //
                         if (delay > 0.0 && delay - elapsedTime > 0)
                         {
                             timer.set(delay - elapsedTime, event);
@@ -152,6 +170,9 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     break;
 
                 case TURN_TO_CAPBALL:
+                    //
+                    // Turn the robot so that it will run and graze the Cap Ball off its base.
+                    //
                     xDistance = yDistance = 0.0;
                     robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -54.0: 48.0;
 
@@ -160,6 +181,9 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                     break;
 
                 case KNOCK_OUT_CAPBALL:
+                    //
+                    // Run and graze the Cap Ball.
+                    //
                     xDistance = 0.0;
                     yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? 80.0: 80.0;
 

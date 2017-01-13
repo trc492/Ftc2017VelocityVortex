@@ -132,11 +132,6 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         {
             textToSpeech = FtcOpMode.getInstance().getTextToSpeech();
         }
-
-        if (textToSpeech != null)
-        {
-            textToSpeech.speak("Initializing.", TextToSpeech.QUEUE_FLUSH, null);
-        }
         //
         // Initialize sensors.
         //
@@ -281,11 +276,16 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         conveyor = new FtcDcMotor("conveyorMotor");
 
+        //
+        // Wait for gyro calibration to complete if not already.
+        //
         while (gyro.isCalibrating())
         {
             TrcUtil.sleep(10);
         }
-
+        //
+        // Tell the driver initialization is complete.
+        //
         if (textToSpeech != null)
         {
             textToSpeech.speak("Initialization complete!", TextToSpeech.QUEUE_FLUSH, null);
@@ -298,7 +298,13 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         {
             lineDetectionSensor.sensor.enableLed(true);
         }
+        //
+        // Since our gyro is analog, we need to enable its integrator.
+        //
         gyro.setEnabled(true);
+        //
+        // Reset all X, Y and heading values.
+        //
         driveBase.resetPosition();
         targetHeading = 0.0;
     }   //startMode
@@ -306,6 +312,9 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     public void stopMode(TrcRobot.RunMode runMode)
     {
         shooter.stop();
+        //
+        // Disable the gyro integrator.
+        //
         gyro.setEnabled(false);
 
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)
@@ -374,7 +383,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
             if (zoneIndex > 0)
             {
                 //
-                // Encountering white line, abort PID drive.
+                // Detected white line, abort PID drive.
                 //
                 tracer.traceInfo(moduleName, "%s: Found white line.", analogTrigger.toString());
                 pidDrive.cancel();

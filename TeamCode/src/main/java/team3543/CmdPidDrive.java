@@ -88,6 +88,9 @@ public class CmdPidDrive implements TrcRobot.RobotCommand
             switch (state)
             {
                 case DO_DELAY:
+                    //
+                    // Do delay if any.
+                    //
                     if (delay == 0.0)
                     {
                         sm.setState(State.DO_PID_DRIVE);

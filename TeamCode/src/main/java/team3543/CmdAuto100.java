@@ -432,11 +432,11 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         //
                         if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
                         {
-                            xDistance = usePath1 && beaconButtons == 2? 24.0: 36.0;
+                            xDistance = beaconButtons == 2 && usePath1 ? 12.0 : 40.0;
                         }
                         else
                         {
-                            xDistance = 36.0;
+                            xDistance = 24.0;
                         }
                         yDistance = 0.0;
 
@@ -449,7 +449,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     //
                     // Go towards the vortexes.
                     //
-                    xDistance = 0.0;
+                    xDistance = yDistance = 0.0;
                     nextState = State.TURN_TO_VORTEX;
                     if (usePath1)
                     {
@@ -457,11 +457,14 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         {
                             if (alliance == FtcAuto.Alliance.BLUE_ALLIANCE)
                             {
-                                yDistance = 0.0;
+                                if (parkOption == FtcAuto.ParkOption.PARK_CORNER)
+                                {
+                                    yDistance = 36.0;
+                                    nextState = State.DONE;
+                                }
                             }
                             else if (parkOption == FtcAuto.ParkOption.PARK_CENTER)
                             {
-                                yDistance = 0.0;
                                 robot.targetHeading = -45.0;
                                 nextState = State.PARK_VORTEX;
                             }
@@ -476,9 +479,14 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                             yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -40.0 : 60.0;
                         }
                     }
-                    else
+                    else if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
                     {
-                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -40.0 : 0.0;
+                        yDistance = -40.0;
+                    }
+                    else if (parkOption == FtcAuto.ParkOption.PARK_CORNER)
+                    {
+                        yDistance = 36.0;
+                        nextState = State.DONE;
                     }
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
@@ -490,7 +498,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // Turn the robot to face the vortexes to either the front or the back of the robot.
                     //
                     xDistance = yDistance = 0.0;
-                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 135.0;
+                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 120.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PARK_VORTEX);
@@ -503,7 +511,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     xDistance = 0.0;
                     if (alliance == FtcAuto.Alliance.BLUE_ALLIANCE)
                     {
-                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? -36.0: 36.0;
+                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? -36.0: 40.0;
                     }
                     else if (usePath1 && beaconButtons == 2 && parkOption == FtcAuto.ParkOption.PARK_CENTER)
                     {

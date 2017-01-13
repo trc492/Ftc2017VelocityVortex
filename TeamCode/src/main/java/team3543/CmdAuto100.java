@@ -142,6 +142,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
         if (sm.isReady())
         {
             state = sm.getState();
+            State nextState;
             double xDistance, yDistance;
             int redValue, greenValue, blueValue;
             boolean isRed, isBlue;
@@ -449,11 +450,13 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // Go towards the vortexes.
                     //
                     xDistance = 0.0;
+                    nextState = State.TURN_TO_VORTEX;
                     if (usePath1)
                     {
                         if (beaconButtons == 2)
                         {
-                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -72.0 : 0.0;
+                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -84.0 : 0.0;
+                            nextState = State.DONE;
                         }
                         else
                         {
@@ -466,7 +469,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     }
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
-                    sm.waitForSingleEvent(event, State.TURN_TO_VORTEX);
+                    sm.waitForSingleEvent(event, nextState);
                     break;
 
                 case TURN_TO_VORTEX:

@@ -191,7 +191,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         // Create menus.
         //
         FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", null, this);
-        FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", allianceMenu, this, 0.0, 15.0, 1.0, 0.0, " %.0f sec");
+        FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", allianceMenu, this, 0.0, 30.0, 1.0, 0.0, " %.0f sec");
         FtcValueMenu numParticlesMenu = new FtcValueMenu(
                 "Shoot particles:", delayMenu, this, 0.0, 2.0, 1.0, 2.0, " %.0f");
         FtcChoiceMenu<ParkOption> parkOptionMenu = new FtcChoiceMenu<>("Park options:", numParticlesMenu, this);
@@ -199,9 +199,9 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         FtcValueMenu beaconButtonsMenu = new FtcValueMenu(
                 "Push beacon buttons:", strategyMenu, this, 0.0, 2.0, 1.0, 2.0, " %.0f");
         FtcValueMenu driveDistanceMenu = new FtcValueMenu(
-                "Distance:", strategyMenu, this, -10.0, 10.0, 0.5, 5.0, " %.0f ft");
+                "Distance:", strategyMenu, this, -12.0, 12.0, 0.5, 4.0, " %.0f ft");
         FtcValueMenu driveTimeMenu = new FtcValueMenu(
-                "Drive time:", strategyMenu, this, 0.0, 15.0, 1.0, 5.0, " %.0f sec");
+                "Drive time:", strategyMenu, this, 0.0, 20.0, 1.0, 5.0, " %.0f sec");
         FtcValueMenu drivePowerMenu = new FtcValueMenu(
                 "Drive power:", driveTimeMenu, this, -1.0, 1.0, 0.1, 0.5, " %.1f");
         //

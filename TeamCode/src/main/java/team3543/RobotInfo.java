@@ -33,7 +33,7 @@ public class RobotInfo
     public static final int DRIVE_MAX_SPEED                     = 4000;     //encoder counts per second
     public static final DcMotor.RunMode DRIVE_MOTOR_MODE        = DcMotor.RunMode.RUN_WITHOUT_ENCODER;
 //    public static final DcMotor.RunMode DRIVE_MOTOR_MODE        = DcMotor.RunMode.RUN_USING_ENCODER;
-    public static final double TURN_POWER_LIMIT                 = 0.50;
+    public static final double TURN_POWER_LIMIT                 = 0.5;
 
     //
     // INCHES_PER_COUNT: 0.0132166817227156
@@ -102,7 +102,7 @@ public class RobotInfo
     public static final double RANGE_TOLERANCE                  = 0.5;
     public static final double RANGE_SETTLING                   = 0.2;
 
-    public static final double PIDDRIVE_STALL_TIMEOUT           = 0.5;      //in msec.
+    public static final double PIDDRIVE_STALL_TIMEOUT           = 0.25;     //in msec.
 
     //
     // Line detection.

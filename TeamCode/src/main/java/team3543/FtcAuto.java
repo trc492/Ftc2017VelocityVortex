@@ -34,15 +34,22 @@ import trclib.TrcDbgTrace;
 import trclib.TrcRobot;
 
 @Autonomous(name="Autonomous", group="3543Auto")
-public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
+class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 {
-    public enum Alliance
+    enum Alliance
     {
         RED_ALLIANCE,
         BLUE_ALLIANCE
     }   //enum Alliance
 
-    public enum Strategy
+    enum ParkOption
+    {
+        DO_NOTHING,
+        PARK_CORNER,
+        PARK_CENTER
+    }   //enum ParkOption
+
+    private enum Strategy
     {
         AUTO_100_1,
         AUTO_100_2,
@@ -52,13 +59,6 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         TIMED_DRIVE,
         DO_NOTHING
     }   //enum Strategy
-
-    public enum ParkOption
-    {
-        DO_NOTHING,
-        PARK_CORNER,
-        PARK_CENTER
-    }   //enum ParkOption
 
     private static final String moduleName = "FtcAuto";
 

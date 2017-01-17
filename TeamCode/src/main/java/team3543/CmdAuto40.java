@@ -28,12 +28,11 @@ import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 
-public class CmdAuto40 implements TrcRobot.RobotCommand
+class CmdAuto40 implements TrcRobot.RobotCommand
 {
     private static final boolean debugXPid = false;
     private static final boolean debugYPid = false;
     private static final boolean debugTurnPid = false;
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private enum State
     {
@@ -56,13 +55,12 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
     private TrcEvent event;
     private TrcStateMachine<State> sm;
 
-    public CmdAuto40(
-            Robot robot,
-            FtcAuto.Alliance alliance,
-            double delay,
-            int numParticles,
-            FtcAuto.ParkOption parkOption,
-            boolean startNear)
+    CmdAuto40(Robot robot,
+              FtcAuto.Alliance alliance,
+              double delay,
+              int numParticles,
+              FtcAuto.ParkOption parkOption,
+              boolean startNear)
     {
         this.robot = robot;
         this.alliance = alliance;
@@ -218,6 +216,8 @@ public class CmdAuto40 implements TrcRobot.RobotCommand
 
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
         {
+            TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
+
             tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
                              robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
 

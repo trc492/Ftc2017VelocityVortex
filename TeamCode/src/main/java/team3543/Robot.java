@@ -54,74 +54,69 @@ import trclib.TrcUtil;
 
 public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.TriggerHandler
 {
-    public static final boolean USE_SPEECH = true;
-    public static final boolean USE_RANGE_SENSOR = true;
-    public static final boolean USE_LINE_DETECTOR = true;
-    public static final boolean USE_ODS_LINE_DETECTOR = true;
-    public static final boolean USE_COLOR_SENSOR = true;
-    public static final boolean USE_ANALOG_GYRO = true;
+    static final boolean USE_RANGE_SENSOR = true;
+    static final boolean USE_LINE_DETECTOR = true;
+    static final boolean USE_ODS_LINE_DETECTOR = true;
+    static final boolean USE_COLOR_SENSOR = true;
+    private static final boolean USE_ANALOG_GYRO = true;
+    private static final boolean USE_SPEECH = true;
 
     private static final String moduleName = "Robot";
     //
     // Global objects.
     //
-    public FtcOpMode opmode;
-    public HardwareMap hardwareMap;
     public HalDashboard dashboard;
-    public FtcRobotControllerActivity activity;
-    public TrcDbgTrace tracer;
+    private TrcDbgTrace tracer;
     //
     // Text To Speech.
     //
-    public TextToSpeech textToSpeech = null;
+    private TextToSpeech textToSpeech = null;
     //
     // Sensors.
     //
-    public TrcGyro gyro = null;
-    public FtcMRColorSensor beaconColorSensor = null;
-    public FtcMRColorSensor lineDetectionSensor = null;
-    public FtcOpticalDistanceSensor odsLineDetector = null;
-    public FtcMRRangeSensor rangeSensor = null;
+    TrcGyro gyro = null;
+    FtcMRColorSensor beaconColorSensor = null;
+    FtcMRColorSensor lineDetectionSensor = null;
+    FtcOpticalDistanceSensor odsLineDetector = null;
+    private FtcMRRangeSensor rangeSensor = null;
     private double prevRangeValue = 0.0;
     //
     // DriveBase subsystem.
     //
-    public FtcDcMotor leftFrontWheel = null;
-    public FtcDcMotor rightFrontWheel = null;
-    public FtcDcMotor leftRearWheel = null;
-    public FtcDcMotor rightRearWheel = null;
-    public TrcDriveBase driveBase = null;
-    public FtcRobotBattery battery = null;
-    public FtcAndroidTone androidTone = null;
+    FtcDcMotor leftFrontWheel = null;
+    FtcDcMotor rightFrontWheel = null;
+    FtcDcMotor leftRearWheel = null;
+    FtcDcMotor rightRearWheel = null;
+    TrcDriveBase driveBase = null;
+    FtcRobotBattery battery = null;
 
-    public TrcPidController encoderXPidCtrl = null;
-    public TrcPidController encoderYPidCtrl = null;
-    public TrcPidController gyroPidCtrl = null;
-    public TrcPidController rangePidCtrl = null;
-    public TrcPidDrive pidDrive = null;
-    public TrcPidDrive rangePidDrive = null;
+    TrcPidController encoderXPidCtrl = null;
+    TrcPidController encoderYPidCtrl = null;
+    TrcPidController gyroPidCtrl = null;
+    TrcPidController rangePidCtrl = null;
+    TrcPidDrive pidDrive = null;
+    TrcPidDrive rangePidDrive = null;
 
-    public TrcAnalogTrigger<FtcOpticalDistanceSensor.DataType> odsTrigger = null;
-    public TrcAnalogTrigger<FtcMRColorSensor.DataType> colorTrigger = null;
-    public double targetHeading = 0.0;
+    TrcAnalogTrigger<FtcOpticalDistanceSensor.DataType> odsTrigger = null;
+    TrcAnalogTrigger<FtcMRColorSensor.DataType> colorTrigger = null;
+    double targetHeading = 0.0;
     //
     // Other subsystems.
     //
-    public Shooter shooter = null;
-    public FtcServo leftButtonPusher = null;
-    public FtcServo rightButtonPusher = null;
-    public FtcDcMotor ballPickUp = null;
-    public FtcDcMotor conveyor = null;
+    Shooter shooter = null;
+    FtcServo leftButtonPusher = null;
+    FtcServo rightButtonPusher = null;
+    FtcDcMotor ballPickUp = null;
+    FtcDcMotor conveyor = null;
 
     public Robot(TrcRobot.RunMode runMode)
     {
         //
         // Initialize global objects.
         //
-        opmode = FtcOpMode.getInstance();
-        hardwareMap = opmode.hardwareMap;
+        HardwareMap hardwareMap = FtcOpMode.getInstance().hardwareMap;
         dashboard = HalDashboard.getInstance();
-        activity = (FtcRobotControllerActivity)hardwareMap.appContext;
+        FtcRobotControllerActivity activity = (FtcRobotControllerActivity)hardwareMap.appContext;
         hardwareMap.logDevices();
         dashboard.setTextView((TextView)activity.findViewById(FtcSampleCode.R.id.textOpMode));
         tracer = FtcOpMode.getGlobalTracer();
@@ -200,7 +195,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         //
         // Initialize tone device.
         //
-        androidTone = new FtcAndroidTone("AndroidTone");
+        FtcAndroidTone androidTone = new FtcAndroidTone("AndroidTone");
         //
         // Initialize PID drive.
         //
@@ -292,7 +287,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         }
     }   //Robot
 
-    public void startMode(TrcRobot.RunMode runMode)
+    void startMode(TrcRobot.RunMode runMode)
     {
         if (USE_LINE_DETECTOR && !USE_ODS_LINE_DETECTOR)
         {
@@ -309,7 +304,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         targetHeading = 0.0;
     }   //startMode
 
-    public void stopMode(TrcRobot.RunMode runMode)
+    void stopMode(TrcRobot.RunMode runMode)
     {
         shooter.stop();
         //
@@ -451,14 +446,14 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         }
     }   //setDrivePID
 
-    public void setPIDDriveTarget(
+    void setPIDDriveTarget(
             double xDistance, double yDistance, double heading, boolean holdTarget, TrcEvent event)
     {
         setDrivePID(xDistance, yDistance, heading);
         pidDrive.setTarget(xDistance, yDistance, heading, holdTarget, event);
     }   //setPIDDriveTarget
 
-    public void traceStateInfo(double elapsedTime, String stateName)
+    void traceStateInfo(double elapsedTime, String stateName)
     {
         tracer.traceInfo(
                 moduleName, "[%5.3f] %17s: xPos=%6.2f,yPos=%6.2f,heading=%6.1f/%6.1f,range=%5.2f,volt=%5.2fV(%5.2fV)",
@@ -467,9 +462,8 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 getInput(rangePidCtrl), battery.getCurrentVoltage(), battery.getLowestVoltage());
     }   //traceStateInfo
 
-    public double selectParameter(
-            boolean startNear, FtcAuto.Alliance alliance, double nearRed, double nearBlue,
-            double farRed, double farBlue)
+    double selectParameter(boolean startNear, FtcAuto.Alliance alliance, double nearRed, double nearBlue,
+                           double farRed, double farBlue)
     {
         if (startNear)
         {

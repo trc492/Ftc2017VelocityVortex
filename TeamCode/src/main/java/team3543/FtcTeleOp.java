@@ -30,7 +30,7 @@ import hallib.HalDashboard;
 import trclib.TrcRobot;
 
 @TeleOp(name="TeleOp", group="3543TeleOp")
-public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
+class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 {
     private enum DriveMode
     {
@@ -48,8 +48,8 @@ public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
     protected HalDashboard dashboard;
     protected Robot robot;
 
-    protected FtcGamepad driverGamepad;
-    protected FtcGamepad operatorGamepad;
+    FtcGamepad driverGamepad;
+    private FtcGamepad operatorGamepad;
 
     private double drivePowerScale = 1.0;
     private boolean invertedDrive = false;

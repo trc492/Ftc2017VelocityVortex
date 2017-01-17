@@ -29,7 +29,7 @@ import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
-public class CmdNearStart implements TrcRobot.RobotCommand
+class CmdNearStart implements TrcRobot.RobotCommand
 {
     private static final boolean debugXPid = false;
     private static final boolean debugYPid = false;
@@ -51,19 +51,19 @@ public class CmdNearStart implements TrcRobot.RobotCommand
     private FtcAuto.Alliance alliance;
     private double delay;
     private int numParticles;
-    private boolean shortRun;
+    private boolean nearBeacon;
     private TrcEvent event;
     private TrcTimer timer;
     private TrcStateMachine<State> sm;
     private boolean particleLoaded = true;
 
-    public CmdNearStart(Robot robot, FtcAuto.Alliance alliance, double delay, int numParticles, boolean shortRun)
+    CmdNearStart(Robot robot, FtcAuto.Alliance alliance, double delay, int numParticles, boolean nearBeacon)
     {
         this.robot = robot;
         this.alliance = alliance;
         this.delay = delay;
         this.numParticles = numParticles;
-        this.shortRun = shortRun;
+        this.nearBeacon = nearBeacon;
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
         sm = new TrcStateMachine<>(moduleName);
@@ -163,7 +163,7 @@ public class CmdNearStart implements TrcRobot.RobotCommand
                     // Run and graze the Cap Ball.
                     //
                     xDistance = 0.0;
-                    yDistance = shortRun? 42.0: 60.0;
+                    yDistance = nearBeacon? 42.0: 60.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);

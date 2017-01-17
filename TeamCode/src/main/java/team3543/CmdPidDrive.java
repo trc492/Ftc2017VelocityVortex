@@ -29,12 +29,11 @@ import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
-public class CmdPidDrive implements TrcRobot.RobotCommand
+class CmdPidDrive implements TrcRobot.RobotCommand
 {
     private static final boolean debugXPid = false;
     private static final boolean debugYPid = false;
     private static final boolean debugTurnPid = false;
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private enum State
     {
@@ -54,7 +53,7 @@ public class CmdPidDrive implements TrcRobot.RobotCommand
     private TrcTimer timer;
     private TrcStateMachine<State> sm;
 
-    public CmdPidDrive(Robot robot, double delay, double xDistance, double yDistance, double heading)
+    CmdPidDrive(Robot robot, double delay, double xDistance, double yDistance, double heading)
     {
         this.robot = robot;
         this.delay = delay;
@@ -124,6 +123,8 @@ public class CmdPidDrive implements TrcRobot.RobotCommand
 
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
         {
+            TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
+
             tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
                              robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
 

@@ -27,7 +27,7 @@ import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
-public class CmdTimedDrive implements TrcRobot.RobotCommand
+class CmdTimedDrive implements TrcRobot.RobotCommand
 {
     private enum State
     {
@@ -48,8 +48,7 @@ public class CmdTimedDrive implements TrcRobot.RobotCommand
     private TrcTimer timer;
     private TrcStateMachine<State> sm;
 
-    public CmdTimedDrive(
-            Robot robot, double delay, double driveTime, double xDrivePower, double yDrivePower, double turnPower)
+    CmdTimedDrive(Robot robot, double delay, double driveTime, double xDrivePower, double yDrivePower, double turnPower)
     {
         this.robot = robot;
         this.delay = delay;

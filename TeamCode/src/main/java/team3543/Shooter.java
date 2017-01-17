@@ -33,7 +33,7 @@ import trclib.TrcStateMachine;
 import trclib.TrcTaskMgr;
 import trclib.TrcTimer;
 
-public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
+class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
 {
     private enum ShooterState
     {
@@ -55,7 +55,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
     private TrcEvent completionEvent = null;
     private boolean continuousModeOn = false;
 
-    public Shooter(String instanceName)
+    Shooter(String instanceName)
     {
         this.instanceName = instanceName;
 
@@ -94,7 +94,7 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         }
     }
 
-    public void stop()
+    void stop()
     {
         if (sm.isEnabled())
         {
@@ -105,22 +105,22 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         pidMotor.cancel();
     }
 
-    public double getPosition()
+    double getPosition()
     {
         return pidMotor.getPosition();
     }
 
-    public boolean isTouchActive()
+    boolean isTouchActive()
     {
         return touchSensor.isActive();
     }
 
-    public void setPower(double power)
+    void setPower(double power)
     {
         shooterMotor.setPower(power);
     }
 
-    public void setBallGatePosition(double position)
+    void setBallGatePosition(double position)
     {
         ballGate.setPosition(position);
     }
@@ -137,27 +137,27 @@ public class Shooter implements TrcTaskMgr.Task, TrcPidController.PidInput
         setTaskEnabled(true);
     }
 
-    public void fireOneShot(TrcEvent event)
+    void fireOneShot(TrcEvent event)
     {
         fire(ShooterState.ARM_AND_FIRE, false, event);
     }
 
-    public void fireOneShot()
+    void fireOneShot()
     {
         fire(ShooterState.ARM_AND_FIRE, false, null);
     }
 
-    public void loadAndFireOneShot(TrcEvent event)
+    void loadAndFireOneShot(TrcEvent event)
     {
         fire(ShooterState.LOAD_PARTICLE, false, event);
     }
 
-    public void loadAndFireOneShot()
+    void loadAndFireOneShot()
     {
         fire(ShooterState.LOAD_PARTICLE, false, null);
     }
 
-    public void fireContinuous(boolean on)
+    void fireContinuous(boolean on)
     {
         continuousModeOn = on;
         if (on)

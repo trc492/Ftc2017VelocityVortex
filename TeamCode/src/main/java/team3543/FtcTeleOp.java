@@ -30,7 +30,7 @@ import hallib.HalDashboard;
 import trclib.TrcRobot;
 
 @TeleOp(name="TeleOp", group="3543TeleOp")
-class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
+public class FtcTeleOp extends FtcOpMode implements FtcGamepad.ButtonHandler
 {
     private enum DriveMode
     {

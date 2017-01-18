@@ -34,7 +34,7 @@ import trclib.TrcDbgTrace;
 import trclib.TrcRobot;
 
 @Autonomous(name="Autonomous", group="3543Auto")
-class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
+public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 {
     enum Alliance
     {
@@ -55,6 +55,7 @@ class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         AUTO_100_2,
         AUTO_40_NEAR,
         AUTO_40_FAR,
+//        AUTO_20_FAR,
         DISTANCE_DRIVE,
         TIMED_DRIVE,
         DO_NOTHING
@@ -111,6 +112,10 @@ class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
             case AUTO_40_FAR:
                 autoCommand = new CmdAuto40(robot, alliance, delay, numParticles, parkOption, false);
                 break;
+
+//            case AUTO_20_FAR:
+//                autoCommand = new CmdAuto20(robot, alliance, delay, numParticles);
+//                break;
 
             case DISTANCE_DRIVE:
                 autoCommand = new CmdPidDrive(robot, delay, 0.0, driveDistance*12.0, 0.0);
@@ -201,7 +206,7 @@ class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         FtcValueMenu driveDistanceMenu = new FtcValueMenu(
                 "Distance:", strategyMenu, this, -12.0, 12.0, 0.5, 4.0, " %.0f ft");
         FtcValueMenu driveTimeMenu = new FtcValueMenu(
-                "Drive time:", strategyMenu, this, 0.0, 20.0, 1.0, 5.0, " %.0f sec");
+                "Drive time:", strategyMenu, this, 0.0, 30.0, 1.0, 5.0, " %.0f sec");
         FtcValueMenu drivePowerMenu = new FtcValueMenu(
                 "Drive power:", driveTimeMenu, this, -1.0, 1.0, 0.1, 0.5, " %.1f");
         //

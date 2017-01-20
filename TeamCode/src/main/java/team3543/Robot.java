@@ -66,7 +66,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     // Global objects.
     //
     public HalDashboard dashboard;
-    private TrcDbgTrace tracer;
+    public TrcDbgTrace tracer;
     //
     // Text To Speech.
     //

@@ -27,9 +27,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import ftclib.FtcChoiceMenu;
 import ftclib.FtcGamepad;
 import ftclib.FtcMenu;
-import ftclib.FtcOpMode;
 import ftclib.FtcValueMenu;
-import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
@@ -37,7 +35,7 @@ import trclib.TrcTimer;
 @TeleOp(name="Test", group="3543Test")
 public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepad.ButtonHandler
 {
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
+    private static final String moduleName = "FtcTest";
 
     private enum Test
     {
@@ -93,9 +91,9 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         //
         // Initialize additional objects.
         //
-        event = new TrcEvent("TestEvent");
-        timer = new TrcTimer("TestTimer");
-        sm = new TrcStateMachine<>("TestSM");
+        event = new TrcEvent(moduleName);
+        timer = new TrcTimer(moduleName);
+        sm = new TrcStateMachine<>(moduleName);
         //
         // Test menus.
         //
@@ -174,7 +172,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
     public void runPeriodic(double elapsedTime)
     {
         //
-        // Allow TeleOp to run so we can control the robot in test sensor mode.
+        // Allow TeleOp to run so we can control the robot in sensors test mode.
         //
         if (test == Test.SENSORS_TEST)
         {
@@ -230,15 +228,15 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
                 {
                     if (test == Test.X_DISTANCE_DRIVE)
                     {
-                        robot.encoderXPidCtrl.printPidInfo(tracer);
+                        robot.encoderXPidCtrl.printPidInfo(robot.tracer);
                     }
                     else if (test == Test.Y_DISTANCE_DRIVE)
                     {
-                        robot.encoderYPidCtrl.printPidInfo(tracer);
+                        robot.encoderYPidCtrl.printPidInfo(robot.tracer);
                     }
                     else if (test == Test.GYRO_TURN)
                     {
-                        robot.gyroPidCtrl.printPidInfo(tracer);
+                        robot.gyroPidCtrl.printPidInfo(robot.tracer);
                     }
                 }
                 break;
@@ -507,7 +505,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         if (robot.rangePidDrive.isActive())
         {
-            robot.rangePidCtrl.printPidInfo(tracer);
+            robot.rangePidCtrl.printPidInfo(robot.tracer);
         }
     }   //doRangeDrive
 

@@ -22,8 +22,6 @@
 
 package team3543;
 
-import ftclib.FtcOpMode;
-import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
@@ -34,7 +32,6 @@ class CmdNearStart implements TrcRobot.RobotCommand
     private static final boolean debugXPid = false;
     private static final boolean debugYPid = false;
     private static final boolean debugTurnPid = false;
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private enum State
     {
@@ -95,7 +92,7 @@ class CmdNearStart implements TrcRobot.RobotCommand
                     //
                     // Shoot the selected number of particles.
                     //
-                    tracer.traceInfo(state.toString(), "NumParticles=%d", numParticles);
+                    robot.tracer.traceInfo(state.toString(), "NumParticles=%d", numParticles);
                     //
                     // Fire a particle if any.
                     //
@@ -183,22 +180,22 @@ class CmdNearStart implements TrcRobot.RobotCommand
 
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
         {
-            tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
-                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+            robot.tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
+                                   robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
 
             if (debugXPid)
             {
-                robot.encoderXPidCtrl.printPidInfo(tracer);
+                robot.encoderXPidCtrl.printPidInfo(robot.tracer);
             }
 
             if (debugYPid)
             {
-                robot.encoderYPidCtrl.printPidInfo(tracer);
+                robot.encoderYPidCtrl.printPidInfo(robot.tracer);
             }
 
             if (debugTurnPid)
             {
-                robot.gyroPidCtrl.printPidInfo(tracer);
+                robot.gyroPidCtrl.printPidInfo(robot.tracer);
             }
         }
 

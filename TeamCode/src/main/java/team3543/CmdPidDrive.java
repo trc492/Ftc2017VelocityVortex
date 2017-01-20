@@ -22,8 +22,6 @@
 
 package team3543;
 
-import ftclib.FtcOpMode;
-import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
@@ -123,24 +121,22 @@ class CmdPidDrive implements TrcRobot.RobotCommand
 
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
         {
-            TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
-
-            tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
-                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+            robot.tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
+                                   robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
 
             if (debugXPid && xDistance != 0.0)
             {
-                robot.encoderXPidCtrl.printPidInfo(tracer);
+                robot.encoderXPidCtrl.printPidInfo(robot.tracer);
             }
 
             if (debugYPid && yDistance != 0.0)
             {
-                robot.encoderYPidCtrl.printPidInfo(tracer);
+                robot.encoderYPidCtrl.printPidInfo(robot.tracer);
             }
 
             if (debugTurnPid)
             {
-                robot.gyroPidCtrl.printPidInfo(tracer);
+                robot.gyroPidCtrl.printPidInfo(robot.tracer);
             }
         }
 

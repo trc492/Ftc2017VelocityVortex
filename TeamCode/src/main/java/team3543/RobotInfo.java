@@ -29,6 +29,7 @@ class RobotInfo
     //
     // DriveBase subsystem.
     //
+    static final float MM_PER_INCH                      = 25.4f;
 
     static final int DRIVE_MAX_SPEED                    = 4000;     //encoder counts per second
     static final DcMotor.RunMode DRIVE_MOTOR_MODE       = DcMotor.RunMode.RUN_WITHOUT_ENCODER;

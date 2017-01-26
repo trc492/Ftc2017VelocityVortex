@@ -22,8 +22,6 @@
 
 package team3543;
 
-import ftclib.FtcOpMode;
-import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
@@ -67,7 +65,7 @@ class CmdAuto40 implements TrcRobot.RobotCommand
         this.parkOption = parkOption;
         this.startNear = startNear;
         startCmd = startNear? new CmdNearStart(robot, alliance, delay, numParticles, true):
-                              new CmdFarStart(robot, alliance, delay, numParticles);
+                              new CmdFarStart(robot, alliance, delay, numParticles, false);
         event = new TrcEvent(moduleName);
         sm = new TrcStateMachine<>(moduleName);
         sm.start(State.START);
@@ -97,7 +95,8 @@ class CmdAuto40 implements TrcRobot.RobotCommand
         {
             state = sm.getState();
             State nextState;
-            double xDistance, yDistance;
+            double xDistance = 0.0, yDistance = 0.0;
+            boolean printStateInfo = true;
 
             switch (state)
             {
@@ -108,6 +107,7 @@ class CmdAuto40 implements TrcRobot.RobotCommand
                     // This state will run that segment until its completion when it returns true, then we move on to
                     // the next state. startCmd would shoot a specified number of particles and displace the Cap Ball.
                     //
+                    printStateInfo = false;
                     if (startCmd.cmdPeriodic(elapsedTime))
                     {
                         sm.setState(State.BACKUP);
@@ -208,32 +208,30 @@ class CmdAuto40 implements TrcRobot.RobotCommand
                     break;
             }
 
-            if (state != State.START)
+            if (printStateInfo)
             {
-                robot.traceStateInfo(elapsedTime, state.toString());
+                robot.traceStateInfo(elapsedTime, state.toString(), xDistance, yDistance, robot.targetHeading);
             }
         }
 
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
         {
-            TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
-
-            tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
-                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+            robot.tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
+                                   robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
 
             if (debugXPid)
             {
-                robot.encoderXPidCtrl.printPidInfo(tracer);
+                robot.encoderXPidCtrl.printPidInfo(robot.tracer);
             }
 
             if (debugYPid)
             {
-                robot.encoderYPidCtrl.printPidInfo(tracer);
+                robot.encoderYPidCtrl.printPidInfo(robot.tracer);
             }
 
             if (debugTurnPid)
             {
-                robot.gyroPidCtrl.printPidInfo(tracer);
+                robot.gyroPidCtrl.printPidInfo(robot.tracer);
             }
         }
 

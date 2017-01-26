@@ -80,6 +80,7 @@ class RobotInfo
     // 12/10/2016: 0.022, 0.0, 0.0024; [< 15] 0.028, 0.0, 0.0;      (No speed control, 0.75 power limit)
     // 01/09/2017: 0.024, 0.0, 0.024; [< 15] 0.03, 0.0, 0.001;        (No speed control, 0.75 power limit)
     //
+    static final double ANALOG_GYRO_SCALE               = 1.0136;
     static final double ANALOG_GYRO_VOLT_PER_DEG_PER_SEC= 0.007;
     static final double GYRO_KP                         = 0.024;
     static final double GYRO_KI                         = 0.0;

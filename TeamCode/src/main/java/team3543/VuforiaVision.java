@@ -109,12 +109,12 @@ public class VuforiaVision
                                               target.getName(),
                                               targetPos.get(0)/RobotInfo.MM_PER_INCH,
                                               targetPos.get(1)/RobotInfo.MM_PER_INCH,
-                                              -targetPos.get(2)/RobotInfo.MM_PER_INCH);
+                                              targetPos.get(2)/RobotInfo.MM_PER_INCH);
                 robot.tracer.traceInfo("TargetPos", "%s: %6.2f, %6.2f, %6.2f",
                                        target.getName(),
                                        targetPos.get(0)/RobotInfo.MM_PER_INCH,
                                        targetPos.get(1)/RobotInfo.MM_PER_INCH,
-                                       -targetPos.get(2)/RobotInfo.MM_PER_INCH);
+                                       targetPos.get(2)/RobotInfo.MM_PER_INCH);
             }
         }
 

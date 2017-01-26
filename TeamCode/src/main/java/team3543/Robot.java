@@ -134,6 +134,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         {
             gyro = new FtcAnalogGyro("analogGyro", RobotInfo.ANALOG_GYRO_VOLT_PER_DEG_PER_SEC);
             ((FtcAnalogGyro)gyro).calibrate();
+            gyro.setScale(0, RobotInfo.ANALOG_GYRO_SCALE);
         }
         else
         {

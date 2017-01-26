@@ -30,7 +30,6 @@ import ftclib.FtcChoiceMenu;
 import ftclib.FtcMenu;
 import ftclib.FtcOpMode;
 import ftclib.FtcValueMenu;
-import trclib.TrcDbgTrace;
 import trclib.TrcRobot;
 
 @Autonomous(name="Autonomous", group="3543Auto")
@@ -55,7 +54,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         AUTO_100_2,
         AUTO_40_NEAR,
         AUTO_40_FAR,
-//        AUTO_20_FAR,
+        AUTO_40D_FAR,
         DISTANCE_DRIVE,
         TIMED_DRIVE,
         DO_NOTHING
@@ -63,9 +62,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
     private static final String moduleName = "FtcAuto";
 
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
     private Robot robot;
-
     private TrcRobot.RobotCommand autoCommand = null;
     private Alliance alliance = Alliance.RED_ALLIANCE;
     private double delay = 0.0;
@@ -113,9 +110,9 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 autoCommand = new CmdAuto40(robot, alliance, delay, numParticles, parkOption, false);
                 break;
 
-//            case AUTO_20_FAR:
-//                autoCommand = new CmdAuto20(robot, alliance, delay, numParticles);
-//                break;
+            case AUTO_40D_FAR:
+//                autoCommand = new CmdAuto40D(robot, alliance, delay, numParticles, parkOption);
+                break;
 
             case DISTANCE_DRIVE:
                 autoCommand = new CmdPidDrive(robot, delay, 0.0, driveDistance*12.0, 0.0);
@@ -142,7 +139,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         robot.startMode(TrcRobot.RunMode.AUTO_MODE);
         robot.battery.setEnabled(true);
         Date date = new Date();
-        tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", date.toString());
+        robot.tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", date.toString());
         robot.dashboard.clearDisplay();
     }   //startMode
 
@@ -227,6 +224,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         strategyMenu.addChoice("Auto 100pt 2", Strategy.AUTO_100_2, beaconButtonsMenu);
         strategyMenu.addChoice("Auto 40pt near", Strategy.AUTO_40_NEAR);
         strategyMenu.addChoice("Auto 40pt far", Strategy.AUTO_40_FAR);
+        strategyMenu.addChoice("Auto DF far", Strategy.AUTO_40D_FAR);
         strategyMenu.addChoice("Distance Drive", Strategy.DISTANCE_DRIVE, driveDistanceMenu);
         strategyMenu.addChoice("Timed Drive", Strategy.TIMED_DRIVE, driveTimeMenu);
         strategyMenu.addChoice("Do nothing", Strategy.DO_NOTHING);

@@ -64,7 +64,7 @@ class RobotInfo
     static final double ENCODER_Y_KF                    = 0.0;
     static final double ENCODER_Y_TOLERANCE             = 2.0;
     static final double ENCODER_Y_SETTLING              = 0.2;
-    static final double ENOCDER_Y_INCHES_PER_COUNT      = 0.01667;
+    static final double ENCODER_Y_INCHES_PER_COUNT      = 0.01667;
 
     static final double SMALL_Y_THRESHOLD               = 8.0;
     static final double ENCODER_SMALL_Y_KP              = 0.045;

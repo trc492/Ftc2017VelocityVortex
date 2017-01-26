@@ -89,6 +89,11 @@ public class VuforiaVision
         vuforia.setTrackingEnabled(enabled);
     }   //setEnabled
 
+    public String getTargetName(int index)
+    {
+        return vuforia.getTarget(index).getName();
+    }   //getTargetName
+
     public VectorF getTargetPosition(int index)
     {
         VectorF targetPos = null;

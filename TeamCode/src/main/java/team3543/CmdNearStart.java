@@ -84,7 +84,7 @@ class CmdNearStart implements TrcRobot.RobotCommand
         if (sm.isReady())
         {
             state = sm.getState();
-            double xDistance, yDistance;
+            double xDistance = 0.0, yDistance = 0.0;
 
             switch (state)
             {
@@ -175,7 +175,7 @@ class CmdNearStart implements TrcRobot.RobotCommand
                     done = true;
                     break;
             }
-            robot.traceStateInfo(elapsedTime, state.toString());
+            robot.traceStateInfo(elapsedTime, state.toString(), xDistance, yDistance, robot.targetHeading);
         }
 
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))

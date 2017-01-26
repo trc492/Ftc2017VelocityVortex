@@ -116,7 +116,7 @@ class CmdTimedDrive implements TrcRobot.RobotCommand
                     sm.stop();
                     break;
             }
-            robot.traceStateInfo(elapsedTime, state.toString());
+            robot.traceStateInfo(elapsedTime, state.toString(), 0.0, 0.0, 0.0);
         }
 
         return done;

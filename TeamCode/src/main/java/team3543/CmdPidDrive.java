@@ -116,7 +116,7 @@ class CmdPidDrive implements TrcRobot.RobotCommand
                     sm.stop();
                     break;
             }
-            robot.traceStateInfo(elapsedTime, state.toString());
+            robot.traceStateInfo(elapsedTime, state.toString(), xDistance, yDistance, heading);
         }
 
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))

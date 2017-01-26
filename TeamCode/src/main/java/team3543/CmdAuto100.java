@@ -22,19 +22,16 @@
 
 package team3543;
 
-import ftclib.FtcOpMode;
-import trclib.TrcDbgTrace;
 import trclib.TrcEvent;
 import trclib.TrcRobot;
 import trclib.TrcStateMachine;
 import trclib.TrcTimer;
 
-public class CmdAuto100 implements TrcRobot.RobotCommand
+class CmdAuto100 implements TrcRobot.RobotCommand
 {
     private static final boolean debugXPid = false;
     private static final boolean debugYPid = false;
     private static final boolean debugTurnPid = false;
-    private TrcDbgTrace tracer = FtcOpMode.getGlobalTracer();
 
     private enum State
     {
@@ -61,10 +58,9 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
     private Robot robot;
     private FtcAuto.Alliance alliance;
     private FtcAuto.ParkOption parkOption;
-    private int beaconButtons;
-    private boolean usePath1;
+    private int numBeaconButtons;
     private int remainingBeaconButtons;
-    private boolean shortRun;
+    private boolean nearBeacon;
     private CmdNearStart nearStartCmd;
     private TrcEvent event;
     private TrcTimer timer;
@@ -72,25 +68,22 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
     private boolean leftPusherExtended = false;
     private boolean rightPusherExtended = false;
 
-    public CmdAuto100(
-            Robot robot,
-            FtcAuto.Alliance alliance,
-            double delay,
-            int numParticles,
-            FtcAuto.ParkOption parkOption,
-            int beaconButtons,
-            boolean usePath1)
+    CmdAuto100(Robot robot,
+               FtcAuto.Alliance alliance,
+               double delay,
+               int numParticles,
+               FtcAuto.ParkOption parkOption,
+               int numBeaconButtons,
+               boolean usePath1)
     {
         this.robot = robot;
         this.alliance = alliance;
         this.parkOption = parkOption;
-        this.beaconButtons = beaconButtons;
-        this.usePath1 = usePath1;
+        this.numBeaconButtons = numBeaconButtons;
 
-        remainingBeaconButtons = beaconButtons;
-        shortRun = alliance == FtcAuto.Alliance.RED_ALLIANCE && (usePath1 || beaconButtons == 1) ||
-                   alliance == FtcAuto.Alliance.BLUE_ALLIANCE && !usePath1 && beaconButtons == 1;
-        nearStartCmd = new CmdNearStart(robot, alliance, delay, numParticles, shortRun);
+        remainingBeaconButtons = numBeaconButtons;
+        nearBeacon = !usePath1 || numBeaconButtons == 1;
+        nearStartCmd = new CmdNearStart(robot, alliance, delay, numParticles, nearBeacon);
 
         event = new TrcEvent(moduleName);
         timer = new TrcTimer(moduleName);
@@ -143,9 +136,10 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
         {
             state = sm.getState();
             State nextState;
-            double xDistance, yDistance;
+            double xDistance = 0.0, yDistance = 0.0;
             int redValue, greenValue, blueValue;
             boolean isRed, isBlue;
+            boolean printStateInfo = true;
 
             switch (state)
             {
@@ -156,6 +150,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // it returns true, then we move on to the next state. nearStartCmd would shoot a specified
                     // number of particles and displace the Cap Ball.
                     //
+                    printStateInfo = false;
                     if (nearStartCmd.cmdPeriodic(elapsedTime))
                     {
                         sm.setState(State.TURN_TO_WALL);
@@ -178,7 +173,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // Go forward to the wall.
                     //
                     xDistance = 0.0;
-                    yDistance = shortRun? 22.0: 16.0;
+                    yDistance = nearBeacon? 22.0: 16.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PARALLEL_WALL);
@@ -202,7 +197,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // set a timeout time to make sure we will move on even if the range sensor has malfunctioned.
                     //
                     robot.driveBase.mecanumDrive_Cartesian(-1.0, 0.0, 0.0);
-                    timer.set(1.0, event);
+                    timer.set(1.5, event);
                     sm.setState(State.ALIGN_WALL2);
                     break;
 
@@ -211,7 +206,12 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // Continue to strafe left until either the range sensor said we are less than 3.5-inch away
                     // from the wall or the timeout has expired.
                     //
-                    if (robot.getInput(robot.rangePidCtrl) < 3.5 || event.isSignaled())
+                    if (robot.getInput(robot.rangePidCtrl) < 3.5)
+                    {
+                        timer.set(0.5, event);
+                        sm.setState(State.ALIGN_WALL3);
+                    }
+                    else if (event.isSignaled())
                     {
                         sm.setState(State.ALIGN_WALL3);
                     }
@@ -240,16 +240,15 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // overshoot too much when detecting the line.
                     //
                     xDistance = 0.0;
-                    if (usePath1)
+                    yDistance = nearBeacon && alliance == FtcAuto.Alliance.RED_ALLIANCE ||
+                                !nearBeacon && alliance == FtcAuto.Alliance.BLUE_ALLIANCE? -30.0: 30.0;
+                    if (numBeaconButtons == 2 && remainingBeaconButtons == 1)
                     {
-                        // Path1 always back up.
-                        yDistance = -30.0;
-                    }
-                    else
-                    {
-                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE && remainingBeaconButtons == 2 ||
-                                    alliance == FtcAuto.Alliance.BLUE_ALLIANCE && remainingBeaconButtons == 1?
-                                        30.0: -30.0;
+                        //
+                        // We are going to the 2nd of the 2 beacons, so the direction is reversed.
+                        //
+                        yDistance = -yDistance;
+                        nearBeacon = !nearBeacon;
                     }
                     robot.targetHeading = robot.driveBase.getHeading();
 
@@ -300,7 +299,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     robot.dashboard.displayPrintf(
                             14, "[%d,%d,%d]isRed=%s,isBlue=%s",
                             redValue, greenValue, blueValue, Boolean.toString(isRed), Boolean.toString(isBlue));
-                    tracer.traceInfo(
+                    robot.tracer.traceInfo(
                             state.toString(), "[%d,%d,%d]isRed=%s,isBlue=%s",
                             redValue, greenValue, blueValue, Boolean.toString(isRed), Boolean.toString(isBlue));
                     //
@@ -361,7 +360,7 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         isBlue = blueValue > redValue && blueValue > greenValue;
                     }
                     boolean timedOut = event.isSignaled();
-                    tracer.traceInfo(
+                    robot.tracer.traceInfo(
                             state.toString(), "[%d,%d,%d]isRed=%s,isBlue=%s,expired=%s",
                             redValue, greenValue, blueValue, Boolean.toString(isRed), Boolean.toString(isBlue),
                             Boolean.toString(timedOut));
@@ -405,14 +404,8 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                         // We have another button to push, go to the next beacon.
                         //
                         xDistance = 0.0;
-                        if (usePath1)
-                        {
-                            yDistance = 57.0;
-                        }
-                        else
-                        {
-                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -40.0: 40.0;
-                        }
+                        yDistance = nearBeacon && alliance == FtcAuto.Alliance.RED_ALLIANCE ||
+                                    !nearBeacon && alliance == FtcAuto.Alliance.BLUE_ALLIANCE? 40.0: -40.0;
 
                         robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                         remainingBeaconButtons--;
@@ -428,20 +421,18 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     else
                     {
                         //
-                        // We are going to park somewhere. let's get off the wall so we can run to our parking place.
+                        // We are going to park somewhere. let's get off the wall so we can run or turn to our
+                        // parking place.
+                        // If we are at near beacon and want to park at the center, we are already aligned to the
+                        // center vortex, we just need to turn towards it.
                         //
-                        if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
-                        {
-                            xDistance = beaconButtons == 2 && usePath1 ? 12.0 : 40.0;
-                        }
-                        else
-                        {
-                            xDistance = 24.0;
-                        }
+                        xDistance = nearBeacon && parkOption != FtcAuto.ParkOption.PARK_CENTER? 24.0: 12.0;
                         yDistance = 0.0;
+                        nextState = nearBeacon && parkOption == FtcAuto.ParkOption.PARK_CENTER?
+                                        State.TURN_TO_VORTEX: State.GOTO_VORTEX;
 
                         robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
-                        sm.waitForSingleEvent(event, State.GOTO_VORTEX);
+                        sm.waitForSingleEvent(event, nextState);
                     }
                     break;
 
@@ -450,42 +441,29 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     // Go towards the vortexes.
                     //
                     xDistance = yDistance = 0.0;
-                    nextState = State.TURN_TO_VORTEX;
-                    if (usePath1)
+                    if (nearBeacon)
                     {
-                        if (beaconButtons == 2)
-                        {
-                            if (alliance == FtcAuto.Alliance.BLUE_ALLIANCE)
-                            {
-                                if (parkOption == FtcAuto.ParkOption.PARK_CORNER)
-                                {
-                                    yDistance = 36.0;
-                                    nextState = State.DONE;
-                                }
-                            }
-                            else if (parkOption == FtcAuto.ParkOption.PARK_CENTER)
-                            {
-                                robot.targetHeading = -45.0;
-                                nextState = State.PARK_VORTEX;
-                            }
-                            else
-                            {
-                                yDistance = -84.0;
-                                nextState = State.DONE;
-                            }
-                        }
-                        else
-                        {
-                            yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE ? -40.0 : 60.0;
-                        }
+                        //
+                        // If we come here, we are at near beacon and want to park at the corner. We just run
+                        // straight to it and we are done.
+                        //
+                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -64.0: 24.0;
+                        nextState = State.DONE;
                     }
-                    else if (alliance == FtcAuto.Alliance.RED_ALLIANCE)
+                    else if (parkOption == FtcAuto.ParkOption.PARK_CENTER)
                     {
-                        yDistance = -40.0;
+                        //
+                        // We are at far beacon and want to park at the center, turn toward the center.
+                        //
+                        robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? -45.0: 225.0;
+                        nextState = State.PARK_VORTEX;
                     }
-                    else if (parkOption == FtcAuto.ParkOption.PARK_CORNER)
+                    else
                     {
-                        yDistance = 36.0;
+                        //
+                        // We are at far beacon and want to park at the corner, run straight to it and we are done.
+                        //
+                        yDistance = alliance == FtcAuto.Alliance.RED_ALLIANCE? -84.0: 84.0;
                         nextState = State.DONE;
                     }
 
@@ -495,10 +473,11 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
 
                 case TURN_TO_VORTEX:
                     //
-                    // Turn the robot to face the vortexes to either the front or the back of the robot.
+                    // If we come here, we are at near beacon and want to park at the center vortex. Turn the robot
+                    // to face the vortexes.
                     //
                     xDistance = yDistance = 0.0;
-                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 45.0: 120.0;
+                    robot.targetHeading = alliance == FtcAuto.Alliance.RED_ALLIANCE? 90.0: 270.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.PARK_VORTEX);
@@ -506,21 +485,10 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
 
                 case PARK_VORTEX:
                     //
-                    // Go forward or backward to the selected vortex.
+                    // If we come here, we are at near or far beacon and want to park at the center vortex.
                     //
                     xDistance = 0.0;
-                    if (alliance == FtcAuto.Alliance.BLUE_ALLIANCE)
-                    {
-                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? -36.0: 40.0;
-                    }
-                    else if (usePath1 && beaconButtons == 2 && parkOption == FtcAuto.ParkOption.PARK_CENTER)
-                    {
-                        yDistance = -48.0;
-                    }
-                    else
-                    {
-                        yDistance = parkOption == FtcAuto.ParkOption.PARK_CENTER? 36.0: -36.0;
-                    }
+                    yDistance = nearBeacon? 48.0: alliance == FtcAuto.Alliance.RED_ALLIANCE? -52.0: 52.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);
@@ -536,30 +504,30 @@ public class CmdAuto100 implements TrcRobot.RobotCommand
                     break;
             }
 
-            if (state != State.NEAR_START)
+            if (printStateInfo)
             {
-                robot.traceStateInfo(elapsedTime, state.toString());
+                robot.traceStateInfo(elapsedTime, state.toString(), xDistance, yDistance, robot.targetHeading);
             }
         }
 
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
         {
-            tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
-                             robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+            robot.tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
+                                   robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
 
             if (debugXPid)
             {
-                robot.encoderXPidCtrl.printPidInfo(tracer);
+                robot.encoderXPidCtrl.printPidInfo(robot.tracer);
             }
 
             if (debugYPid)
             {
-                robot.encoderYPidCtrl.printPidInfo(tracer);
+                robot.encoderYPidCtrl.printPidInfo(robot.tracer);
             }
 
             if (debugTurnPid)
             {
-                robot.gyroPidCtrl.printPidInfo(tracer);
+                robot.gyroPidCtrl.printPidInfo(robot.tracer);
             }
         }
 

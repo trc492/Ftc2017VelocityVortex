@@ -70,7 +70,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
     //
     // Text To Speech.
     //
-    private TextToSpeech textToSpeech = null;
+    public TextToSpeech textToSpeech = null;
     //
     // Sensors.
     //
@@ -189,7 +189,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
 
         driveBase = new TrcDriveBase(leftFrontWheel, leftRearWheel, rightFrontWheel, rightRearWheel, gyro);
         driveBase.setXPositionScale(RobotInfo.ENCODER_X_INCHES_PER_COUNT);
-        driveBase.setYPositionScale(RobotInfo.ENOCDER_Y_INCHES_PER_COUNT);
+        driveBase.setYPositionScale(RobotInfo.ENCODER_Y_INCHES_PER_COUNT);
 
         battery = new FtcRobotBattery(leftFrontWheel.motor.getController());
         //
@@ -453,13 +453,15 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         pidDrive.setTarget(xDistance, yDistance, heading, holdTarget, event);
     }   //setPIDDriveTarget
 
-    void traceStateInfo(double elapsedTime, String stateName)
+    void traceStateInfo(double elapsedTime, String stateName, double xDistance, double yDistance, double heading)
     {
         tracer.traceInfo(
-                moduleName, "[%5.3f] %17s: xPos=%6.2f,yPos=%6.2f,heading=%6.1f/%6.1f,range=%5.2f,volt=%5.2fV(%5.2fV)",
+                moduleName,
+                "[%5.3f] %17s: xPos=%6.2f/%6.2f,yPos=%6.2f/%6.2f,heading=%6.1f/%6.1f,range=%5.2f,volt=%5.2fV(%5.2fV)",
                 elapsedTime, stateName,
-                driveBase.getXPosition(), driveBase.getYPosition(), driveBase.getHeading(), targetHeading,
-                getInput(rangePidCtrl), battery.getCurrentVoltage(), battery.getLowestVoltage());
+                driveBase.getXPosition(), xDistance, driveBase.getYPosition(), yDistance,
+                driveBase.getHeading(), heading, getInput(rangePidCtrl),
+                battery.getCurrentVoltage(), battery.getLowestVoltage());
     }   //traceStateInfo
 
     double selectParameter(boolean startNear, FtcAuto.Alliance alliance, double nearRed, double nearBlue,

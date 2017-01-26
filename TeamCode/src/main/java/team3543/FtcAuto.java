@@ -111,7 +111,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 break;
 
             case AUTO_40D_FAR:
-//                autoCommand = new CmdAuto40D(robot, alliance, delay, numParticles, parkOption);
+                autoCommand = new CmdAuto40D(robot, alliance, delay, numParticles, parkOption);
                 break;
 
             case DISTANCE_DRIVE:
@@ -231,7 +231,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Traverse menus.
         //
-        FtcMenu.walkMenuTree(allianceMenu);
+        FtcMenu.walkMenuTree(allianceMenu, this);
         //
         // Fetch choices.
         //

@@ -305,7 +305,7 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         //
         // Traverse menus.
         //
-        FtcMenu.walkMenuTree(testMenu);
+        FtcMenu.walkMenuTree(testMenu, this);
         //
         // Fetch choices.
         //

@@ -32,6 +32,11 @@ import ftclib.FtcVuforia;
 
 public class VuforiaVision
 {
+    public static final int TARGET_WHEELS = 0;
+    public static final int TARGET_TOOLS = 1;
+    public static final int TARGET_LEGOS = 2;
+    public static final int TARGET_GEARS = 3;
+
     private Robot robot;
     private FtcVuforia vuforia;
 

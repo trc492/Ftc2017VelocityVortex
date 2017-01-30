@@ -174,14 +174,16 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         //
         // Allow TeleOp to run so we can control the robot in sensors test mode.
         //
-        if (test == Test.SENSORS_TEST)
+        switch (test)
         {
-            super.runPeriodic(elapsedTime);
-            doSensorsTest();
-        }
-        else if (test == Test.MOTORS_TEST)
-        {
-            doMotorsTest();
+            case SENSORS_TEST:
+                super.runPeriodic(elapsedTime);
+                doSensorsTest();
+                break;
+
+            case MOTORS_TEST:
+                doMotorsTest();
+                break;
         }
     }   //runPeriodic
 

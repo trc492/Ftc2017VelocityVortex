@@ -24,6 +24,7 @@ package team3543;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ftclib.FtcChoiceMenu;
@@ -136,10 +137,13 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     @Override
     public void startMode()
     {
+        Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd_hh:mm");
+
+        robot.tracer.openLogFile(dateFormat.format(now) + ".log");
         robot.startMode(TrcRobot.RunMode.AUTO_MODE);
         robot.battery.setEnabled(true);
-        Date date = new Date();
-        robot.tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", date.toString());
+        robot.tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", now.toString());
         robot.dashboard.clearDisplay();
     }   //startMode
 
@@ -148,6 +152,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     {
         robot.stopMode(TrcRobot.RunMode.AUTO_MODE);
         robot.battery.setEnabled(false);
+        robot.tracer.closeLogFile();
     }   //stopMode
 
     @Override

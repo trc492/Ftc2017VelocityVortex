@@ -177,6 +177,11 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         if (test == Test.SENSORS_TEST)
         {
             super.runPeriodic(elapsedTime);
+            doSensorsTest();
+        }
+        else if (test == Test.MOTORS_TEST)
+        {
+            doMotorsTest();
         }
     }   //runPeriodic
 
@@ -188,14 +193,6 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
 
         switch (test)
         {
-            case SENSORS_TEST:
-                doSensorsTest();
-                break;
-
-            case MOTORS_TEST:
-                doMotorsTest();
-                break;
-
             case X_TIMED_DRIVE:
             case Y_TIMED_DRIVE:
                 double lfEnc = robot.leftFrontWheel.getPosition();

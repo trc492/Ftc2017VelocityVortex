@@ -140,7 +140,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd_hh:mm");
 
-        robot.tracer.openLogFile(dateFormat.format(now) + ".log");
+        robot.tracer.openTraceLog(dateFormat.format(now) + ".log");
         robot.startMode(TrcRobot.RunMode.AUTO_MODE);
         robot.battery.setEnabled(true);
         robot.tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", now.toString());
@@ -152,7 +152,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     {
         robot.stopMode(TrcRobot.RunMode.AUTO_MODE);
         robot.battery.setEnabled(false);
-        robot.tracer.closeLogFile();
+        robot.tracer.closeTraceLog();
     }   //stopMode
 
     @Override

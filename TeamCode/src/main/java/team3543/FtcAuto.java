@@ -22,6 +22,8 @@
 
 package team3543;
 
+import android.os.Environment;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.text.SimpleDateFormat;
@@ -138,9 +140,10 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     public void startMode()
     {
         Date now = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd_hh:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh-mm");
+        String logFilePath = "/sdcard/FIRST/" + dateFormat.format(now) + ".log";
 
-        robot.tracer.openTraceLog(dateFormat.format(now) + ".log");
+        robot.tracer.openTraceLog(logFilePath);
         robot.startMode(TrcRobot.RunMode.AUTO_MODE);
         robot.battery.setEnabled(true);
         robot.tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", now.toString());

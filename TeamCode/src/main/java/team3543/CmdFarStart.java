@@ -172,7 +172,7 @@ public class CmdFarStart implements TrcRobot.RobotCommand
                         // We don't want to displace Cap Ball, go forward a little and stop!
                         //
                         xDistance = 0.0;
-                        yDistance = 50.0;
+                        yDistance = 52.0;
 
                         robot.encoderYPidCtrl.setOutputRange(-0.5, 0.5);
                         robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Titan Robotics Club (http://www.titanrobotics.com)
+ * Copyright (c) 2016 Titan Robotics Club (http://www.titanrobotics.com)
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,6 +38,8 @@ import trclib.TrcRobot;
 @Autonomous(name="Autonomous", group="3543Auto")
 public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 {
+    private static final boolean USE_TRACELOG = true;
+
     enum Alliance
     {
         RED_ALLIANCE,
@@ -140,10 +142,14 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     public void startMode()
     {
         Date now = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh-mm");
-        String logFilePath = "/sdcard/FIRST/" + dateFormat.format(now) + ".log";
 
-        robot.tracer.openTraceLog(logFilePath);
+        if (USE_TRACELOG)
+        {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh-mm");
+            String logFilePath = "/sdcard/FIRST/" + dateFormat.format(now) + ".log";
+            robot.tracer.openTraceLog(logFilePath);
+        }
+
         robot.startMode(TrcRobot.RunMode.AUTO_MODE);
         robot.battery.setEnabled(true);
         robot.tracer.traceInfo(moduleName, "%s: ***** Starting autonomous *****", now.toString());
@@ -155,7 +161,11 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     {
         robot.stopMode(TrcRobot.RunMode.AUTO_MODE);
         robot.battery.setEnabled(false);
-        robot.tracer.closeTraceLog();
+
+        if (USE_TRACELOG)
+        {
+            robot.tracer.closeTraceLog();
+        }
     }   //stopMode
 
     @Override

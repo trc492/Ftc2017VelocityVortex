@@ -28,6 +28,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import ftclib.FtcChoiceMenu;
 import ftclib.FtcMenu;
@@ -145,7 +146,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
         if (USE_TRACELOG)
         {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh-mm");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh-mm", Locale.US);
             String logFilePath = "/sdcard/FIRST/" + dateFormat.format(now) + ".log";
             robot.tracer.openTraceLog(logFilePath);
         }

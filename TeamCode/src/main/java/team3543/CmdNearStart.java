@@ -160,7 +160,7 @@ class CmdNearStart implements TrcRobot.RobotCommand
                     // Run and graze the Cap Ball.
                     //
                     xDistance = 0.0;
-                    yDistance = nearBeacon? 42.0: 60.0;
+                    yDistance = nearBeacon? 42.0: 63.0;
 
                     robot.setPIDDriveTarget(xDistance, yDistance, robot.targetHeading, false, event);
                     sm.waitForSingleEvent(event, State.DONE);

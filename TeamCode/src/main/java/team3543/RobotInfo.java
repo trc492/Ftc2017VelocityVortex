@@ -111,8 +111,8 @@ class RobotInfo
     //
 //    static final double LINE_DARK_LEVEL                 = 2.0;      //for color sensor
 //    static final double LINE_WHITE_LEVEL                = 21.0;     //for color sensor
-    static final double LINE_DARK_LEVEL                 = 0.4;      //for ODS
-    static final double LINE_WHITE_LEVEL                = 2.5;      //for ODS
+    static final double LINE_DARK_LEVEL                 = 0.3;      //for ODS
+    static final double LINE_WHITE_LEVEL                = 2.3;      //for ODS
 
     //
     // Shooter subsystem.

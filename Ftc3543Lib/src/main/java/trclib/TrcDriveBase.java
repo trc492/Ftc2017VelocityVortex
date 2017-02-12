@@ -25,7 +25,7 @@ package trclib;
 /**
  * This class implements a platform independent drive base. The drive base class implements a drive train that may
  * consist of 2 to 6 motors. It supports tank drive, arcade drive and mecanum drive with motor stalled detection and
- * inverted drive mode.
+ * inverted drive mode. It also supports gyro assisted drive to keep robot driving straight.
  */
 public class TrcDriveBase implements TrcTaskMgr.Task
 {

@@ -22,8 +22,6 @@
 
 package team3543;
 
-import android.os.Environment;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +38,14 @@ import trclib.TrcRobot;
 public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 {
     private static final boolean USE_TRACELOG = true;
+
+    enum MatchType
+    {
+        TEST,
+        QUALIFYING,
+        SEMI_FINAL,
+        FINAL
+    }   //enum MatchType
 
     enum Alliance
     {
@@ -70,6 +76,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
     private Robot robot;
     private TrcRobot.RobotCommand autoCommand = null;
+    private MatchType matchType = MatchType.TEST;
+    private int matchNumber = 0;
     private Alliance alliance = Alliance.RED_ALLIANCE;
     private double delay = 0.0;
     private int numParticles = 2;
@@ -147,7 +155,10 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         if (USE_TRACELOG)
         {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh-mm", Locale.US);
-            String logFilePath = "/sdcard/FIRST/" + dateFormat.format(now) + ".log";
+            String logFilePath = "/sdcard/FIRST/" + matchType.toString();
+
+            if (matchType != MatchType.TEST) logFilePath += matchNumber;
+            logFilePath += "_" + dateFormat.format(now) + ".log";
             robot.tracer.openTraceLog(logFilePath);
         }
 
@@ -211,7 +222,9 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Create menus.
         //
-        FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", null, this);
+        FtcChoiceMenu<MatchType> matchMenu = new FtcChoiceMenu<>("Match type:", null, this);
+        FtcValueMenu matchNumberMenu = new FtcValueMenu("Match number:", matchMenu, this, 1.0, 50.0, 1.0, 1.0, "%.0f");
+        FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", matchMenu, this);
         FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", allianceMenu, this, 0.0, 30.0, 1.0, 0.0, " %.0f sec");
         FtcValueMenu numParticlesMenu = new FtcValueMenu(
                 "Shoot particles:", delayMenu, this, 0.0, 2.0, 1.0, 2.0, " %.0f");
@@ -225,12 +238,19 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
                 "Drive time:", strategyMenu, this, 0.0, 30.0, 1.0, 5.0, " %.0f sec");
         FtcValueMenu drivePowerMenu = new FtcValueMenu(
                 "Drive power:", driveTimeMenu, this, -1.0, 1.0, 0.1, 0.5, " %.1f");
-        //
-        // Populate menus.
-        //
+
+        matchNumberMenu.setChildMenu(allianceMenu);
         delayMenu.setChildMenu(numParticlesMenu);
         numParticlesMenu.setChildMenu(parkOptionMenu);
         driveTimeMenu.setChildMenu(drivePowerMenu);
+
+        //
+        // Populate choice menus.
+        //
+        matchMenu.addChoice("Test", MatchType.TEST, allianceMenu);
+        matchMenu.addChoice("Qualifying", MatchType.QUALIFYING, matchNumberMenu);
+        matchMenu.addChoice("Semi-final", MatchType.SEMI_FINAL, matchNumberMenu);
+        matchMenu.addChoice("Final", MatchType.FINAL, matchNumberMenu);
 
         allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, delayMenu);
         allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, delayMenu);
@@ -250,10 +270,12 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Traverse menus.
         //
-        FtcMenu.walkMenuTree(allianceMenu, this);
+        FtcMenu.walkMenuTree(matchMenu, this);
         //
         // Fetch choices.
         //
+        matchType = matchMenu.getCurrentChoiceObject();
+        matchNumber = (int)matchNumberMenu.getCurrentValue();
         alliance = allianceMenu.getCurrentChoiceObject();
         delay = delayMenu.getCurrentValue();
         numParticles = (int)numParticlesMenu.getCurrentValue();

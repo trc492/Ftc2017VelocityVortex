@@ -41,7 +41,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
     enum MatchType
     {
-        TEST,
+        PRACTICE,
         QUALIFYING,
         SEMI_FINAL,
         FINAL
@@ -76,7 +76,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
 
     private Robot robot;
     private TrcRobot.RobotCommand autoCommand = null;
-    private MatchType matchType = MatchType.TEST;
+    private MatchType matchType = MatchType.PRACTICE;
     private int matchNumber = 0;
     private Alliance alliance = Alliance.RED_ALLIANCE;
     private double delay = 0.0;
@@ -157,7 +157,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh-mm", Locale.US);
             String logFilePath = "/sdcard/FIRST/" + matchType.toString();
 
-            if (matchType != MatchType.TEST) logFilePath += matchNumber;
+            if (matchType != MatchType.PRACTICE) logFilePath += matchNumber;
             logFilePath += "_" + dateFormat.format(now) + ".log";
             robot.tracer.openTraceLog(logFilePath);
         }
@@ -222,9 +222,9 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Create menus.
         //
-        FtcChoiceMenu<MatchType> matchMenu = new FtcChoiceMenu<>("Match type:", null, this);
-        FtcValueMenu matchNumberMenu = new FtcValueMenu("Match number:", matchMenu, this, 1.0, 50.0, 1.0, 1.0, "%.0f");
-        FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", matchMenu, this);
+        FtcChoiceMenu<MatchType> matchTypeMenu = new FtcChoiceMenu<>("Match type:", null, this);
+        FtcValueMenu matchNumberMenu = new FtcValueMenu("Match number:", matchTypeMenu, this, 1.0, 50.0, 1.0, 1.0, "%.0f");
+        FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", matchTypeMenu, this);
         FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", allianceMenu, this, 0.0, 30.0, 1.0, 0.0, " %.0f sec");
         FtcValueMenu numParticlesMenu = new FtcValueMenu(
                 "Shoot particles:", delayMenu, this, 0.0, 2.0, 1.0, 2.0, " %.0f");
@@ -247,10 +247,10 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Populate choice menus.
         //
-        matchMenu.addChoice("Test", MatchType.TEST, allianceMenu);
-        matchMenu.addChoice("Qualifying", MatchType.QUALIFYING, matchNumberMenu);
-        matchMenu.addChoice("Semi-final", MatchType.SEMI_FINAL, matchNumberMenu);
-        matchMenu.addChoice("Final", MatchType.FINAL, matchNumberMenu);
+        matchTypeMenu.addChoice("Test", MatchType.PRACTICE, allianceMenu);
+        matchTypeMenu.addChoice("Qualifying", MatchType.QUALIFYING, matchNumberMenu);
+        matchTypeMenu.addChoice("Semi-final", MatchType.SEMI_FINAL, matchNumberMenu);
+        matchTypeMenu.addChoice("Final", MatchType.FINAL, matchNumberMenu);
 
         allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, delayMenu);
         allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, delayMenu);
@@ -270,11 +270,11 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Traverse menus.
         //
-        FtcMenu.walkMenuTree(matchMenu, this);
+        FtcMenu.walkMenuTree(matchTypeMenu, this);
         //
         // Fetch choices.
         //
-        matchType = matchMenu.getCurrentChoiceObject();
+        matchType = matchTypeMenu.getCurrentChoiceObject();
         matchNumber = (int)matchNumberMenu.getCurrentValue();
         alliance = allianceMenu.getCurrentChoiceObject();
         delay = delayMenu.getCurrentValue();
@@ -289,7 +289,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         // Show choices.
         //
         robot.dashboard.displayPrintf(1, "== Match: %s%s ==",
-                                      matchType.toString(), matchType == MatchType.TEST? "": "_" + matchNumber);
+                                      matchType.toString(), matchType == MatchType.PRACTICE? "": "_" + matchNumber);
         robot.dashboard.displayPrintf(2, "Auto Strategy: %s", strategyMenu.getCurrentChoiceText());
         robot.dashboard.displayPrintf(3, "Alliance=%s,Delay=%.0f sec", alliance.toString(), delay);
         robot.dashboard.displayPrintf(4, "NumParticles=%d,ParkOption=%s", numParticles, parkOption.toString());

@@ -288,11 +288,13 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Show choices.
         //
-        robot.dashboard.displayPrintf(1, "-- Auto Strategy: %s --", strategyMenu.getCurrentChoiceText());
-        robot.dashboard.displayPrintf(2, "Alliance=%s,Delay=%.0f sec", alliance.toString(), delay);
-        robot.dashboard.displayPrintf(3, "Auto100: NumParticles=%d,BeaconButtons=%d", numParticles, beaconButtons);
-        robot.dashboard.displayPrintf(4, "Auto40: ParkOption=%s", parkOption.toString());
-        robot.dashboard.displayPrintf(5, "Drive: distance=%.0f ft,Time=%.0f,Power=%.1f",
+        robot.dashboard.displayPrintf(1, "== Match: %s%s ==",
+                                      matchType.toString(), matchType == MatchType.TEST? "": "_" + matchNumber);
+        robot.dashboard.displayPrintf(2, "Auto Strategy: %s", strategyMenu.getCurrentChoiceText());
+        robot.dashboard.displayPrintf(3, "Alliance=%s,Delay=%.0f sec", alliance.toString(), delay);
+        robot.dashboard.displayPrintf(4, "NumParticles=%d,ParkOption=%s", numParticles, parkOption.toString());
+        robot.dashboard.displayPrintf(5, "Auto100: BeaconButtons=%d", beaconButtons);
+        robot.dashboard.displayPrintf(6, "Drive: distance=%.0f ft,Time=%.0f,Power=%.1f",
                                       driveDistance, driveTime, drivePower);
     }   //doMenus
 

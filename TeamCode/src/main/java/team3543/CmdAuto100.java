@@ -236,7 +236,7 @@ class CmdAuto100 implements TrcRobot.RobotCommand
                 case FIND_LINE:
                     //
                     // We should be aligned with the wall, maintain the current heading when running along the wall
-                    // looking for the white line. Limit the robot to only 12% power so we won't miss the line or
+                    // looking for the white line. Limit the robot to only 13% power so we won't miss the line or
                     // overshoot too much when detecting the line.
                     //
                     xDistance = 0.0;

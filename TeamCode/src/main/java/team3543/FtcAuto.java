@@ -42,7 +42,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
     enum MatchType
     {
         PRACTICE,
-        QUALIFYING,
+        QUALIFICATION,
         SEMI_FINAL,
         FINAL
     }   //enum MatchType
@@ -223,7 +223,8 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         // Create menus.
         //
         FtcChoiceMenu<MatchType> matchTypeMenu = new FtcChoiceMenu<>("Match type:", null, this);
-        FtcValueMenu matchNumberMenu = new FtcValueMenu("Match number:", matchTypeMenu, this, 1.0, 50.0, 1.0, 1.0, "%.0f");
+        FtcValueMenu matchNumberMenu = new FtcValueMenu(
+                "Match number:", matchTypeMenu, this, 1.0, 50.0, 1.0, 1.0, "%.0f");
         FtcChoiceMenu<Alliance> allianceMenu = new FtcChoiceMenu<>("Alliance:", matchTypeMenu, this);
         FtcValueMenu delayMenu = new FtcValueMenu("Delay time:", allianceMenu, this, 0.0, 30.0, 1.0, 0.0, " %.0f sec");
         FtcValueMenu numParticlesMenu = new FtcValueMenu(
@@ -248,7 +249,7 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         // Populate choice menus.
         //
         matchTypeMenu.addChoice("Test", MatchType.PRACTICE, allianceMenu);
-        matchTypeMenu.addChoice("Qualifying", MatchType.QUALIFYING, matchNumberMenu);
+        matchTypeMenu.addChoice("Qualification", MatchType.QUALIFICATION, matchNumberMenu);
         matchTypeMenu.addChoice("Semi-final", MatchType.SEMI_FINAL, matchNumberMenu);
         matchTypeMenu.addChoice("Final", MatchType.FINAL, matchNumberMenu);
 

@@ -192,7 +192,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
         driveBase.setXPositionScale(RobotInfo.ENCODER_X_INCHES_PER_COUNT);
         driveBase.setYPositionScale(RobotInfo.ENCODER_Y_INCHES_PER_COUNT);
 
-        battery = new FtcRobotBattery(leftFrontWheel.motor.getController());
+        battery = new FtcRobotBattery();
         //
         // Initialize tone device.
         //

@@ -24,10 +24,7 @@ package team3543;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import ftclib.FtcChoiceMenu;
 import ftclib.FtcMenu;

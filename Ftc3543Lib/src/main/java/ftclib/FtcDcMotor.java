@@ -24,7 +24,6 @@ package ftclib;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import trclib.TrcDigitalInput;
@@ -311,31 +310,29 @@ public class FtcDcMotor extends TrcMotor
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API, "hardware=%s", Boolean.toString(hardware));
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API);
         }
-
         //
         // Modern Robotics motor controllers supports resetting encoders by setting the motor controller mode. This
         // is a long operation and has side effect of disabling the motor controller unless you do another setMode
-        // to re-enable it. For example:
-        //      motor.setMode(DcMotorController.RunMode.RESET_ENCODERS);
-        //      motor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
-        // It is a lot more efficient doing it in software.
+        // to re-enable it. Therefore, resetPosition with hardware set to true is a synchronous call. This should
+        // only be called in robotInit time. For other times, it should call resetPosition with hardware set to false
+        // (software reset).
         //
         if (hardware)
         {
-            zeroEncoderValue = motor.getCurrentPosition();
-        }
-        else
-        {
             motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            while (motor.getCurrentPosition() != 0)
+            while (motor.getCurrentPosition() != 0.0)
             {
                 Thread.yield();
             }
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             zeroEncoderValue = 0;
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        }
+        else
+        {
+            zeroEncoderValue = motor.getCurrentPosition();
         }
     }   //resetPosition
 

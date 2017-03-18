@@ -24,6 +24,7 @@ package ftclib;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsUsbDcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import trclib.TrcDigitalInput;
@@ -300,15 +301,17 @@ public class FtcDcMotor extends TrcMotor
 
     /**
      * This method resets the motor position sensor, typically an encoder.
+     *
+     * @param hardware specifies true for resetting hardware position, false for resetting software position.
      */
     @Override
-    public void resetPosition()
+    public void resetPosition(boolean hardware)
     {
         final String funcName = "resetPosition";
 
         if (debugEnabled)
         {
-            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API);
+            dbgTrace.traceEnter(funcName, TrcDbgTrace.TraceLevel.API, "hardware=%s", Boolean.toString(hardware));
             dbgTrace.traceExit(funcName, TrcDbgTrace.TraceLevel.API);
         }
 
@@ -320,7 +323,28 @@ public class FtcDcMotor extends TrcMotor
         //      motor.setMode(DcMotorController.RunMode.RUN_WITHOUT_ENCODERS);
         // It is a lot more efficient doing it in software.
         //
-        zeroEncoderValue = motor.getCurrentPosition();
+        if (hardware)
+        {
+            zeroEncoderValue = motor.getCurrentPosition();
+        }
+        else
+        {
+            motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            while (motor.getCurrentPosition() != 0)
+            {
+                Thread.yield();
+            }
+            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            zeroEncoderValue = 0;
+        }
+    }   //resetPosition
+
+    /**
+     * This method resets the motor position sensor, typically an encoder.
+     */
+    public void resetPosition()
+    {
+        resetPosition(false);
     }   //resetPosition
 
     /**

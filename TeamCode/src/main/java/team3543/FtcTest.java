@@ -293,14 +293,14 @@ public class FtcTest extends FtcTeleOp implements FtcMenu.MenuButtons, FtcGamepa
         //
         // Populate menus.
         //
-        testMenu.addChoice("Sensors test", Test.SENSORS_TEST);
-        testMenu.addChoice("Motors test", Test.MOTORS_TEST);
-        testMenu.addChoice("X Timed drive", Test.X_TIMED_DRIVE, driveTimeMenu);
-        testMenu.addChoice("Y Timed drive", Test.Y_TIMED_DRIVE, driveTimeMenu);
-        testMenu.addChoice("X Distance drive", Test.X_DISTANCE_DRIVE, driveDistanceMenu);
-        testMenu.addChoice("Y Distance drive", Test.Y_DISTANCE_DRIVE, driveDistanceMenu);
-        testMenu.addChoice("Range drive", Test.RANGE_DRIVE, rangeDistanceMenu);
-        testMenu.addChoice("Degrees turn", Test.GYRO_TURN, turnDegreesMenu);
+        testMenu.addChoice("Sensors test", Test.SENSORS_TEST, true);
+        testMenu.addChoice("Motors test", Test.MOTORS_TEST, false);
+        testMenu.addChoice("X Timed drive", Test.X_TIMED_DRIVE, false, driveTimeMenu);
+        testMenu.addChoice("Y Timed drive", Test.Y_TIMED_DRIVE, false, driveTimeMenu);
+        testMenu.addChoice("X Distance drive", Test.X_DISTANCE_DRIVE, false, driveDistanceMenu);
+        testMenu.addChoice("Y Distance drive", Test.Y_DISTANCE_DRIVE, false, driveDistanceMenu);
+        testMenu.addChoice("Range drive", Test.RANGE_DRIVE, false, rangeDistanceMenu);
+        testMenu.addChoice("Degrees turn", Test.GYRO_TURN, false, turnDegreesMenu);
         //
         // Traverse menus.
         //

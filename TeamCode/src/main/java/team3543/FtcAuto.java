@@ -243,26 +243,26 @@ public class FtcAuto extends FtcOpMode implements FtcMenu.MenuButtons
         //
         // Populate choice menus.
         //
-        matchTypeMenu.addChoice("Test", MatchType.PRACTICE, allianceMenu);
-        matchTypeMenu.addChoice("Qualification", MatchType.QUALIFICATION, matchNumberMenu);
-        matchTypeMenu.addChoice("Semi-final", MatchType.SEMI_FINAL, matchNumberMenu);
-        matchTypeMenu.addChoice("Final", MatchType.FINAL, matchNumberMenu);
+        matchTypeMenu.addChoice("Practice", MatchType.PRACTICE, true, allianceMenu);
+        matchTypeMenu.addChoice("Qualification", MatchType.QUALIFICATION, false, matchNumberMenu);
+        matchTypeMenu.addChoice("Semi-final", MatchType.SEMI_FINAL, false, matchNumberMenu);
+        matchTypeMenu.addChoice("Final", MatchType.FINAL, false, matchNumberMenu);
 
-        allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, delayMenu);
-        allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, delayMenu);
+        allianceMenu.addChoice("Red", Alliance.RED_ALLIANCE, true, delayMenu);
+        allianceMenu.addChoice("Blue", Alliance.BLUE_ALLIANCE, false, delayMenu);
 
-        parkOptionMenu.addChoice("Do nothing", ParkOption.DO_NOTHING, strategyMenu);
-        parkOptionMenu.addChoice("Park center", ParkOption.PARK_CENTER, strategyMenu);
-        parkOptionMenu.addChoice("Park corner", ParkOption.PARK_CORNER, strategyMenu);
+        parkOptionMenu.addChoice("Do nothing", ParkOption.DO_NOTHING, true, strategyMenu);
+        parkOptionMenu.addChoice("Park center", ParkOption.PARK_CENTER, false, strategyMenu);
+        parkOptionMenu.addChoice("Park corner", ParkOption.PARK_CORNER, false, strategyMenu);
 
-        strategyMenu.addChoice("Auto 100pt 1", Strategy.AUTO_100_1, beaconButtonsMenu);
-        strategyMenu.addChoice("Auto 100pt 2", Strategy.AUTO_100_2, beaconButtonsMenu);
-        strategyMenu.addChoice("Auto 40pt near", Strategy.AUTO_40_NEAR);
-        strategyMenu.addChoice("Auto 40pt far", Strategy.AUTO_40_FAR);
-        strategyMenu.addChoice("Auto DF far", Strategy.AUTO_40D_FAR);
-        strategyMenu.addChoice("Distance Drive", Strategy.DISTANCE_DRIVE, driveDistanceMenu);
-        strategyMenu.addChoice("Timed Drive", Strategy.TIMED_DRIVE, driveTimeMenu);
-        strategyMenu.addChoice("Do nothing", Strategy.DO_NOTHING);
+        strategyMenu.addChoice("Auto 100pt 1", Strategy.AUTO_100_1, true, beaconButtonsMenu);
+        strategyMenu.addChoice("Auto 100pt 2", Strategy.AUTO_100_2, false, beaconButtonsMenu);
+        strategyMenu.addChoice("Auto 40pt near", Strategy.AUTO_40_NEAR, false);
+        strategyMenu.addChoice("Auto 40pt far", Strategy.AUTO_40_FAR, false);
+        strategyMenu.addChoice("Auto DF far", Strategy.AUTO_40D_FAR, false);
+        strategyMenu.addChoice("Distance Drive", Strategy.DISTANCE_DRIVE, false, driveDistanceMenu);
+        strategyMenu.addChoice("Timed Drive", Strategy.TIMED_DRIVE, false, driveTimeMenu);
+        strategyMenu.addChoice("Do nothing", Strategy.DO_NOTHING, false);
         //
         // Traverse menus.
         //

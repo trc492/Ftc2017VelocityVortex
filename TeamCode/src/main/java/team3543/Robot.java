@@ -462,7 +462,7 @@ public class Robot implements TrcPidController.PidInput, TrcAnalogTrigger.Trigge
                 elapsedTime, stateName,
                 driveBase.getXPosition(), xDistance, driveBase.getYPosition(), yDistance,
                 driveBase.getHeading(), heading, getInput(rangePidCtrl),
-                battery.getCurrentVoltage(), battery.getLowestVoltage());
+                battery.getVoltage(), battery.getLowestVoltage());
     }   //traceStateInfo
 
     double selectParameter(boolean startNear, FtcAuto.Alliance alliance, double nearRed, double nearBlue,

@@ -181,7 +181,7 @@ class CmdNearStart implements TrcRobot.RobotCommand
         if (robot.pidDrive.isActive() && (debugXPid || debugYPid || debugTurnPid))
         {
             robot.tracer.traceInfo("Battery", "Voltage=%5.2fV (%5.2fV)",
-                                   robot.battery.getCurrentVoltage(), robot.battery.getLowestVoltage());
+                                   robot.battery.getVoltage(), robot.battery.getLowestVoltage());
 
             if (debugXPid)
             {
